@@ -1,0 +1,41 @@
+name: wayt_app
+description: A Very Good Project created by Very Good CLI.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  a2f_sdk:
+    git:
+      url: git@github.com:app-anvil/a2f_sdk.git
+      ref: 5.2.1
+  bloc: ^8.1.4
+  equatable: ^2.0.7
+  flext: ^1.4.1
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6
+  flutter_localizations:
+    sdk: flutter
+  gap: ^3.0.1
+  get_it: ^8.0.2  
+  go_router: ^14.6.1  
+  intl: ^0.19.0
+  the_umpteenth_logger:
+    git:
+      url: git@github.com:gianmarcocalbi/the_umpteenth_logger.git
+      path: packages/the_umpteenth_logger
+      ref: 1.0.0
+
+dev_dependencies:
+  bloc_test: ^9.1.7
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  very_good_analysis: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true

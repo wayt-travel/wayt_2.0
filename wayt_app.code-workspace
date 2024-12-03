@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "name": "/",
+      "path": "."
+    },
+    {
+      "name": "/wayt_app",
+      "path": "wayt_app"
+    },
+  ],
+  "settings": {
+    "todo-tree.tree.showCountsInTree": false,
+    "todo-tree.tree.showBadges": false,
+    "todo-tree.filtering.excludeGlobs": [
+      "**/node_modules/*/**",
+      "**/wayt_app/*/**"
+    ],
+    "dart.debugSdkLibraries": true,
+    "dart.debugExternalPackageLibraries": true
+  }
+}
