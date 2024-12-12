@@ -11,6 +11,7 @@ void registersRepositories() {
   late final ({
     AuthRepository authRepo,
     UserRepository userRepo,
+    PlanRepository planRepo,
   }) repositories;
 
   if (config.mode.isApi) {
@@ -29,4 +30,5 @@ void registersRepositories() {
 
   GetIt.I.registerSingleton<AuthRepository>(repositories.authRepo);
   GetIt.I.registerSingleton<UserRepository>(repositories.userRepo);
+  GetIt.I.registerSingleton<PlanRepository>(repositories.planRepo);
 }
