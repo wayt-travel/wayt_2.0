@@ -9,6 +9,7 @@ class MockUser extends Mock implements UserEntity {}
 
 void main() {
   late MockUserDataSource mockUserDataSource;
+  // ignore: unused_local_variable
   late UserRepository repo;
 
   setUp(() {

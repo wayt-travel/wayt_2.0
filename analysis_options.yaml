@@ -13,6 +13,7 @@ analyzer:
     - lib/**/*.g.dart
     - lib/**/app_localizations_*.dart
     - lib/l10n/*.dart
+    - '**/*_test.dart'
 
 linter:
   rules:
