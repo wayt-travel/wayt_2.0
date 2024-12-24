@@ -2,10 +2,10 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../../auth_repository/data/data.dart';
+import '../../../../plan_repository/data/data.dart';
 
 void main() {
-  late AuthDataSource dataSource;
+  late PlanDataSource dataSource;
 
   group('In memory data source', () {});
 }

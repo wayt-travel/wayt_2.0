@@ -1,5 +1,3 @@
-
-
 // TODO: example of a cubit test
 // void main() {
 //   group('CounterCubit', () {
