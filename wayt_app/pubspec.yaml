@@ -10,7 +10,7 @@ dependencies:
   a2f_sdk:
     git:
       url: git@github.com:app-anvil/a2f_sdk.git
-      ref: 6.0.0
+      ref: 7.0.0
   bloc: ^8.1.4
   envied: ^1.0.0
   equatable: ^2.0.7

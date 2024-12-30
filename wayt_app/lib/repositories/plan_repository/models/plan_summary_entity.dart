@@ -1,7 +1,7 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
 /// Travel plan summary entity.
-abstract interface class PlanSummaryEntity implements ResourceEntity {
+abstract interface class PlanSummaryEntity implements Entity, ResourceEntity {
   /// The name of the travel plan.
   String get name;
 

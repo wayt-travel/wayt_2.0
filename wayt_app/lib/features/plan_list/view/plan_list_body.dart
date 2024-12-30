@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../repositories/repositories.dart';
+import '../../plan/view/plan_page.dart';
 
 class PlanListBody extends StatelessWidget {
   final List<PlanSummaryEntity> plans;
@@ -14,7 +15,8 @@ class PlanListBody extends StatelessWidget {
         (context, index) {
           final plan = plans[index];
           return ListTile(
-            onTap: () {},
+            key: ValueKey(index),
+            onTap: () => PlanPage.push(context, planId: plan.id),
             title: Text(plan.name),
             subtitle: _PlanTileDate(plan),
           );

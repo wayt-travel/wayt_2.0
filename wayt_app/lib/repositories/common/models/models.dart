@@ -1,1 +1,1 @@
-export 'plan_item.dart';
+export 'travel_item/travel_item.dart';

@@ -2,57 +2,98 @@ part of 'plan_repository.dart';
 
 class _PlanRepositoryImpl
     extends Repository<String, PlanSummaryEntity, PlanRepositoryState>
-    implements PlanRepository {
-  final PlanDataSource _dataSource;
+    implements PlanRepository, PlanRepositoryWithDataSource {
+  @override
+  final PlanDataSource dataSource;
 
   /// Map of user ids to the ids of the plans they own.
   final _userPlansMap = <String, List<String>>{};
 
-  _PlanRepositoryImpl(this._dataSource);
+  _PlanRepositoryImpl(this.dataSource);
 
-  void _addToMap(PlanSummaryEntity plan) {
+  /// Adds a [plan] to the cache and map.
+  void _addToCacheAndMap(PlanSummaryEntity plan) {
     _userPlansMap.putIfAbsent(plan.userId, () => []).add(plan.id);
+    cache.save(plan.id, plan);
   }
 
-  void addAllToMap(List<PlanSummaryEntity> plans) {
+  /// Adds a collection of [plans] to the cache and map.
+  void _addAllToCacheAndMap(Iterable<PlanSummaryEntity> plans) {
     for (final plan in plans) {
-      _addToMap(plan);
+      _addToCacheAndMap(plan);
     }
+  }
+
+  /// Removes a [plan] from the cache and map.
+  void _removeFromCacheAndMap(PlanSummaryEntity plan) {
+    cache.delete(plan.id);
+    _userPlansMap[plan.userId]?.remove(plan.id);
   }
 
   @override
   Future<PlanEntity> create(CreatePlanInput input) async {
-    final created = await _dataSource.create(input);
-    cache.save(created.id, created);
-    _addToMap(created);
+    logger.v('Creating plan with input: $input');
+    final created = await dataSource.create(input);
+    logger.v('${created.toShortString()} created. Adding to cache and map.');
+    _addToCacheAndMap(created);
     emit(PlanRepositoryPlanAdded(created));
+    logger.i('Plan created and added to cache and map [$created].');
     return created;
   }
 
   @override
-  Future<PlanEntity> fetchOne(String id) async {
-    final item = await _dataSource.readById(id);
-    cache.save(item.id, item);
-    _addToMap(item);
-    emit(PlanRepositoryPlanFetched(item));
-    return item;
+  Future<FetchPlanResponse> fetchOne(String id) async {
+    logger.v('Fetching plan with id: $id');
+    final response = await dataSource.readById(id);
+    final (:plan, :travelItems) = response;
+    logger.v('${plan.toShortString()} fetched. Adding it to cache and map.');
+    _addToCacheAndMap(plan);
+    emit(PlanRepositoryPlanFetched(plan));
+    logger.i('Plan fetched and added to cache and map [$plan].');
+    return response;
   }
 
   @override
   Future<void> delete(String id) async {
-    await _dataSource.delete(id);
+    logger.v('Deleting plan with id: $id');
+    await dataSource.delete(id);
     final deletedItem = cache.getOrThrow(id);
-    cache.delete(id);
-    _userPlansMap[deletedItem.userId]?.remove(id);
+    logger.v(
+      'Plan ${deletedItem.id} deleted. Removing it from cache and map.',
+    );
+    _removeFromCacheAndMap(deletedItem);
     emit(PlanRepositoryPlanDeleted(deletedItem));
+    logger.i('Plan deleted and removed from cache and map [$deletedItem].');
   }
 
   @override
   Future<List<PlanSummaryEntity>> fetchAllOfUser(String userId) async {
-    final plans = await _dataSource.readAllOfUser(userId);
-    cache.saveAll({for (final plan in plans) plan.id: plan});
-    addAllToMap(plans);
+    logger.v('Fetching all plans of user with id: $userId');
+    final plans = await dataSource.readAllOfUser(userId);
+    logger.v('${plans.length} plans fetched. Adding them to cache and map.');
+    _addAllToCacheAndMap(plans);
     emit(PlanRepositoryPlanCollectionFetched(plans));
+    logger.i('${plans.length} plans fetched and added to cache and map.');
     return plans;
+  }
+
+  @override
+  void add(PlanEntity plan, {bool shouldEmit = true}) {
+    logger.v('Adding ${plan.toShortString()} to cache and map');
+    _addToCacheAndMap(plan);
+    logger.i('${plan.toShortString()} added to cache and map');
+    if (shouldEmit) {
+      emit(PlanRepositoryPlanFetched(plan));
+    }
+  }
+
+  @override
+  void addAll(Iterable<PlanEntity> plans, {bool shouldEmit = true}) {
+    logger.v('Adding ${plans.length} plans to cache and map');
+    _addAllToCacheAndMap(plans.cast<PlanSummaryEntity>());
+    logger.i('${plans.length} plans added to cache and map');
+    if (shouldEmit) {
+      emit(PlanRepositoryPlanCollectionFetched(plans.toList()));
+    }
   }
 }

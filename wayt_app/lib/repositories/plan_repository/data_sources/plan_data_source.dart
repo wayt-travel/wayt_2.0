@@ -10,7 +10,9 @@ abstract interface class PlanDataSource {
   Future<List<PlanSummaryModel>> readAllOfUser(String userId);
 
   /// Read a plan by its id.
-  Future<PlanModel> readById(String id);
+  ///
+  /// It returns the plan with its items.
+  Future<FetchPlanResponse> readById(String id);
 
   /// Delete a plan by its id.
   Future<void> delete(String id);

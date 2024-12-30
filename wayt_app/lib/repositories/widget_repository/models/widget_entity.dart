@@ -2,10 +2,15 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
 import 'package:luthor/luthor.dart';
 
+import '../../common/common.dart';
 import '../widget_repository.dart';
 
 abstract interface class WidgetEntity
-    implements Equatable, UniquelyIdentifiableEntity {
+    implements
+        TravelItemEntity,
+        Equatable,
+        UniquelyIdentifiableEntity,
+        ModelToStringMixin {
   /// The id of the folder that contains the Widget.
   ///
   /// If the Widget is not in a folder, this value is `null`.

@@ -15,14 +15,14 @@ final class $ {
   static WEnv get env => WEnv.I;
 
   static ({
-    AuthRepository auth,
-    PlanRepository plan,
-    PlanRepository user,
-    PlanRepository widget
+    AuthRepository Function() auth,
+    PlanRepository Function() plan,
+    UserRepository Function() user,
+    WidgetRepository Function() widget
   }) get repo => (
-        auth: GetIt.I.get<AuthRepository>(),
-        user: GetIt.I.get<PlanRepository>(),
-        plan: GetIt.I.get<PlanRepository>(),
-        widget: GetIt.I.get<PlanRepository>(),
+        auth: GetIt.I.get<AuthRepository>,
+        user: GetIt.I.get<UserRepository>,
+        plan: GetIt.I.get<PlanRepository>,
+        widget: GetIt.I.get<WidgetRepository>,
       );
 }

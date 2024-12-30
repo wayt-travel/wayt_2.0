@@ -23,4 +23,20 @@ abstract interface class WidgetRepository
 
   /// Deletes a widget by its [id].
   Future<void> delete(String id);
+
+  /// Adds a widget to the repository without fetching it from the data source
+  /// and without triggering a state change.
+  /// 
+  /// If [shouldEmit] is `true`, the repository will emit a state change.
+  ///
+  /// See also [addAll].
+  void add(WidgetEntity widget, {bool shouldEmit = true});
+
+  /// Adds multiple widgets to the repository without fetching them from the
+  /// data source and without triggering a state change.
+  /// 
+  /// If [shouldEmit] is `true`, the repository will emit a state change.
+  ///
+  /// See also [add].
+  void addAll(Iterable<WidgetEntity> widgets, {bool shouldEmit = true});
 }

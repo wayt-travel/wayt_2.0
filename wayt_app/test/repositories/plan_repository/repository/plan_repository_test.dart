@@ -1,7 +1,9 @@
+import 'package:flext/flext.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:wayt_app/init/in_memory_data.dart';
 import 'package:wayt_app/repositories/plan_repository/plan_repository.dart';
+import 'package:wayt_app/repositories/repositories.dart';
 
 class MockPlanDataSource extends Mock implements PlanDataSource {}
 
@@ -65,7 +67,13 @@ void main() {
     test('should fetch the entity and emit a new state', () async {
       when(() => mockPlanDataSource.readById(any())).thenAnswer(
         (invocation) async => inMemoryData.plans
-            .getOrThrow(invocation.positionalArguments[0] as String),
+            .getOrThrow(invocation.positionalArguments[0] as String)
+            .let(
+              (response) => (
+                plan: response,
+                travelItems: <TravelItemEntity>[],
+              ),
+            ),
       );
       var emitted = false;
       repo.listen((state) {
@@ -81,7 +89,7 @@ void main() {
       verify(() => mockPlanDataSource.readById(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, hasLength(1));
-      expect(repo.items.single.id, fetched.id);
+      expect(repo.items.single.id, fetched.plan.id);
     });
   });
 

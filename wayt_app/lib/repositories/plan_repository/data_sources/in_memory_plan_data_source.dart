@@ -47,5 +47,15 @@ final class InMemoryPlanDataSource implements PlanDataSource {
       );
 
   @override
-  Future<PlanModel> readById(String id) async => _data.plans.getOrThrow(id);
+  Future<FetchPlanResponse> readById(String id) async {
+    final plan = _data.plans.getOrThrow(id);
+    final items = _data.travelItems.values
+        .where((item) => plan.itemIds.contains(item.id))
+        .toList()
+        .sorted(
+          (i1, i2) => plan.itemIds.indexOf(i1.id) - plan.itemIds.indexOf(i2.id),
+        )
+        .toList();
+    return (plan: plan, travelItems: items);
+  }
 }

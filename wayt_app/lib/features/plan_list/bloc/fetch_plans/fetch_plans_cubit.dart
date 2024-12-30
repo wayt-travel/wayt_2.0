@@ -32,7 +32,7 @@ class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
   Future<void> fetch() async {
     logger.v('Fetching plans');
     emit(state.copyWith(status: StateStatus.progress));
-    final user = $.repo.auth.item?.user;
+    final user = $.repo.auth().item?.user;
     if (user == null) {
       logger.e('The user is not authenticated. Cannot fetch plans');
       emit(state.copyWithError($.errors.auth.unauthenticated));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/features.dart';
+import '../features/plan/view/plan_page.dart';
 import '../widgets/widgets.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -82,6 +83,7 @@ final $router = GoRouter(
   // ),
   routes: [
     SplashPage.route,
+    PlanPage.route,
     _routerStatefulShellRoute,
   ],
   redirect: (context, state) {

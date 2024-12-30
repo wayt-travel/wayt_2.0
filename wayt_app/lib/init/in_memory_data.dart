@@ -21,12 +21,12 @@ class _Data {
   final String authUserId = _uuid.v4();
   final Cache<String, UserModel> users;
   final Cache<String, PlanModel> plans;
-  final Cache<String, WidgetModel> widgets;
+  final Cache<String, TravelItemModel> travelItems;
 
   _Data({
     required this.users,
     required this.plans,
-    required this.widgets,
+    required this.travelItems,
   });
 }
 
@@ -34,7 +34,7 @@ class InMemoryData with LoggerMixin {
   final _data = _Data(
     users: Cache(),
     plans: Cache(),
-    widgets: Cache(),
+    travelItems: Cache(),
   );
 
   InMemoryData() {
@@ -93,7 +93,12 @@ class InMemoryData with LoggerMixin {
 
   Cache<String, PlanModel> get plans => _data.plans;
   Cache<String, UserModel> get users => _data.users;
-  Cache<String, WidgetModel> get widgets => _data.widgets;
+  Cache<String, TravelItemModel> get travelItems => _data.travelItems;
+  Cache<String, WidgetModel> get widgets => _data.travelItems.entries
+      .where((e) => e.value is WidgetModel)
+      .map((e) => MapEntry(e.key, e.value as WidgetModel))
+      .let(Map.fromEntries)
+      .let(Cache.fromMap);
   String get authUserId => _data.authUserId;
   UserModel get authUser => _data.users.getOrThrow(authUserId);
 }

@@ -15,12 +15,28 @@ abstract interface class PlanRepository
   /// Creates a new Plan.
   Future<PlanEntity> create(CreatePlanInput input);
 
-  /// Fetches all plans of a user.
+  /// Fetches all plan (summaries only) of a user.
   Future<List<PlanSummaryEntity>> fetchAllOfUser(String userId);
 
-  /// Fetches a plan by its [id].
-  Future<PlanEntity> fetchOne(String id);
+  /// Fetches a full plan by its [id].
+  Future<FetchPlanResponse> fetchOne(String id);
 
   /// Deletes a plan by its [id].
   Future<void> delete(String id);
+
+  /// Adds a plan to the repository without fetching it from the data source
+  /// and without triggering a state change.
+  ///
+  /// If [shouldEmit] is `true`, the repository will emit a state change.
+  ///
+  /// See also [addAll].
+  void add(PlanEntity plan, {bool shouldEmit = true});
+
+  /// Adds multiple plans to the repository without fetching them from the
+  /// data source and without triggering a state change.
+  ///
+  /// If [shouldEmit] is `true`, the repository will emit a state change.
+  ///
+  /// See also [add].
+  void addAll(Iterable<PlanEntity> plans, {bool shouldEmit = true});
 }
