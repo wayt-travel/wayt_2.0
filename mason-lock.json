@@ -1,1 +1,1 @@
-{"bricks":{"repository":{"git":{"url":"https://github.com/app-anvil/mason-bricks.git","path":"bricks/repository","ref":"b275876f3e25b010f0c8c2d9959638eaba209deb"}}}}
+{"bricks":{"repository":{"git":{"url":"https://github.com/app-anvil/mason-bricks.git","path":"bricks/repository","ref":"8271504c8349537ae1ce77af66aafefd58dabb9a"}},"repository2":{"git":{"url":"https://github.com/app-anvil/mason-bricks.git","path":"bricks/repository2","ref":"8271504c8349537ae1ce77af66aafefd58dabb9a"}}}}

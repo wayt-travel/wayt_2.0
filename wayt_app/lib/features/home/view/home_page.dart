@@ -41,6 +41,7 @@ class HomeView extends StatelessWidget {
             'Home',
             style: const TextStyle().copyWith(
               fontWeight: FontWeight.bold,
+              fontFamily: 'Noto Serif',
             ),
           ),
         ),

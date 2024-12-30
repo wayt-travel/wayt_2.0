@@ -31,7 +31,7 @@ final class AppState extends Equatable {
     bool? isUpToDate,
     UserEntity? user,
     AppStatus? status,
-    MphError? Function()? error,
+    WError? Function()? error,
   }) {
     return AppState._(
       status: status ?? this.status,
@@ -41,7 +41,7 @@ final class AppState extends Equatable {
     );
   }
 
-  AppState unauthenticated({MphError? error}) {
+  AppState unauthenticated({WError? error}) {
     return AppState._(
       status: AppStatus.unauthenticated,
       error: error,
@@ -61,7 +61,7 @@ final class AppState extends Equatable {
 
   final AppStatus status;
   final UserEntity? user;
-  final MphError? error;
+  final WError? error;
 
   /// Indicates if the app is up to date.
   ///

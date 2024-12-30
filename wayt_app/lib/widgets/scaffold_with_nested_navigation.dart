@@ -9,9 +9,11 @@ import 'scaffold_with_bottom_navigation_bar.dart';
 class ScaffoldWithNestedNavigation extends StatelessWidget {
   const ScaffoldWithNestedNavigation({
     required this.navigationShell,
+    required this.destinations,
     Key? key,
   }) : super(key: key ?? const ValueKey('ScaffoldWithNestedNavigation'));
 
+  final List<NavigationDestination> destinations;
   final StatefulNavigationShell navigationShell;
 
   void _goBranch(int index) {
@@ -28,6 +30,7 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
     return ScaffoldWithBottomNavigationBar(
       body: navigationShell,
       currentIndex: navigationShell.currentIndex,
+      destinations: destinations,
       onDestinationSelected: _goBranch,
     );
   }

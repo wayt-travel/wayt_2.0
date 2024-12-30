@@ -18,9 +18,13 @@ part 'app_state.dart';
 /// the user to the correct page. If user is logged in their are redirected to
 /// HomePage, otherwise to the LoginPage.
 ///
-/// If the app is not upto date the UpdateAppModal is shown before checking
+/// If the app is not u pto date the UpdateAppModal is shown before checking
 /// the states of the user.
 class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
+  final AuthRepository _authRepository;
+  final UserRepository _userRepository;
+  late final StreamSubscription<AuthRepositoryState> _authSubscription;
+
   AppBloc({
     required AuthRepository authRepo,
     required UserRepository userRepo,
@@ -28,31 +32,27 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
         _userRepository = userRepo,
         super(const AppState.unknown()) {
     on<_AuthenticationStatusChanged>(_onAuthenticationStateChanged);
-    // TODO:
     _setUpListeners();
   }
 
-  final AuthRepository _authRepository;
-  late final StreamSubscription<AuthRepositoryState> _authSubscription;
-
-  final UserRepository _userRepository;
-
-  /// Calls this method when the initialization of the app is completed.
-  /// This method should be called after that `state.isAppToDate` is set.
   void _setUpListeners() {
     _authSubscription = _authRepository.listen(
-      (state) => add(
-        _AuthenticationStatusChanged(state),
-      ),
+      (state) => add(_AuthenticationStatusChanged(state)),
     );
-    _authRepository.init();
+  }
+
+  Future<void> init() async {
+    // await _authRepository.init();
+    await _authRepository.signIn(
+      email: 'john.doe@example.com',
+      password: 'password',
+    );
   }
 
   Future<UserEntity?> _tryFetchUser() async {
     try {
-      await _userRepository.fetch();
-      return _userRepository.item;
-    } catch (e, _) {
+      return _userRepository.fetchMe();
+    } catch (_) {
       return null;
     }
   }
@@ -67,9 +67,7 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
           try {
             final user = await _tryFetchUser();
             if (user != null) {
-              emit(
-                state.authenticated(user),
-              );
+              emit(state.authenticated(user));
               return;
             }
             emit(state.unauthenticated());
@@ -80,7 +78,7 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
         }
       case AuthenticationStatus.unauthenticated:
         // TODO: reset all repositories
-        _userRepository.reset();
+        // _userRepository.reset();
 
         return emit(state.unauthenticated());
     }

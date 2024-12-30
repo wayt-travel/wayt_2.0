@@ -1,5 +1,3 @@
-// ignore_for_file: comment_references
-
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
@@ -19,7 +17,7 @@ import 'package:flutter/widgets.dart';
 class GoRouterRefreshStream extends ChangeNotifier {
   /// Creates a [GoRouterRefreshStream].
   ///
-  /// Every time the [stream] receives an event the [GoRouter] will refresh its
+  /// Every time the [stream] receives an event the GoRouter will refresh its
   /// current route.
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
