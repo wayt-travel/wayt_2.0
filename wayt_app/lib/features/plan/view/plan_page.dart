@@ -8,6 +8,7 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
 import '../bloc/fetch_plan/fetch_plan_cubit.dart';
+import 'add_widget_mbs.dart';
 import 'plan_page_body.dart';
 
 class PlanPage {
@@ -63,25 +64,29 @@ class PlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<FetchPlanCubit, FetchPlanState>(
-        builder: (context, state) {
-          late final Widget content;
-          if (state.status.isSuccess) {
-            content = PlanPageBody(
-              plan: state.response!.plan,
-              travelItems: state.response!.travelItems,
-            );
-          } else if (state.status.isFailure) {
-            content = Center(
-              child: Text(state.error!.userIntlMessage(context)),
-            ).asSliver;
-          } else {
-            content = const SliverFillRemaining(
-              child: LoadingIndicatorMessage(),
-            );
-          }
-          return CustomScrollView(
+    return BlocBuilder<FetchPlanCubit, FetchPlanState>(
+      builder: (context, state) {
+        late final Widget content;
+        if (state.status.isSuccess) {
+          content = PlanPageBody(
+            plan: state.response!.plan,
+            travelItems: state.response!.travelItems,
+          );
+        } else if (state.status.isFailure) {
+          content = Center(
+            child: Text(state.error!.userIntlMessage(context)),
+          ).asSliver;
+        } else {
+          content = const SliverFillRemaining(
+            child: LoadingIndicatorMessage(),
+          );
+        }
+        return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => AddWidgetMbs.show(context),
+            child: const Icon(Icons.add),
+          ),
+          body: CustomScrollView(
             slivers: [
               SliverAppBar.large(
                 title: Text(
@@ -96,9 +101,9 @@ class PlanView extends StatelessWidget {
               ),
               content,
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

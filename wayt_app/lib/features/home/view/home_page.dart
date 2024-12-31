@@ -3,6 +3,8 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../theme/theme.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage._();
 
@@ -41,7 +43,7 @@ class HomeView extends StatelessWidget {
             'Home',
             style: const TextStyle().copyWith(
               fontWeight: FontWeight.bold,
-              fontFamily: 'Noto Serif',
+              fontFamily: kFontFamilySerif,
             ),
           ),
         ),

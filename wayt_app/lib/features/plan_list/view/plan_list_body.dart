@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../repositories/repositories.dart';
-import '../../plan/view/plan_page.dart';
+import '../../../theme/random_color.dart';
+import 'plan_tile/plan_tile.dart';
 
 class PlanListBody extends StatefulWidget {
   final List<PlanSummaryEntity> plans;
@@ -42,41 +42,16 @@ class _PlanListBodyState extends State<PlanListBody>
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            final plan = widget.plans[index];
-            return ListTile(
+            return PlanTile(
+              index: index,
               key: ValueKey(index),
-              onTap: () => PlanPage.push(
-                context,
-                planId: plan.id,
-                planSummary: plan,
-              ),
-              title: Text(plan.name),
-              subtitle: _PlanTileDate(plan),
+              accentColor: RandomColor.colorFromInt(index, intensity: 300),
+              plan: widget.plans[index],
             );
           },
           childCount: widget.plans.length,
         ),
       ),
     );
-  }
-}
-
-class _PlanTileDate extends StatelessWidget {
-  final PlanSummaryEntity plan;
-  const _PlanTileDate(this.plan);
-
-  @override
-  Widget build(BuildContext context) {
-    late String text;
-    if (plan.plannedAt == null) {
-      text = 'No date set';
-    } else if (!plan.isMonthSet) {
-      text = DateFormat.y().format(plan.plannedAt!);
-    } else if (!plan.isDaySet) {
-      text = DateFormat.yMMMM().format(plan.plannedAt!);
-    } else {
-      text = DateFormat.yMMMMd().format(plan.plannedAt!);
-    }
-    return Text(text);
   }
 }

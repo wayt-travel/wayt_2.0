@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../l10n/l10n.dart';
 import '../../router/router.dart';
+import '../../theme/theme.dart';
 import '../app.dart';
 
 class WaytApp extends StatelessWidget {
@@ -47,24 +48,24 @@ class WaytView extends StatelessWidget {
           data: theme.copyWith(
             textTheme: theme.textTheme
                 .apply(
-                  fontFamily: 'Noto Sans',
+                  fontFamily: kFontFamilySans,
                 )
                 .let(
                   (t) => t.copyWith(
                     displayLarge: t.displayLarge?.apply(
-                      fontFamily: 'Noto Serif',
+                      fontFamily: kFontFamilySerif,
                     ),
                     displayMedium: t.displayMedium?.apply(
-                      fontFamily: 'Noto Serif',
+                      fontFamily: kFontFamilySerif,
                     ),
                     displaySmall: t.displaySmall?.apply(
-                      fontFamily: 'Noto Serif',
+                      fontFamily: kFontFamilySerif,
                     ),
                   ),
                 ),
             appBarTheme: theme.appBarTheme.copyWith(
               titleTextStyle: theme.textTheme.titleLarge?.copyWith(
-                fontFamily: 'Noto Serif',
+                fontFamily: kFontFamilySerif,
               ),
             ),
           ),

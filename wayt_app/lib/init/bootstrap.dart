@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 /// Bootstraps the application.
@@ -30,7 +32,6 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       ),
     ),
   );
-
   runApp(await builder());
 }
 
