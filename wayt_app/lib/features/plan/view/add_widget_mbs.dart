@@ -28,6 +28,7 @@ class AddWidgetMbs extends StatelessWidget {
           sliver: SliverMainAxisGroup(
             slivers: [
               Text(
+                // FIXME: l10n
                 'Add widget',
                 style: context.tt.titleLarge?.copyWith(
                   fontFamily: kFontFamilySerif,
@@ -35,6 +36,7 @@ class AddWidgetMbs extends StatelessWidget {
               ).asSliver,
               $.style.insets.sm.asVSpan.asSliver,
               Text(
+                // FIXME: l10n
                 'Texts',
                 style: context.tt.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -45,22 +47,30 @@ class AddWidgetMbs extends StatelessWidget {
                 alignment: WrapAlignment.spaceBetween,
                 children: [
                   _AddTextWidgetButton(
+                    // FIXME: l10n
                     shortText: 'H1',
+                    // FIXME: l10n
                     caption: 'Title 1',
                     fontSize: 34,
                   ),
                   _AddTextWidgetButton(
+                    // FIXME: l10n
                     shortText: 'H2',
+                    // FIXME: l10n
                     caption: 'Title 2',
                     fontSize: 26,
                   ),
                   _AddTextWidgetButton(
+                    // FIXME: l10n
                     shortText: 'H3',
+                    // FIXME: l10n
                     caption: 'Title 3',
                     fontSize: 22,
                   ),
                   _AddTextWidgetButton(
+                    // FIXME: l10n
                     shortText: '❡',
+                    // FIXME: l10n
                     caption: 'Paragraph',
                     fontSize: 16,
                   ),
