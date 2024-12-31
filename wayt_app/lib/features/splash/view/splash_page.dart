@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app.dart';
-import '../../home/home.dart';
+import '../../../router/router.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage._();
@@ -28,9 +27,10 @@ class SplashPage extends StatelessWidget {
     return BlocListener<AppBloc, AppState>(
       listenWhen: (prev, current) =>
           prev.status.isUnknown && (current.status != prev.status),
-      listener: (context, state) {
-        HomePage.go(context);
-      },
+      // FIXME: the transition should look like the splash screen is popped
+      // instead now it looks like the default route is pushed, i.e., sliding
+      // in from the right edge of the screen.
+      listener: (context, state) => goToDefaultRoute(context),
       child: Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,

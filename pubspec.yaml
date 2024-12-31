@@ -3,9 +3,13 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dev_dependencies:
-  melos: ^6.1.0
+  a2f_sdk:
+    git:
+      url: git@github.com:app-anvil/a2f_sdk.git
+      ref: 7.0.0
   flutter_lints: ^5.0.0
+  melos: ^6.1.0
   very_good_analysis: ^6.0.0

@@ -1,28 +1,29 @@
 import '../repositories/repositories.dart';
 import 'in_memory_data.dart';
 
-({
+typedef RepositoryPack = ({
   AuthRepository authRepo,
   UserRepository userRepo,
   PlanRepository planRepo,
-}) inMemoryRepositories() {
+  WidgetRepository widgetRepo,
+  TravelItemRepository travelItemRepo,
+});
+
+RepositoryPack inMemoryRepositories() {
   final data = InMemoryData();
-
-  final authenticationRepository = AuthRepository(
-    InMemoryAuthDataSource(),
-  );
-
-  final userRepository = UserRepository(
-    InMemoryUserDataSource(),
-  );
-
-  final planRepository = PlanRepository(
-    InMemoryPlanDataSource(data),
+  final authRepository = AuthRepository(InMemoryAuthDataSource(data));
+  final userRepository = UserRepository(InMemoryUserDataSource(data));
+  final planRepository = PlanRepository(InMemoryPlanDataSource(data));
+  final widgetRepository = WidgetRepository(InMemoryWidgetDataSource(data));
+  final travelItemRepository = TravelItemRepository(
+    widgetRepository: widgetRepository,
   );
 
   return (
-    authRepo: authenticationRepository,
+    authRepo: authRepository,
     userRepo: userRepository,
     planRepo: planRepository,
+    widgetRepo: widgetRepository,
+    travelItemRepo: travelItemRepository,
   );
 }
