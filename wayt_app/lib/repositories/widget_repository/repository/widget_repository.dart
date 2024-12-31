@@ -26,7 +26,7 @@ abstract interface class WidgetRepository
 
   /// Adds a widget to the repository without fetching it from the data source
   /// and without triggering a state change.
-  /// 
+  ///
   /// If [shouldEmit] is `true`, the repository will emit a state change.
   ///
   /// See also [addAll].
@@ -34,9 +34,15 @@ abstract interface class WidgetRepository
 
   /// Adds multiple widgets to the repository without fetching them from the
   /// data source and without triggering a state change.
-  /// 
+  ///
   /// If [shouldEmit] is `true`, the repository will emit a state change.
   ///
   /// See also [add].
   void addAll(Iterable<WidgetEntity> widgets, {bool shouldEmit = true});
+
+  /// Gets all widgets of a plan with the given [planId] from the cache.
+  List<WidgetEntity> getAllOfPlan(String planId);
+
+  /// Gets all widgets of a journal with the given [journalId] from the cache.
+  List<WidgetEntity> getAllOfJournal(String journalId);
 }

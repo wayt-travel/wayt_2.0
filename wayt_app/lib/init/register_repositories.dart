@@ -27,4 +27,5 @@ void registerRepositories() {
   GetIt.I.registerSingleton<UserRepository>(repositories.userRepo);
   GetIt.I.registerSingleton<PlanRepository>(repositories.planRepo);
   GetIt.I.registerSingleton<WidgetRepository>(repositories.widgetRepo);
+  GetIt.I.registerSingleton<TravelItemRepository>(repositories.travelItemRepo);
 }

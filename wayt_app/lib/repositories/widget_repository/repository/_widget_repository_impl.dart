@@ -6,16 +6,16 @@ class _WidgetRepositoryImpl
   final WidgetDataSource _dataSource;
 
   /// Map of plan ids to the ids of the widgets they contain.
-  final Map<String, String> _planWidgetMap = {};
+  final Map<String, List<String>> _planWidgetMap = {};
 
   /// Map of journal ids to the ids of the widgets they contain.
-  final Map<String, String> _journalWidgetMap = {};
+  final Map<String, List<String>> _journalWidgetMap = {};
 
   /// Map of folder ids (of plans) to the ids of the widgets they contain.
-  final Map<String, String> _planFolderWidgetMap = {};
+  final Map<String, List<String>> _planFolderWidgetMap = {};
 
   /// Map of folder ids (of journals) to the ids of the widgets they contain.
-  final Map<String, String> _journalFolderWidgetMap = {};
+  final Map<String, List<String>> _journalFolderWidgetMap = {};
 
   /// Private constructor.
   _WidgetRepositoryImpl(this._dataSource);
@@ -24,14 +24,18 @@ class _WidgetRepositoryImpl
   void _addToCacheAndMaps(WidgetEntity widget) {
     cache.save(widget.id, widget);
     if (widget.journalId != null) {
-      _journalWidgetMap.putIfAbsent(widget.journalId!, () => widget.id);
+      _journalWidgetMap.putIfAbsent(widget.journalId!, () => []).add(widget.id);
       if (widget.folderId != null) {
-        _journalFolderWidgetMap.putIfAbsent(widget.folderId!, () => widget.id);
+        _journalFolderWidgetMap
+            .putIfAbsent(widget.folderId!, () => [])
+            .add(widget.id);
       }
     } else {
-      _planWidgetMap.putIfAbsent(widget.planId!, () => widget.id);
+      _planWidgetMap.putIfAbsent(widget.planId!, () => []).add(widget.id);
       if (widget.folderId != null) {
-        _planFolderWidgetMap.putIfAbsent(widget.folderId!, () => widget.id);
+        _planFolderWidgetMap
+            .putIfAbsent(widget.folderId!, () => [])
+            .add(widget.id);
       }
     }
   }
@@ -122,4 +126,12 @@ class _WidgetRepositoryImpl
       emit(WidgetRepositoryWidgetCollectionFetched(widgets.toList()));
     }
   }
+
+  @override
+  List<WidgetEntity> getAllOfJournal(String journalId) =>
+      _journalWidgetMap[journalId]?.map(cache.getOrThrow).toList() ?? [];
+
+  @override
+  List<WidgetEntity> getAllOfPlan(String planId) =>
+      _planWidgetMap[planId]?.map(cache.getOrThrow).toList() ?? [];
 }

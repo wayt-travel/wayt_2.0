@@ -45,9 +45,23 @@ class WaytView extends StatelessWidget {
         final theme = context.theme;
         return Theme(
           data: theme.copyWith(
-            textTheme: theme.textTheme.apply(
-              fontFamily: 'Noto Sans',
-            ),
+            textTheme: theme.textTheme
+                .apply(
+                  fontFamily: 'Noto Sans',
+                )
+                .let(
+                  (t) => t.copyWith(
+                    displayLarge: t.displayLarge?.apply(
+                      fontFamily: 'Noto Serif',
+                    ),
+                    displayMedium: t.displayMedium?.apply(
+                      fontFamily: 'Noto Serif',
+                    ),
+                    displaySmall: t.displaySmall?.apply(
+                      fontFamily: 'Noto Serif',
+                    ),
+                  ),
+                ),
             appBarTheme: theme.appBarTheme.copyWith(
               titleTextStyle: theme.textTheme.titleLarge?.copyWith(
                 fontFamily: 'Noto Serif',

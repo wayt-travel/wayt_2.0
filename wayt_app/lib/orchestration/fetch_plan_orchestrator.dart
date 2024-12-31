@@ -1,3 +1,4 @@
+import 'package:flext/flext.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../repositories/repositories.dart';
@@ -16,10 +17,14 @@ final class FetchPlanOrchestrator with LoggerMixin {
   /// The widget repository.
   final WidgetRepository widgetRepository;
 
+  /// The travel item repository.
+  final TravelItemRepository travelItemRepository;
+
   /// Creates a new instance of [FetchPlanOrchestrator].
   FetchPlanOrchestrator({
     required PlanRepository planRepository,
     required this.widgetRepository,
+    required this.travelItemRepository,
   }) : planRepository = planRepository as PlanRepositoryWithDataSource;
 
   /// Fetches a plan by its [planId].
@@ -35,11 +40,26 @@ final class FetchPlanOrchestrator with LoggerMixin {
           'Plan with id $planId not found in repository. It will be fetched',
         );
       } else if (cachedPlan is PlanEntity) {
-        logger.i(
-          '${cachedPlan.toShortString()} found in repository cache. No need to '
-          'fetch it. It will be used as is',
-        );
-        return cachedPlan;
+        // Check that all the items of the plan are in the repository.
+        final repoItems = travelItemRepository
+            .getAllOfPlan(planId)
+            .map((item) => item.id)
+            .toSet();
+        final planItems = cachedPlan.itemIds.toSet();
+        if (const SetEquality<String>().equals(repoItems, planItems)) {
+          logger.i(
+            '${cachedPlan.toShortString()} found in repository cache. No need '
+            'to fetch it. It will be used as is',
+          );
+          planRepository.add(cachedPlan, shouldEmit: true);
+          return cachedPlan;
+        } else {
+          logger.v(
+            'Plan with id $planId found in repository cache but it is '
+            'not a PlanEntity or its items are not loaded into the items '
+            'repository. It will be fully fetched',
+          );
+        }
       } else {
         logger.v(
           'Plan with id $planId found in repository cache but it is '

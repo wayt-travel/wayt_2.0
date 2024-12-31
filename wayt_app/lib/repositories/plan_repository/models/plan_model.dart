@@ -14,9 +14,9 @@ class PlanModel extends PlanSummaryModel implements PlanEntity {
     required super.isMonthSet,
     required super.tags,
     required super.createdAt,
+    required super.plannedAt,
+    required super.updatedAt,
     required this.itemIds,
-    super.plannedAt,
-    super.updatedAt,
   });
 
   @override

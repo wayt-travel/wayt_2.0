@@ -1,9 +1,8 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
-import 'package:luthor/luthor.dart';
+import 'package:pub_semver/pub_semver.dart';
 
-import '../../common/common.dart';
-import '../widget_repository.dart';
+import '../../repositories.dart';
 
 abstract interface class WidgetEntity
     implements
@@ -22,6 +21,6 @@ abstract interface class WidgetEntity
   /// The features of the Widget.
   List<WidgetFeatureEntity> get features;
 
-  /// Validator for the [folderId].
-  static Validator get folderIdValidator => l.string().uuid().required();
+  /// The version of the widget.
+  Version get version;
 }

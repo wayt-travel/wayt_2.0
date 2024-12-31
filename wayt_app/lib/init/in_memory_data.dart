@@ -8,7 +8,24 @@ import 'package:uuid/rng.dart';
 import 'package:uuid/uuid.dart';
 import 'package:world_countries/world_countries.dart';
 
+import '../core/context/context.dart';
 import '../repositories/repositories.dart';
+import '../repositories/widget_repository/models/widget_feature/features/text/feature_text_style.dart';
+
+Future<void> waitFakeTime() async {
+  // Do not wait in local test.
+  if ($.env.isLocalTest) return;
+  await Future<void>.delayed(const Duration(milliseconds: 2000));
+}
+
+const String loremIpsum =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+    'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim '
+    'veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+    'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate '
+    'velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint '
+    'occaecat cupidatat non proident, sunt in culpa qui officia deserunt '
+    'mollit anim id est laborum.';
 
 final _rnd = Random(281994);
 final _uuid = Uuid(
@@ -50,6 +67,43 @@ class InMemoryData with LoggerMixin {
     _addPlans();
   }
 
+  List<String> _addWidgets(String planId) {
+    final titles = [
+      'This is a heading!',
+      'Stop #1',
+      'Stop #2',
+      'Stop #3',
+      'Stop #4',
+    ];
+    final ids = <String>[];
+
+    for (final title in titles) {
+      final widgets = [
+        TextWidgetModel(
+          id: (ids..add(_uuid.v4())).last,
+          createdAt: DateTime.now().toUtc(),
+          planId: planId,
+          journalId: null,
+          text: title,
+          textStyle: const FeatureTextStyle.h1(),
+        ),
+        TextWidgetModel(
+          id: (ids..add(_uuid.v4())).last,
+          createdAt: DateTime.now().toUtc(),
+          planId: planId,
+          journalId: null,
+          text: 'We plan to visit this place. Here, then there, etc.'
+              '\n\n$loremIpsum',
+          textStyle: const FeatureTextStyle.body(),
+        ),
+      ];
+      _data.travelItems.saveAll({
+        for (final widget in widgets) widget.id: widget,
+      });
+    }
+    return ids;
+  }
+
   void _addPlans() {
     final countries = [...WorldCountry.list]..shuffle(_rnd);
     const planCount = 20;
@@ -81,9 +135,10 @@ class InMemoryData with LoggerMixin {
           isMonthSet: isMonthSet,
           isDaySet: isDaySet,
           plannedAt: isYearSet ? plannedAt : null,
-          tags: ['tag'],
+          tags: [country.name.name],
           name: 'Trip to ${country.name.name}',
-          itemIds: [],
+          updatedAt: null,
+          itemIds: _addWidgets(id),
         ),
       );
     }

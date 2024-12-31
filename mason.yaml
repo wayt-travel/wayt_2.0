@@ -9,3 +9,8 @@ bricks:
       url: 'https://github.com/app-anvil/mason-bricks.git'
       path: bricks/repository2
       ref: main
+  cubit:
+    git:
+      url: 'https://github.com/app-anvil/mason-bricks.git'
+      path: bricks/cubit
+      ref: main

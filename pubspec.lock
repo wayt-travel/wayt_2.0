@@ -5,11 +5,11 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: "5.3.0"
-      resolved-ref: e1860a51b36ab31d4897a3adb3f3f16a5f947e63
+      ref: "7.0.0"
+      resolved-ref: "9cd022f75b2a19c4b751e0301e428e603c5add03"
       url: "git@github.com:app-anvil/a2f_sdk.git"
     source: git
-    version: "5.3.0"
+    version: "7.0.0"
   ansi_styles:
     dependency: transitive
     description:
@@ -557,8 +557,8 @@ packages:
     dependency: transitive
     description:
       path: "packages/the_umpteenth_logger"
-      ref: "1.0.0"
-      resolved-ref: "782722f34691716ae20949d4e315fb50370a96c8"
+      ref: "1.1.0"
+      resolved-ref: "068d2d0aafcdce9e69ba560ea0d0039f876e19f1"
       url: "git@github.com:gianmarcocalbi/the_umpteenth_logger.git"
     source: git
     version: "0.1.0+1"

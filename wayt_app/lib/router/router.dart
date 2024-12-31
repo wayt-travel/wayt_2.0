@@ -46,37 +46,37 @@ StatefulShellRoute _buildStatefulShellRoute(
     );
 
 final _routerStatefulShellRoute = _buildStatefulShellRoute(
-      [
-        // (
-        //   icon: const Icon(Icons.home_rounded),
-        //   // FIXME: l10n
-        //   getL10nLabel: (context) => 'Home',
-        //   navigatorKey: _homeNavigatorKey,
-        //   routes: [HomePage.route],
-        // ),
-        (
-          icon: const Icon(Icons.architecture_rounded),
-          // FIXME: l10n
-          getL10nLabel: (context) => 'Plans',
-          navigatorKey: GlobalKey<NavigatorState>(),
-          routes: [PlanListPage.route],
-        ),
-        (
-          icon: const Icon(Icons.person_rounded),
-          // FIXME: l10n
-          getL10nLabel: (context) => 'Profile',
-          navigatorKey: GlobalKey<NavigatorState>(),
-          routes: [ProfilePage.route],
-        ),
-      ],
-    );
+  [
+    // (
+    //   icon: const Icon(Icons.home_rounded),
+    //   // FIXME: l10n
+    //   getL10nLabel: (context) => 'Home',
+    //   navigatorKey: _homeNavigatorKey,
+    //   routes: [HomePage.route],
+    // ),
+    (
+      icon: const Icon(Icons.architecture_rounded),
+      // FIXME: l10n
+      getL10nLabel: (context) => 'Plans',
+      navigatorKey: GlobalKey<NavigatorState>(),
+      routes: [PlanListPage.route],
+    ),
+    (
+      icon: const Icon(Icons.person_rounded),
+      // FIXME: l10n
+      getL10nLabel: (context) => 'Profile',
+      navigatorKey: GlobalKey<NavigatorState>(),
+      routes: [ProfilePage.route],
+    ),
+  ],
+);
 
 // Because child of routes doesn't have a bottom navigation bar, they use
 // _rootNavigatorKey as a parentNavigationKey parameter.
 final $router = GoRouter(
   initialLocation: SplashPage.path,
   navigatorKey: _rootNavigatorKey,
-  
+
   debugLogDiagnostics: true,
   // refreshListenable: GoRouterRefreshStream(
   //   GetIt.I.get<AppBloc>().stream,

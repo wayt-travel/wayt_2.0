@@ -1,6 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../../../repositories.dart';
+import '../../repositories.dart';
 
 /// Item contained in a travel plan or journal.
 ///

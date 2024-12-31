@@ -12,6 +12,7 @@ part 'fetch_plan_state.dart';
 
 class FetchPlanCubit extends Cubit<FetchPlanState> with LoggerMixin {
   final String planId;
+  final TravelItemRepository travelItemRepository;
   final PlanRepository planRepository;
   final WidgetRepository widgetRepository;
   final FetchPlanOrchestrator fetchPlanOrchestrator;
@@ -21,9 +22,11 @@ class FetchPlanCubit extends Cubit<FetchPlanState> with LoggerMixin {
     required this.planId,
     required this.planRepository,
     required this.widgetRepository,
+    required this.travelItemRepository,
   })  : fetchPlanOrchestrator = FetchPlanOrchestrator(
           planRepository: planRepository,
           widgetRepository: widgetRepository,
+          travelItemRepository: travelItemRepository,
         ),
         super(const FetchPlanState.initial()) {
     _planSubscription = planRepository.listen((repoState) {
@@ -32,7 +35,12 @@ class FetchPlanCubit extends Cubit<FetchPlanState> with LoggerMixin {
         emit(
           state.copyWith(
             status: StateStatus.success,
-            plan: Optional(repoState.item),
+            response: Optional(
+              (
+                plan: repoState.item,
+                travelItems: travelItemRepository.getAllOfPlan(planId),
+              ),
+            ),
           ),
         );
       }

@@ -2,7 +2,6 @@ import 'package:flext/flext.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:wayt_app/init/in_memory_data.dart';
-import 'package:wayt_app/repositories/plan_repository/plan_repository.dart';
 import 'package:wayt_app/repositories/repositories.dart';
 
 class MockPlanDataSource extends Mock implements PlanDataSource {}
@@ -49,6 +48,7 @@ void main() {
           name: input.name,
           createdAt: DateTime.now(),
           itemIds: [],
+          updatedAt: null,
         );
       });
       final created = await repo.create(input);

@@ -1,13 +1,10 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
-import 'package:equatable/equatable.dart';
 
-import '../../../widget_repository/models/widget_entity.dart';
+import '../../widget_repository/models/widget_entity.dart';
 import 'travel_item_entity.dart';
 
 /// Base model class for [TravelItemEntity] implementations.
-abstract class TravelItemModel extends Model
-    with EquatableMixin
-    implements TravelItemEntity {
+abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   final String id;
 
