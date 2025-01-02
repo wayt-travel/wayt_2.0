@@ -10,12 +10,11 @@ import 'package:world_countries/world_countries.dart';
 
 import '../core/context/context.dart';
 import '../repositories/repositories.dart';
-import '../repositories/widget_repository/models/widget_feature/features/text/feature_text_style.dart';
 
 Future<void> waitFakeTime() async {
   // Do not wait in local test.
   if ($.env.isLocalTest) return;
-  await Future<void>.delayed(const Duration(milliseconds: 2000));
+  await Future<void>.delayed(const Duration(milliseconds: 300));
 }
 
 const String loremIpsum =
@@ -82,16 +81,14 @@ class InMemoryData with LoggerMixin {
         TextWidgetModel(
           id: (ids..add(_uuid.v4())).last,
           createdAt: DateTime.now().toUtc(),
-          planId: planId,
-          journalId: null,
+          planOrJournalId: PlanOrJournalId.plan(planId),
           text: title,
           textStyle: const FeatureTextStyle.h1(),
         ),
         TextWidgetModel(
           id: (ids..add(_uuid.v4())).last,
           createdAt: DateTime.now().toUtc(),
-          planId: planId,
-          journalId: null,
+          planOrJournalId: PlanOrJournalId.plan(planId),
           text: 'We plan to visit this place. Here, then there, etc.'
               '\n\n$loremIpsum',
           textStyle: const FeatureTextStyle.body(),

@@ -7,13 +7,7 @@ import '../../repositories.dart';
 /// In general it can be a widget or a folder of widgets.
 abstract interface class TravelItemEntity implements Entity, ResourceEntity {
   /// The id of the Plan or Journal that contains the Widget.
-  String get journalOrPlanId;
-
-  /// The id of the Journal that contains the Widget.
-  String? get journalId;
-
-  /// The id of the Plan that contains the Widget.
-  String? get planId;
+  PlanOrJournalId get planOrJournalId;
 
   /// Whether the item is a folder widget.
   bool get isFolderWidget;

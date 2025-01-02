@@ -8,10 +8,9 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   InMemoryWidgetDataSource(this._data);
 
   @override
-  Future<WidgetModel> create(CreateWidgetInput input) {
-    throw UnsupportedError(
-      'In-memory data source does not support creating new Widget.',
-    );
+  Future<WidgetModel> create(WidgetModel input) {
+    _data.widgets.save(input.id, input);
+    return Future.value(input);
   }
 
   @override

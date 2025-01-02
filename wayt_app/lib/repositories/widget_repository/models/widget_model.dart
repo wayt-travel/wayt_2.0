@@ -24,14 +24,9 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
     required this.type,
     required this.version,
     required super.createdAt,
-    required super.journalId,
-    required super.planId,
+    required super.planOrJournalId,
     required super.updatedAt,
-  }) : assert(
-          (planId != null && journalId == null) ||
-              (planId == null && journalId != null),
-          'One and only one of planId or journalId must be not null',
-        );
+  });
 
   WidgetModel copyWith({
     Optional<String?> folderId = const Optional.absent(),

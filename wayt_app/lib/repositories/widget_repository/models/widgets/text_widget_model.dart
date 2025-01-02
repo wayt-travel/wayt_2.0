@@ -3,7 +3,6 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../repositories.dart';
-import '../widget_feature/features/text/feature_text_style.dart';
 
 /// A Widget that displays a customizable text.
 final class TextWidgetModel extends WidgetModel {
@@ -14,8 +13,7 @@ final class TextWidgetModel extends WidgetModel {
     required String id,
     required String text,
     required FeatureTextStyle textStyle,
-    required String? journalId,
-    required String? planId,
+    required PlanOrJournalId planOrJournalId,
     String? folderId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -32,8 +30,7 @@ final class TextWidgetModel extends WidgetModel {
         ],
         folderId: folderId,
         createdAt: createdAt ?? DateTime.now().toUtc(),
-        journalId: journalId,
-        planId: planId,
+        planOrJournalId: planOrJournalId,
         updatedAt: updatedAt,
       );
 
@@ -42,8 +39,7 @@ final class TextWidgetModel extends WidgetModel {
     required super.features,
     required super.folderId,
     required super.createdAt,
-    required super.journalId,
-    required super.planId,
+    required super.planOrJournalId,
     required super.updatedAt,
   }) : super(
           type: WidgetType.text,
@@ -71,8 +67,7 @@ final class TextWidgetModel extends WidgetModel {
       ],
       folderId: folderId.orElseIfAbsent(this.folderId),
       createdAt: createdAt,
-      journalId: journalId,
-      planId: planId,
+      planOrJournalId: planOrJournalId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }

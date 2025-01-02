@@ -1,4 +1,4 @@
-import '../error.dart';
+import '../errors.dart';
 
 class UnauthenticatedException extends WException {
   UnauthenticatedException([WError? error])

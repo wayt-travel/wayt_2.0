@@ -13,7 +13,7 @@ abstract interface class WidgetRepository
       _WidgetRepositoryImpl(dataSource);
 
   /// Creates a new Widget.
-  Future<void> create(CreateWidgetInput input);
+  Future<void> create(WidgetModel input);
 
   /// Fetches all widget.
   Future<List<WidgetEntity>> fetchMany();

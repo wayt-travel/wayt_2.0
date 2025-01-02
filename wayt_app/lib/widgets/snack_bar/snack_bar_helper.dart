@@ -69,6 +69,13 @@ class SnackBarHelper {
         action: action,
       );
 
+  void showNotImplemented(BuildContext context) {
+    showWarning(
+      context: context,
+      message: 'Not implemented yet',
+    );
+  }
+
   /// Shows a message only if a message is not already in the queue.
   void _showMessage(
     BuildContext context, {

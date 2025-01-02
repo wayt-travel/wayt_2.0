@@ -2,7 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../env/env.dart';
-import '../../error/error.dart';
+import '../../error/errors.dart';
 import '../../repositories/repositories.dart';
 import 'context.dart';
 

@@ -1,9 +1,9 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
-import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
 import '../../util/sdk_candidate.dart';
 import 'modal_bottom_sheet_actions.dart';
+import 'modal_bottom_sheet_tile.dart';
 
 @SdkCandidate(
   requiresL10n: false,
@@ -50,17 +50,21 @@ class ModalBottomSheet {
       clipBehavior: Clip.antiAlias,
       builder: (ctx) {
         return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: padding ?? const AppStyle().insets.screenH.asPaddingH,
-                child: Column(
-                  children: childrenBuilder(ctx),
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding:
+                      padding ?? const AppStyle().insets.screenH.asPaddingH,
+                  child: Column(
+                    children: childrenBuilder(ctx),
+                  ),
                 ),
-              ),
-              const AppStyle().insets.md.asVSpan,
-            ],
+                const AppStyle().insets.md.asVSpan,
+              ],
+            ),
           ),
         );
       },
@@ -85,40 +89,8 @@ class ModalBottomSheet {
     void Function(BuildContext context)? onDismiss,
     bool isDismissible = true,
   }) {
-    final actionWidgets = actions.map((action) {
-      if (action == ModalBottomSheetActions.divider) {
-        return Divider(color: context.col.onSurface.withValues(alpha: 0.16));
-      }
-      final listTile = ListTile(
-        dense: true,
-        onTap: () {
-          if (action.popOnTap) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-          if (action.onTap != null) {
-            action.onTap?.call(context);
-          }
-        },
-        leading: action.iconData != null
-            ? Icon(
-                action.iconData,
-                color: action.isDangerous ? context.col.error : null,
-              )
-            : action.leading,
-        subtitle: action.subtitle != null ? Text(action.subtitle!) : null,
-        title: Text(action.title),
-        tileColor: Colors.transparent,
-        titleTextStyle: context.tt.bodyLarge?.copyWith(
-          color: action.isDangerous ? context.col.error : null,
-          fontWeight: FontWeight.w500,
-        ),
-        subtitleTextStyle: context.tt.bodyMedium?.copyWith(
-          color: action.isDangerous ? context.col.error : null,
-        ),
-      );
-
-      return listTile;
-    }).toList();
+    final actionWidgets =
+        actions.map((action) => ModalBottomSheetTile(action: action)).toList();
     return showShrunk<void>(
       padding: EdgeInsets.zero,
       childrenBuilder: (context) => [

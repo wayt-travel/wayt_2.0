@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../repositories/repositories.dart';
+import '../../widget/widget.dart';
 
 class PlanPageBody extends StatelessWidget {
   final PlanEntity plan;
@@ -10,6 +11,21 @@ class PlanPageBody extends StatelessWidget {
     required this.travelItems,
     super.key,
   });
+
+  Widget _buildTile(BuildContext context, TravelItemEntity item) {
+    if (item is TextWidgetModel) {
+      return ListTile(
+        title: Text(
+          item.textFeature.data,
+          style: item.textFeature.textStyle?.toFlutterTextStyle(context),
+        ),
+      );
+    }
+    // TODO: Implement other widget types
+    return ListTile(
+      title: Text('Item ${item.asWidget.type} is not supported yet'),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +38,9 @@ class PlanPageBody extends StatelessWidget {
           // TODO: Implement folder widgets
           throw UnimplementedError('Folder widgets are not supported yet');
         } else {
-          if (item is TextWidgetModel) {
-            return ListTile(
-              title: Text(
-                item.textFeature.data,
-                style: item.textFeature.textStyle?.toFlutterTextStyle(context),
-              ),
-            );
-          }
-          // TODO: Implement other widget types
-          return ListTile(
-            title: Text('Item ${item.asWidget.type} is not supported yet'),
+          return TravelItemWidget(
+            travelItem: item,
+            child: _buildTile(context, item),
           );
         }
       },

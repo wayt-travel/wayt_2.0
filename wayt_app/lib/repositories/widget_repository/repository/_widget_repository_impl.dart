@@ -23,15 +23,19 @@ class _WidgetRepositoryImpl
   /// Adds a widget to the repository cache and maps.
   void _addToCacheAndMaps(WidgetEntity widget) {
     cache.save(widget.id, widget);
-    if (widget.journalId != null) {
-      _journalWidgetMap.putIfAbsent(widget.journalId!, () => []).add(widget.id);
+    if (widget.planOrJournalId.isJournal) {
+      _journalWidgetMap
+          .putIfAbsent(widget.planOrJournalId.journalId!, () => [])
+          .add(widget.id);
       if (widget.folderId != null) {
         _journalFolderWidgetMap
             .putIfAbsent(widget.folderId!, () => [])
             .add(widget.id);
       }
     } else {
-      _planWidgetMap.putIfAbsent(widget.planId!, () => []).add(widget.id);
+      _planWidgetMap
+          .putIfAbsent(widget.planOrJournalId.planId!, () => [])
+          .add(widget.id);
       if (widget.folderId != null) {
         _planFolderWidgetMap
             .putIfAbsent(widget.folderId!, () => [])
@@ -52,13 +56,13 @@ class _WidgetRepositoryImpl
   /// Removes a [widget] from the cache and maps.
   void _removeFromCacheAndMaps(WidgetEntity widget) {
     cache.delete(widget.id);
-    if (widget.journalId != null) {
-      _journalWidgetMap.remove(widget.journalId);
+    if (widget.planOrJournalId.journalId != null) {
+      _journalWidgetMap.remove(widget.planOrJournalId.journalId);
       if (widget.folderId != null) {
         _journalFolderWidgetMap.remove(widget.folderId);
       }
     } else {
-      _planWidgetMap.remove(widget.planId);
+      _planWidgetMap.remove(widget.planOrJournalId.planId);
       if (widget.folderId != null) {
         _planFolderWidgetMap.remove(widget.folderId);
       }
@@ -66,7 +70,7 @@ class _WidgetRepositoryImpl
   }
 
   @override
-  Future<WidgetEntity> create(CreateWidgetInput input) async {
+  Future<WidgetEntity> create(WidgetModel input) async {
     logger.v('Creating widget with input: $input');
     final created = await _dataSource.create(input);
     logger.v(
