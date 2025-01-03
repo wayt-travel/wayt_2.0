@@ -32,6 +32,7 @@ class TextWidgetModal extends StatelessWidget {
           child: BlocProvider(
             create: (context) => AddEditTextWidgetCubit(
               id: PlanOrJournalId.plan(state.pathParameters['planId']!),
+              index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
               text: null,
               textScale: state.uri.queryParameters['format'] != null
                   ? FeatureTextStyleScale.fromName(
@@ -53,6 +54,7 @@ class TextWidgetModal extends StatelessWidget {
           child: BlocProvider(
             create: (context) => AddEditTextWidgetCubit(
               id: PlanOrJournalId.journal(state.pathParameters['journalId']!),
+              index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
               text: null,
               textScale: state.uri.queryParameters['format'] != null
                   ? FeatureTextStyleScale.fromName(
@@ -70,16 +72,21 @@ class TextWidgetModal extends StatelessWidget {
   static void show({
     required BuildContext context,
     required PlanOrJournalId id,
+    required int? index,
     FeatureTextStyleScale? style,
   }) {
-    var targetPath = id.isJournal
-        ? journalPathAdd.replaceFirst(':journalId', id.journalId!)
-        : planPathAdd.replaceFirst(':planId', id.planId!);
-
-    if (style != null) {
-      targetPath += '?format=${style.name}';
-    }
-    context.router.push(targetPath);
+    context.router.push(
+      Uri.parse(
+        id.isJournal
+            ? journalPathAdd.replaceFirst(':journalId', id.journalId!)
+            : planPathAdd.replaceFirst(':planId', id.planId!),
+      ).replace(
+        queryParameters: {
+          if (index != null) 'index': index.toString(),
+          if (style != null) 'format': style.name,
+        },
+      ).toString(),
+    );
   }
 
   @override

@@ -12,14 +12,25 @@ import '../../../../util/util.dart';
 
 part 'add_edit_text_widget_state.dart';
 
+/// Cubit for adding or editing a text widget.
 class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
     with LoggerMixin {
+  /// The id of the plan or journal where the widget will be added.
   final PlanOrJournalId id;
+
+  /// The index where the widget will be added.
+  ///
+  /// Null if the widget is being edited (as the index is not needed) or if the
+  /// widget is being added at the end of the list.
+  final int? index;
+
+  /// The widget repository.
   final WidgetRepository widgetRepository;
 
   AddEditTextWidgetCubit({
     required FeatureTextStyleScale textScale,
     required String? text,
+    required this.index,
     required this.id,
     required this.widgetRepository,
   }) : super(
@@ -72,7 +83,11 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
           text: state.text!,
           textStyle: state.featureTextStyle,
           planOrJournalId: id,
+          // The order is neglected at creation time.
+          order: -1,
         ),
+        // When creating a new widget the index is defined.
+        index,
       );
       logger.i('Text widget created successfully.');
       emit(state.copyWith(status: StateStatus.success));

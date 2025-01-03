@@ -1,101 +1,128 @@
 part of 'widget_repository.dart';
 
-class _WidgetRepositoryImpl
-    extends Repository<String, WidgetEntity, WidgetRepositoryState>
-    implements WidgetRepository {
-  final WidgetDataSource _dataSource;
+/// Extension containing private methods for [_WidgetRepositoryImpl].
+extension _X on _WidgetRepositoryImpl {
+  num _getOrderField(String id) => getOrThrow(id).order;
 
-  /// Map of plan ids to the ids of the widgets they contain.
-  final Map<String, List<String>> _planWidgetMap = {};
+  /// Gets the widgets of the plan or journal with the given [id] from the
+  /// cache.
+  // ignore: unused_element
+  List<WidgetEntity> _getWidgetsOfPlanOrJournal(PlanOrJournalId id) =>
+      _widgetMap[id]?.map(cache.getOrThrow).toList() ?? [];
 
-  /// Map of journal ids to the ids of the widgets they contain.
-  final Map<String, List<String>> _journalWidgetMap = {};
+  /// Updates the orders of widgets of plan/journal with the given [id] using
+  /// the to match the provided [updatedOrders] map.
+  void _updateWidgetOrders(PlanOrJournalId id, Map<String, int> updatedOrders) {
+    for (final entry in updatedOrders.entries) {
+      final widget = cache.getOrThrow(entry.key) as WidgetModel;
+      if (widget.planOrJournalId != id) {
+        throw ArgumentError(
+          'Widget ${widget.id} does not belong to plan/journal $id.',
+        );
+      }
+      final updatedWidget = widget.copyWith(order: entry.value);
+      cache.save(updatedWidget.id, updatedWidget);
+    }
+    _widgetMap[id]?.sortBy(_getOrderField);
+  }
 
-  /// Map of folder ids (of plans) to the ids of the widgets they contain.
-  final Map<String, List<String>> _planFolderWidgetMap = {};
-
-  /// Map of folder ids (of journals) to the ids of the widgets they contain.
-  final Map<String, List<String>> _journalFolderWidgetMap = {};
-
-  /// Private constructor.
-  _WidgetRepositoryImpl(this._dataSource);
-
-  /// Adds a widget to the repository cache and maps.
-  void _addToCacheAndMaps(WidgetEntity widget) {
+  /// Inserts or updates a widget in the repository cache and maps.
+  ///
+  /// The cache is updated with the widget regardless of whether it is already
+  /// present.
+  ///
+  /// As far as the maps are concerned, if the widget is not already present in
+  /// it is simply added. Otherwise, the widget is removed from the maps and
+  /// re-added to ensure that the order is correct.
+  void _upsertInCacheAndMaps(WidgetEntity widget) {
+    // Save the widget to the cache.
     cache.save(widget.id, widget);
-    if (widget.planOrJournalId.isJournal) {
-      _journalWidgetMap
-          .putIfAbsent(widget.planOrJournalId.journalId!, () => [])
+
+    // Remove the widget from the map if it is already present.
+    _widgetMap[widget.planOrJournalId]?.remove(widget.id);
+    // Remove the widget from the folder map if it is already present.
+    _folderWidgetMap[widget.folderId]?.remove(widget.id);
+
+    // Add the widget to the map of widgets of the plan or journal.
+    _widgetMap
+        .putIfAbsent(
+          widget.planOrJournalId,
+          // Create a new list with sorting based on the widget.order field
+          () => ListWithSortedAdd.by(_getOrderField),
+        )
+        .add(widget.id);
+
+    // Add the widget to the map of folders.
+    if (widget.folderId != null) {
+      _folderWidgetMap
+          .putIfAbsent(
+            widget.folderId!,
+            // Create a new list with sorting based on the widget.order field
+            () => ListWithSortedAdd.by(_getOrderField),
+          )
           .add(widget.id);
-      if (widget.folderId != null) {
-        _journalFolderWidgetMap
-            .putIfAbsent(widget.folderId!, () => [])
-            .add(widget.id);
-      }
-    } else {
-      _planWidgetMap
-          .putIfAbsent(widget.planOrJournalId.planId!, () => [])
-          .add(widget.id);
-      if (widget.folderId != null) {
-        _planFolderWidgetMap
-            .putIfAbsent(widget.folderId!, () => [])
-            .add(widget.id);
-      }
     }
   }
 
   /// Adds a collection of widgets to the repository cache and maps.
   ///
-  /// It uses [_addToCacheAndMaps] to add each widget.
-  void _addAllToCacheAndMaps(Iterable<WidgetEntity> widgets) {
+  /// It uses [_upsertInCacheAndMaps] to add each widget.
+  void _upsertAllInCacheAndMaps(Iterable<WidgetEntity> widgets) {
     for (final widget in widgets) {
-      _addToCacheAndMaps(widget);
+      _upsertInCacheAndMaps(widget);
     }
   }
 
   /// Removes a [widget] from the cache and maps.
   void _removeFromCacheAndMaps(WidgetEntity widget) {
     cache.delete(widget.id);
-    if (widget.planOrJournalId.journalId != null) {
-      _journalWidgetMap.remove(widget.planOrJournalId.journalId);
-      if (widget.folderId != null) {
-        _journalFolderWidgetMap.remove(widget.folderId);
-      }
-    } else {
-      _planWidgetMap.remove(widget.planOrJournalId.planId);
-      if (widget.folderId != null) {
-        _planFolderWidgetMap.remove(widget.folderId);
-      }
+    _widgetMap.remove(widget.planOrJournalId);
+    if (widget.folderId != null) {
+      _folderWidgetMap.remove(widget.folderId);
     }
   }
+}
+
+class _WidgetRepositoryImpl
+    extends Repository<String, WidgetEntity, WidgetRepositoryState>
+    implements WidgetRepository {
+  final WidgetDataSource _dataSource;
+
+  /// Map of plan/journal ids to the ids of the widgets they contain.
+  final Map<PlanOrJournalId, ListWithSortedAdd<String>> _widgetMap = {};
+
+  /// Map of folder ids (of plans/journals) to the ids of the widgets they
+  /// contain.
+  final Map<String, ListWithSortedAdd<String>> _folderWidgetMap = {};
+
+  /// Summary helper repository.
+  final SummaryHelperRepository _summaryHelperRepository;
+
+  /// Private constructor.
+  _WidgetRepositoryImpl(this._dataSource, this._summaryHelperRepository);
 
   @override
-  Future<WidgetEntity> create(WidgetModel input) async {
-    logger.v('Creating widget with input: $input');
-    final created = await _dataSource.create(input);
+  Future<UpsertWidgetOutput> create(WidgetModel widget, int? index) async {
+    logger.v('Creating widget with input: $widget');
+    final response = await _dataSource.create(widget, index);
+    final (widget: created, :updatedOrders) = response;
     logger.v(
-      '${created.toShortString()} created. Adding it to cache and maps.',
+      '${created.toShortString()} created and ${updatedOrders.length} other '
+      'widget orders updated.',
     );
-    _addToCacheAndMaps(created);
+    _upsertInCacheAndMaps(created);
+    _updateWidgetOrders(created.planOrJournalId, updatedOrders);
+    emit(
+      WidgetRepositoryWidgetOrdersUpdated(
+        planOrJournalId: created.planOrJournalId,
+        updatedOrders: updatedOrders,
+      ),
+    );
     emit(WidgetRepositoryWidgetAdded(created));
-    logger.i('Widget created and added to cache and maps [$created].');
-    return created;
-  }
-
-  @override
-  Future<List<WidgetEntity>> fetchMany() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<WidgetEntity> fetchOne(String id) async {
-    logger.v('Fetching widget with id: $id');
-    final item = await _dataSource.read(id);
-    logger.v('${item.toShortString()} fetched. Adding it to cache and maps.');
-    _addToCacheAndMaps(item);
-    emit(WidgetRepositoryWidgetFetched(item));
-    logger.i('Widget fetched and added to cache and maps [$item].');
-    return item;
+    logger.i(
+      'Widget created, added to cache and maps [$created] and orders updated',
+    );
+    return response;
   }
 
   @override
@@ -112,20 +139,20 @@ class _WidgetRepositoryImpl
   }
 
   @override
-  void add(WidgetEntity widget, {bool shouldEmit = true}) {
-    logger.v('Adding ${widget.toShortString()} to cache and maps');
-    _addToCacheAndMaps(widget);
-    logger.i('${widget.toShortString()} added to cache and maps');
-    if (shouldEmit) {
-      emit(WidgetRepositoryWidgetFetched(widget));
-    }
-  }
-
-  @override
-  void addAll(Iterable<WidgetEntity> widgets, {bool shouldEmit = true}) {
-    logger.v('Adding ${widgets.length} widgets to cache and maps');
-    _addAllToCacheAndMaps(widgets);
-    logger.i('${widgets.length} widgets added to cache and maps');
+  void addAll({
+    required PlanOrJournalId planOrJournalId,
+    required Iterable<WidgetEntity> widgets,
+    bool shouldEmit = true,
+  }) {
+    logger.v(
+      'Adding ${widgets.length} widgets to cache and maps for $planOrJournalId',
+    );
+    _upsertAllInCacheAndMaps(widgets);
+    logger.i(
+      '${widgets.length} widgets added to cache and maps for $planOrJournalId',
+    );
+    // When all widgets are added, the plan/journal is fully loaded.
+    _summaryHelperRepository.setFullyLoaded(planOrJournalId);
     if (shouldEmit) {
       emit(WidgetRepositoryWidgetCollectionFetched(widgets.toList()));
     }
@@ -133,9 +160,15 @@ class _WidgetRepositoryImpl
 
   @override
   List<WidgetEntity> getAllOfJournal(String journalId) =>
-      _journalWidgetMap[journalId]?.map(cache.getOrThrow).toList() ?? [];
+      _widgetMap[PlanOrJournalId.journal(journalId)]
+          ?.map(cache.getOrThrow)
+          .toList() ??
+      [];
 
   @override
   List<WidgetEntity> getAllOfPlan(String planId) =>
-      _planWidgetMap[planId]?.map(cache.getOrThrow).toList() ?? [];
+      _widgetMap[PlanOrJournalId.journal(planId)]
+          ?.map(cache.getOrThrow)
+          .toList() ??
+      [];
 }

@@ -30,10 +30,9 @@ class PlanPageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverList.builder(
-      itemCount: plan.itemIds.length,
+      itemCount: travelItems.length,
       itemBuilder: (context, index) {
-        final itemId = plan.itemIds[index];
-        final item = travelItems.firstWhere((item) => item.id == itemId);
+        final item = travelItems[index];
         if (item.isFolderWidget) {
           // TODO: Implement folder widgets
           throw UnimplementedError('Folder widgets are not supported yet');

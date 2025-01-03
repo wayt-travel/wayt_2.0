@@ -15,7 +15,10 @@ void main() {
 
   setUp(() {
     mockPlanDataSource = MockPlanDataSource();
-    repo = PlanRepository(mockPlanDataSource);
+    repo = PlanRepository(
+      dataSource: mockPlanDataSource,
+      summaryHelperRepository: SummaryHelperRepository(),
+    );
 
     registerFallbackValue(MockPlan());
   });
@@ -47,7 +50,6 @@ void main() {
           tags: input.tags,
           name: input.name,
           createdAt: DateTime.now(),
-          itemIds: [],
           updatedAt: null,
         );
       });

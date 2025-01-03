@@ -7,13 +7,13 @@ class MockWidgetDataSource extends Mock implements WidgetDataSource {}
 class MockWidget extends Mock implements WidgetEntity {}
 
 void main() {
+  // ignore: unused_local_variable
   late MockWidgetDataSource mockWidgetDataSource;
   // ignore: unused_local_variable
   late WidgetRepository repo;
 
   setUp(() {
     mockWidgetDataSource = MockWidgetDataSource();
-    repo = WidgetRepository(mockWidgetDataSource);
 
     registerFallbackValue(MockWidget());
   });

@@ -28,11 +28,12 @@ class PlanPage {
               planRepository: $.repo.plan(),
               widgetRepository: $.repo.widget(),
               travelItemRepository: $.repo.travelItem(),
+              summaryHelperRepository: $.repo.summaryHelper(),
               planId: state.pathParameters['planId']!,
             )..fetch(force: false),
             child: PlanView(
               planId: state.pathParameters['planId']!,
-              planSummary: state.extra as PlanSummaryEntity?,
+              planSummary: state.extra as PlanEntity?,
             ),
           ),
         ),
@@ -41,21 +42,21 @@ class PlanPage {
   static void go(
     BuildContext context, {
     required String planId,
-    required PlanSummaryEntity? planSummary,
+    required PlanEntity? planSummary,
   }) =>
       context.router.go('/plans/$planId', extra: planSummary);
 
   static void push(
     BuildContext context, {
     required String planId,
-    required PlanSummaryEntity? planSummary,
+    required PlanEntity? planSummary,
   }) =>
       context.router.push('/plans/$planId', extra: planSummary);
 }
 
 class PlanView extends StatelessWidget {
   final String planId;
-  final PlanSummaryEntity? planSummary;
+  final PlanEntity? planSummary;
 
   const PlanView({
     required this.planId,
@@ -92,6 +93,7 @@ class PlanView extends StatelessWidget {
             onPressed: () => AddWidgetMbs.show(
               context,
               id: PlanOrJournalId.plan(planId),
+              index: 0,
             ),
             child: const Icon(Icons.add),
           ),

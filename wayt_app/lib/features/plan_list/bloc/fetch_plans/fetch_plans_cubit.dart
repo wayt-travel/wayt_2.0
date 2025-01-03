@@ -12,7 +12,8 @@ part 'fetch_plans_state.dart';
 
 class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
   final PlanRepository planRepository;
-  StreamSubscription<RepositoryState<PlanSummaryEntity>>? _plansSubscription;
+  StreamSubscription<RepositoryState<PlanEntity>>? _plansSubscription;
+
   FetchPlansCubit({
     required this.planRepository,
   }) : super(const FetchPlansState.initial()) {

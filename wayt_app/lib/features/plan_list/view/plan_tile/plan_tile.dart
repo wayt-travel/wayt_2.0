@@ -9,7 +9,7 @@ import '../../../plan/view/plan_page.dart';
 /// A tile of a Travel Plan displayed in the list of plans of the user.
 class PlanTile extends StatelessWidget {
   /// The plan summary to display.
-  final PlanSummaryEntity plan;
+  final PlanEntity plan;
 
   /// The index of the plan in the list.
   final int index;
@@ -73,7 +73,7 @@ class PlanTile extends StatelessWidget {
 }
 
 class _PlanTileDate extends StatelessWidget {
-  final PlanSummaryEntity plan;
+  final PlanEntity plan;
   const _PlanTileDate(this.plan);
 
   @override

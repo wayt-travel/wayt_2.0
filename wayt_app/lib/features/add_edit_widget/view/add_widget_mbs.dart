@@ -11,9 +11,11 @@ import 'text/text_widget_modal.dart';
 
 class AddWidgetMbs extends StatelessWidget {
   final PlanOrJournalId id;
+  final int? index;
   final ScrollController? scrollController;
   const AddWidgetMbs({
     required this.id,
+    required this.index,
     super.key,
     this.scrollController,
   });
@@ -21,12 +23,14 @@ class AddWidgetMbs extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required PlanOrJournalId id,
+    required int? index,
   }) =>
       ModalBottomSheet.of(context).showExpanded(
         builder: (context, scrollController) => SafeArea(
           bottom: false,
           child: AddWidgetMbs(
             scrollController: scrollController,
+            index: index,
             id: id,
           ),
         ),
@@ -69,6 +73,7 @@ class AddWidgetMbs extends StatelessWidget {
                           TextWidgetModal.show(
                             context: context,
                             id: id,
+                            index: index,
                             style: scale,
                           );
                         },

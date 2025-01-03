@@ -5,7 +5,7 @@ import '../../../theme/random_color.dart';
 import 'plan_tile/plan_tile.dart';
 
 class PlanListBody extends StatefulWidget {
-  final List<PlanSummaryEntity> plans;
+  final List<PlanEntity> plans;
   const PlanListBody(this.plans, {super.key});
 
   @override

@@ -23,10 +23,12 @@ class FetchPlanCubit extends Cubit<FetchPlanState> with LoggerMixin {
     required this.planRepository,
     required this.widgetRepository,
     required this.travelItemRepository,
+    required SummaryHelperRepository summaryHelperRepository,
   })  : fetchPlanOrchestrator = FetchPlanOrchestrator(
           planRepository: planRepository,
           widgetRepository: widgetRepository,
           travelItemRepository: travelItemRepository,
+          summaryHelperRepository: summaryHelperRepository,
         ),
         super(const FetchPlanState.initial()) {
     _planSubscription = planRepository.listen((repoState) {

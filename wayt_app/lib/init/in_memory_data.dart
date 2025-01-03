@@ -66,7 +66,7 @@ class InMemoryData with LoggerMixin {
     _addPlans();
   }
 
-  List<String> _addWidgets(String planId) {
+  void _addWidgets(String planId) {
     final titles = [
       'This is a heading!',
       'Stop #1',
@@ -74,19 +74,20 @@ class InMemoryData with LoggerMixin {
       'Stop #3',
       'Stop #4',
     ];
-    final ids = <String>[];
-
+    var order = 0;
     for (final title in titles) {
       final widgets = [
         TextWidgetModel(
-          id: (ids..add(_uuid.v4())).last,
+          id: _uuid.v4(),
+          order: order++,
           createdAt: DateTime.now().toUtc(),
           planOrJournalId: PlanOrJournalId.plan(planId),
           text: title,
           textStyle: const FeatureTextStyle.h1(),
         ),
         TextWidgetModel(
-          id: (ids..add(_uuid.v4())).last,
+          id: _uuid.v4(),
+          order: order++,
           createdAt: DateTime.now().toUtc(),
           planOrJournalId: PlanOrJournalId.plan(planId),
           text: 'We plan to visit this place. Here, then there, etc.'
@@ -98,7 +99,6 @@ class InMemoryData with LoggerMixin {
         for (final widget in widgets) widget.id: widget,
       });
     }
-    return ids;
   }
 
   void _addPlans() {
@@ -135,9 +135,9 @@ class InMemoryData with LoggerMixin {
           tags: [country.name.name],
           name: 'Trip to ${country.name.name}',
           updatedAt: null,
-          itemIds: _addWidgets(id),
         ),
       );
+      _addWidgets(id);
     }
   }
 
@@ -151,6 +151,15 @@ class InMemoryData with LoggerMixin {
       .map((e) => MapEntry(e.key, e.value as WidgetModel))
       .let(Map.fromEntries)
       .let(Cache.fromMap);
+
+  List<WidgetModel> getWidgetsOfPlanOrJournal(
+    PlanOrJournalId planOrJournalId,
+  ) =>
+      widgets.values
+          .where((e) => e.planOrJournalId == planOrJournalId)
+          .sortedBy<num>((e) => e.order)
+          .toList();
+
   String get authUserId => _data.authUserId;
   UserModel get authUser => _data.users.getOrThrow(authUserId);
 }

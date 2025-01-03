@@ -3,6 +3,9 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import '../../repositories.dart';
 
 /// Base model class for [TravelItemEntity] implementations.
+///
+/// It represents an item (either a widget or widget folder) in a plan or
+/// journal.
 abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   final String id;

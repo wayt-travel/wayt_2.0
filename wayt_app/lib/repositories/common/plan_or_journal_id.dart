@@ -26,11 +26,7 @@ final class PlanOrJournalId extends Equatable {
   }
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [
-        journalId,
-        planId,
-      ];
+  List<Object?> get props => [journalId, planId];
 
   @override
   String toString() =>
