@@ -1,7 +1,6 @@
 import 'package:pub_semver/pub_semver.dart';
 
 import '../../widget_feature.dart';
-import 'feature_text_style.dart';
 
 abstract interface class TextWidgetFeatureEntity
     implements WidgetFeatureEntity {

@@ -4,15 +4,24 @@ import 'package:luthor/luthor.dart';
 /// Common validators with localization.
 abstract interface class L10nValidators {
   static Validator text1To144([BuildContext? context]) => l
+      // FIXME: l10n
+      .required(message: 'It cannot be empty')
       .string()
       // FIXME: l10n
       .min(1, message: 'It cannot be empty')
       // FIXME: l10n
       .max(144, message: 'It should be at most 144 characters long');
 
-  static Validator text1ToInf([BuildContext? context]) => l.string().min(1);
+  static Validator text1ToInf([BuildContext? context]) => l
+      // FIXME: l10n
+      .required(message: 'It cannot be empty')
+      .string()
+      .min(1);
 
-  static Validator coordinates([BuildContext? context]) => l.custom(
+  static Validator coordinates([BuildContext? context]) => l
+          // FIXME: l10n
+          .required(message: 'It cannot be empty')
+          .custom(
         (coords) {
           if (coords is! (double, double)) return false;
           final (lat, lon) = coords;

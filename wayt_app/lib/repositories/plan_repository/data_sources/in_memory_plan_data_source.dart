@@ -21,7 +21,6 @@ final class InMemoryPlanDataSource implements PlanDataSource {
       tags: input.tags,
       name: input.name,
       updatedAt: null,
-      itemIds: [],
     );
 
     _data.plans.save(plan.id, plan);
@@ -36,7 +35,7 @@ final class InMemoryPlanDataSource implements PlanDataSource {
   }
 
   @override
-  Future<List<PlanSummaryModel>> readAllOfUser(String userId) async =>
+  Future<List<PlanModel>> readAllOfUser(String userId) async =>
       waitFakeTime().then(
         (_) => _data.plans.values
             .where((plan) => plan.userId == userId)
@@ -52,15 +51,11 @@ final class InMemoryPlanDataSource implements PlanDataSource {
       );
 
   @override
-  Future<FetchPlanResponse> readById(String id) async {
+  Future<PlanWithItems> readById(String id) async {
     await waitFakeTime();
     final plan = _data.plans.getOrThrow(id);
     final items = _data.travelItems.values
-        .where((item) => plan.itemIds.contains(item.id))
-        .toList()
-        .sorted(
-          (i1, i2) => plan.itemIds.indexOf(i1.id) - plan.itemIds.indexOf(i2.id),
-        )
+        .where((item) => item.planOrJournalId.planId == id)
         .toList();
     return (plan: plan, travelItems: items);
   }

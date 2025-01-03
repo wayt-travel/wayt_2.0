@@ -36,13 +36,8 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverAppBar.large(
-          title: Text(
-            'Profile',
-            style: const TextStyle().copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        const SliverAppBar.large(
+          title: Text('Profile'),
         ),
         const Placeholder().asSliver,
       ],

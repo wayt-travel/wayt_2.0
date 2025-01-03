@@ -1,27 +1,24 @@
-import 'package:a2f_sdk/a2f_sdk.dart';
-import 'package:pub_semver/pub_semver.dart';
-import 'package:uuid/uuid.dart';
-
-import '../../../repositories.dart';
-import '../widget_feature/features/text/feature_text_style.dart';
+part of '../widget_model.dart';
 
 /// A Widget that displays a customizable text.
 final class TextWidgetModel extends WidgetModel {
+  /// The text feature of the widget.
   TextWidgetFeatureModel get textFeature =>
       features.first as TextWidgetFeatureModel;
 
   factory TextWidgetModel({
     required String id,
     required String text,
+    required int order,
     required FeatureTextStyle textStyle,
-    required String? journalId,
-    required String? planId,
+    required PlanOrJournalId planOrJournalId,
     String? folderId,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) =>
       TextWidgetModel._(
         id: id,
+        order: order,
         features: [
           TextWidgetFeatureModel(
             id: const Uuid().v4(),
@@ -32,20 +29,24 @@ final class TextWidgetModel extends WidgetModel {
         ],
         folderId: folderId,
         createdAt: createdAt ?? DateTime.now().toUtc(),
-        journalId: journalId,
-        planId: planId,
+        planOrJournalId: planOrJournalId,
         updatedAt: updatedAt,
       );
 
   TextWidgetModel._({
     required super.id,
+    required super.order,
     required super.features,
     required super.folderId,
     required super.createdAt,
-    required super.journalId,
-    required super.planId,
+    required super.planOrJournalId,
     required super.updatedAt,
-  }) : super(
+  })  : assert(
+          features.length == 1 && features.first is TextWidgetFeatureEntity,
+          'The $TextWidgetModel must have exactly one '
+          '$TextWidgetFeatureEntity.',
+        ),
+        super(
           type: WidgetType.text,
           version: Version(1, 0, 0),
         );
@@ -55,12 +56,14 @@ final class TextWidgetModel extends WidgetModel {
     String? text,
     FeatureTextStyle? textStyle,
     Optional<String?> folderId = const Optional.absent(),
+    int? order,
     WidgetType? type,
     DateTime? updatedAt,
   }) {
     final feature = features.first as TextWidgetFeatureEntity;
     return TextWidgetModel._(
       id: id,
+      order: order ?? this.order,
       features: [
         TextWidgetFeatureModel(
           id: features.first.id,
@@ -71,8 +74,7 @@ final class TextWidgetModel extends WidgetModel {
       ],
       folderId: folderId.orElseIfAbsent(this.folderId),
       createdAt: createdAt,
-      journalId: journalId,
-      planId: planId,
+      planOrJournalId: planOrJournalId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }

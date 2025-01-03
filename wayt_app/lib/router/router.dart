@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/add_edit_widget/view/text/text_widget_modal.dart';
 import '../features/features.dart';
 import '../features/plan/view/plan_page.dart';
 import '../widgets/widgets.dart';
@@ -83,6 +84,7 @@ final $router = GoRouter(
   // ),
   routes: [
     SplashPage.route,
+    ...TextWidgetModal.routes,
     PlanPage.route,
     _routerStatefulShellRoute,
   ],

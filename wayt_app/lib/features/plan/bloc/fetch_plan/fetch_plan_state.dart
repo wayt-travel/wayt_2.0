@@ -1,7 +1,7 @@
 part of 'fetch_plan_cubit.dart';
 
 final class FetchPlanState extends SuperBlocState<WError> {
-  final FetchPlanResponse? response;
+  final PlanWithItems? response;
 
   const FetchPlanState._({
     required this.response,
@@ -16,7 +16,7 @@ final class FetchPlanState extends SuperBlocState<WError> {
   @override
   FetchPlanState copyWith({
     required StateStatus status,
-    Optional<FetchPlanResponse?> response = const Optional.absent(),
+    Optional<PlanWithItems?> response = const Optional.absent(),
   }) =>
       FetchPlanState._(
         response: response.orElseIfAbsent(this.response),

@@ -4,7 +4,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../../error/error.dart';
+import '../../../../error/errors.dart';
 import '../../../../orchestration/fetch_plan_orchestrator.dart';
 import '../../../../repositories/repositories.dart';
 
@@ -23,10 +23,12 @@ class FetchPlanCubit extends Cubit<FetchPlanState> with LoggerMixin {
     required this.planRepository,
     required this.widgetRepository,
     required this.travelItemRepository,
+    required SummaryHelperRepository summaryHelperRepository,
   })  : fetchPlanOrchestrator = FetchPlanOrchestrator(
           planRepository: planRepository,
           widgetRepository: widgetRepository,
           travelItemRepository: travelItemRepository,
+          summaryHelperRepository: summaryHelperRepository,
         ),
         super(const FetchPlanState.initial()) {
     _planSubscription = planRepository.listen((repoState) {

@@ -1,25 +1,30 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../plan_repository.dart';
+import '../../repositories.dart';
 
 part '_plan_repository_impl.dart';
 part 'plan_repository_state.dart';
 
 abstract interface class PlanRepository
-    extends Repository<String, PlanSummaryEntity, PlanRepositoryState> {
+    extends Repository<String, PlanEntity, PlanRepositoryState> {
   /// Creates a new instance of [PlanRepository] that uses the provided data
   /// source.
-  factory PlanRepository(PlanDataSource dataSource) =>
-      _PlanRepositoryImpl(dataSource);
+  factory PlanRepository({
+    required PlanDataSource dataSource,
+    required SummaryHelperRepository summaryHelperRepository,
+  }) =>
+      _PlanRepositoryImpl(dataSource, summaryHelperRepository);
 
   /// Creates a new Plan.
   Future<PlanEntity> create(CreatePlanInput input);
 
-  /// Fetches all plan (summaries only) of a user.
-  Future<List<PlanSummaryEntity>> fetchAllOfUser(String userId);
+  /// Fetches all plan of a user.
+  Future<List<PlanEntity>> fetchAllOfUser(String userId);
 
   /// Fetches a full plan by its [id].
-  Future<FetchPlanResponse> fetchOne(String id);
+  ///
+  /// The plan is returned with its items.
+  Future<PlanWithItems> fetchOne(String id);
 
   /// Deletes a plan by its [id].
   Future<void> delete(String id);

@@ -5,14 +5,15 @@ import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../../../../core/context/context.dart';
-import '../../../../error/error.dart';
+import '../../../../error/errors.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'fetch_plans_state.dart';
 
 class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
   final PlanRepository planRepository;
-  StreamSubscription<RepositoryState<PlanSummaryEntity>>? _plansSubscription;
+  StreamSubscription<RepositoryState<PlanEntity>>? _plansSubscription;
+
   FetchPlansCubit({
     required this.planRepository,
   }) : super(const FetchPlansState.initial()) {

@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 
-import '../../../error/error.dart';
+import '../../../error/errors.dart';
 import '../../../init/in_memory_data.dart';
 import '../../repositories.dart';
 

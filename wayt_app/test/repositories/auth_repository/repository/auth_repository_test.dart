@@ -8,6 +8,7 @@ class MockAuth extends Mock implements AuthEntity {}
 
 void main() {
   late MockAuthDataSource mockAuthDataSource;
+  // ignore: unused_local_variable
   late AuthRepository repo;
 
   setUp(() {

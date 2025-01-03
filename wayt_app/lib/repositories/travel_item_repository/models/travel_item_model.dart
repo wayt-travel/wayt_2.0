@@ -1,18 +1,17 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../../widget_repository/models/widget_entity.dart';
-import 'travel_item_entity.dart';
+import '../../repositories.dart';
 
 /// Base model class for [TravelItemEntity] implementations.
+///
+/// It represents an item (either a widget or widget folder) in a plan or
+/// journal.
 abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   final String id;
 
   @override
-  final String? journalId;
-
-  @override
-  final String? planId;
+  final PlanOrJournalId planOrJournalId;
 
   @override
   final DateTime createdAt;
@@ -21,17 +20,11 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   final DateTime? updatedAt;
 
   const TravelItemModel({
+    required this.planOrJournalId,
     required this.createdAt,
     required this.id,
-    required this.journalId,
-    required this.planId,
     required this.updatedAt,
-  }) : assert(
-          (journalId != null && planId == null) ||
-              (journalId == null && planId != null),
-          'One and only one of journalId [=$journalId] and planId [=$planId] '
-          'must be not null.',
-        );
+  });
 
   @override
   WidgetEntity get asWidget => isWidget
@@ -46,13 +39,9 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   bool get isWidget => this is WidgetEntity;
 
   @override
-  String get journalOrPlanId => journalId ?? planId!;
-
-  @override
   Map<String, dynamic> $toMap() => {
         'id': id,
-        'journalId': journalId,
-        'planId': planId,
+        'planOrJournalId': planOrJournalId,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt?.toIso8601String(),
       };
@@ -60,8 +49,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   List<Object?> get props => [
         id,
-        journalId,
-        planId,
+        planOrJournalId,
         createdAt,
         updatedAt,
       ];

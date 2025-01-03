@@ -72,6 +72,7 @@ class PlanListView extends StatelessWidget {
               onRefresh: () => context.read<FetchPlansCubit>().fetch(),
               // 152 is the height of the SliverAppBar.large
               edgeOffset: 152,
+              backgroundColor: context.col.surfaceContainer,
               child: CustomScrollView(
                 slivers: [
                   const SliverAppBar.large(title: Text('Plans')),

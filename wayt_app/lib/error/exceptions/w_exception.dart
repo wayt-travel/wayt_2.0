@@ -1,4 +1,4 @@
-import '../error.dart';
+import '../errors.dart';
 
 abstract class WException implements Exception {
   final WError error;

@@ -1,6 +1,6 @@
 import '../repositories.dart';
 
-typedef FetchPlanResponse = ({
+typedef PlanWithItems = ({
   PlanEntity plan,
   List<TravelItemEntity> travelItems,
 });
