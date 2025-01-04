@@ -46,14 +46,14 @@ class _Data {
   });
 }
 
-class InMemoryData with LoggerMixin {
+class InMemoryDataHelper with LoggerMixin {
   final _data = _Data(
     users: Cache(),
     plans: Cache(),
     travelItems: Cache(),
   );
 
-  InMemoryData() {
+  InMemoryDataHelper() {
     _data.users.save(
       authUserId,
       UserModel(
@@ -143,23 +143,61 @@ class InMemoryData with LoggerMixin {
 
   String generateUuid() => _uuid.v4();
 
-  Cache<String, PlanModel> get plans => _data.plans;
-  Cache<String, UserModel> get users => _data.users;
-  Cache<String, TravelItemModel> get travelItems => _data.travelItems;
-  Cache<String, WidgetModel> get widgets => _data.travelItems.entries
-      .where((e) => e.value is WidgetModel)
-      .map((e) => MapEntry(e.key, e.value as WidgetModel))
-      .let(Map.fromEntries)
-      .let(Cache.fromMap);
+  String get authUserId => _data.authUserId;
+
+  UserModel get authUser => _data.users.getOrThrow(authUserId);
+
+  UserModel getUser(String id) => _data.users.getOrThrow(id);
+
+  UserModel? tryGetUserByEmail(String email) =>
+      _data.users.values.firstWhereOrNull((e) => e.email == email);
+
+  PlanModel getPlan(String id) => _data.plans.getOrThrow(id);
+
+  void savePlan(PlanModel plan) {
+    _data.plans.save(plan.id, plan);
+  }
+
+  void deletePlan(String id) {
+    _data.plans.delete(id);
+  }
+
+  List<PlanModel> get plans => _data.plans.values.toList();
+
+  List<PlanModel> getPlansWhere(bool Function(PlanModel plan) predicate) =>
+      _data.plans.values.where(predicate).sortedByCompare(
+        (plan) => plan.plannedAt,
+        (p1, p2) {
+          if (p2 == null) return -1;
+          if (p1 == null) return 1;
+          return p1.compareTo(p2);
+        },
+      );
+
+  void saveTravelItems(List<TravelItemModel> items) {
+    _data.travelItems.saveAll({
+      for (final item in items) item.id: item,
+    });
+  }
+
+  TravelItemModel getTravelItem(String id) => _data.travelItems.getOrThrow(id);
+
+  WidgetModel getWidget(String id) =>
+      _data.travelItems.getOrThrow(id) as WidgetModel;
 
   List<WidgetModel> getWidgetsOfPlanOrJournal(
     PlanOrJournalId planOrJournalId,
   ) =>
-      widgets.values
+      _data.travelItems.values
+          .whereType<WidgetModel>()
           .where((e) => e.planOrJournalId == planOrJournalId)
           .sortedBy<num>((e) => e.order)
           .toList();
 
-  String get authUserId => _data.authUserId;
-  UserModel get authUser => _data.users.getOrThrow(authUserId);
+  List<TravelItemModel> getTravelItemsOfPlanOrJournal(
+    PlanOrJournalId planOrJournalId,
+  ) =>
+      _data.travelItems.values
+          .where((e) => e.planOrJournalId == planOrJournalId)
+          .toList();
 }

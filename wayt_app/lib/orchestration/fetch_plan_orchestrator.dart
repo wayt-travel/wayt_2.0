@@ -63,7 +63,10 @@ final class FetchPlanOrchestrator with LoggerMixin {
     final response = await planRepository.dataSource.readById(planId);
     final (:plan, :travelItems) = response;
 
-    logger.i('${plan.toShortString()} fetched from the data source');
+    logger.i(
+      '${plan.toShortString()} and ${travelItems.length} travel items fetched '
+      'from the data source',
+    );
     final widgets =
         travelItems.where((item) => !item.isFolderWidget).cast<WidgetEntity>();
     // No need to emit the state here as the plan has just been fetched.

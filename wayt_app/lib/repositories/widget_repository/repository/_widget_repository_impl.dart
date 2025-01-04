@@ -167,7 +167,7 @@ class _WidgetRepositoryImpl
 
   @override
   List<WidgetEntity> getAllOfPlan(String planId) =>
-      _widgetMap[PlanOrJournalId.journal(planId)]
+      _widgetMap[PlanOrJournalId.plan(planId)]
           ?.map(cache.getOrThrow)
           .toList() ??
       [];

@@ -33,4 +33,7 @@ final class FetchPlanState extends SuperBlocState<WError> {
 
   @override
   List<Object?> get props => [response, ...super.props];
+
+  @override
+  String toString() => '$FetchPlanState { $status }';
 }

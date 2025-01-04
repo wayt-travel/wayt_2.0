@@ -5,15 +5,15 @@ import '../widget_repository.dart';
 
 /// In-memory implementation of the Widget data source.
 final class InMemoryWidgetDataSource implements WidgetDataSource {
-  final InMemoryData _data;
+  final InMemoryDataHelper _dataHelper;
 
-  InMemoryWidgetDataSource(this._data);
+  InMemoryWidgetDataSource(this._dataHelper);
 
   @override
   Future<UpsertWidgetOutput> create(WidgetModel widget, int? index) {
     // Get the widgets of the plan or journal and insert the widget at the
     // specified index.
-    var widgets = _data.getWidgetsOfPlanOrJournal(widget.planOrJournalId);
+    var widgets = _dataHelper.getWidgetsOfPlanOrJournal(widget.planOrJournalId);
     if (index != null) {
       widgets.insert(index, widget);
     } else {
@@ -26,9 +26,7 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
         .toList();
 
     // Save the updated widgets.
-    _data.widgets.saveAll({
-      for (final widget in widgets) widget.id: widget,
-    });
+    _dataHelper.saveTravelItems(widgets);
 
     // Get the list of widgets whose order was updated.
     final updatedWidgets = index != null && widgets.length > index
@@ -38,7 +36,7 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
     // Build the output.
     return Future.value(
       (
-        widget: _data.widgets.getOrThrow(widget.id),
+        widget: _dataHelper.getWidget(widget.id),
         updatedOrders: {
           for (final widget in updatedWidgets) widget.id: widget.order,
         },
@@ -47,7 +45,8 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   }
 
   @override
-  Future<WidgetModel> read(String id) async => _data.widgets.getOrThrow(id);
+  Future<WidgetModel> read(String id) async =>
+      _dataHelper.getWidget(id);
 
   @override
   Future<void> delete(String id) {

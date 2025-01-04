@@ -20,11 +20,15 @@ class ListWithSortedAdd<T> extends DelegatingList<T> {
       return;
     }
     for (var i = 0; i < length; i++) {
+      // Insert the element before the first element that is greater than it
+      // by the comparison function.
       if (_compareFunction(value, this[i]) < 0) {
         super.insert(i, value);
         return;
       }
     }
+    // otherwise, the element is added at the end of the list.
+    super.add(value);
   }
 
   @override

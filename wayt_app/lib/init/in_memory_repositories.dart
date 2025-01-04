@@ -11,7 +11,7 @@ typedef RepositoryPack = ({
 });
 
 RepositoryPack inMemoryRepositories() {
-  final data = InMemoryData();
+  final data = InMemoryDataHelper();
   final authRepository = AuthRepository(InMemoryAuthDataSource(data));
   final userRepository = UserRepository(InMemoryUserDataSource(data));
   final summaryHelperRepository = SummaryHelperRepository();

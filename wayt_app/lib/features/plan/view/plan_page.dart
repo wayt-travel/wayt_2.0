@@ -93,7 +93,8 @@ class PlanView extends StatelessWidget {
             onPressed: () => AddWidgetMbs.show(
               context,
               id: PlanOrJournalId.plan(planId),
-              index: 0,
+              // Add the widget at the end of the list.
+              index: null,
             ),
             child: const Icon(Icons.add),
           ),

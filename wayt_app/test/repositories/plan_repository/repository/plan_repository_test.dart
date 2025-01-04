@@ -11,7 +11,7 @@ class MockPlan extends Mock implements PlanEntity {}
 void main() {
   late MockPlanDataSource mockPlanDataSource;
   late PlanRepository repo;
-  final inMemoryData = InMemoryData();
+  final inMemoryData = InMemoryDataHelper();
 
   setUp(() {
     mockPlanDataSource = MockPlanDataSource();
@@ -68,8 +68,8 @@ void main() {
   group('fetchOne', () {
     test('should fetch the entity and emit a new state', () async {
       when(() => mockPlanDataSource.readById(any())).thenAnswer(
-        (invocation) async => inMemoryData.plans
-            .getOrThrow(invocation.positionalArguments[0] as String)
+        (invocation) async => inMemoryData
+            .getPlan(invocation.positionalArguments[0] as String)
             .let(
               (response) => (
                 plan: response,
@@ -82,7 +82,7 @@ void main() {
         expect(state, isA<PlanRepositoryPlanFetched>());
         emitted = true;
       });
-      final plan = inMemoryData.plans.values.first;
+      final plan = inMemoryData.plans.first;
       final fetched = await repo.fetchOne(plan.id);
 
       // Wait for the state to be emitted.
@@ -98,10 +98,10 @@ void main() {
   group('delete', () {
     test('should delete the entity and emit a new state', () async {
       when(() => mockPlanDataSource.delete(any())).thenAnswer(
-        (invocation) async => inMemoryData.plans
-            .delete(invocation.positionalArguments[0] as String),
+        (invocation) async => inMemoryData
+            .deletePlan(invocation.positionalArguments[0] as String),
       );
-      final plan = inMemoryData.plans.values.first;
+      final plan = inMemoryData.plans.first;
       var emitted = false;
       repo.listen((state) {
         expect(state, isA<PlanRepositoryPlanDeleted>());
@@ -115,7 +115,7 @@ void main() {
       verify(() => mockPlanDataSource.delete(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, isEmpty);
-      expect(inMemoryData.plans.get(plan.id), isNull);
+      expect(inMemoryData.getPlan(plan.id), isNull);
     });
   });
 }

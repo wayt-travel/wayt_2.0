@@ -8,6 +8,7 @@ class _SummaryHelperRepositoryImpl
   @override
   void unset(PlanOrJournalId id) {
     cache.delete(id);
+    logger.d('Fully loaded status for $id unset');
     emit(SummaryHelperRepositoryChanged(id: id, isFullyLoaded: false));
   }
 
@@ -19,6 +20,7 @@ class _SummaryHelperRepositoryImpl
   @override
   void setFullyLoaded(PlanOrJournalId id) {
     cache.save(id, true);
+    logger.d('Fully loaded status for $id set to true');
     emit(SummaryHelperRepositoryChanged(id: id, isFullyLoaded: true));
   }
 }
