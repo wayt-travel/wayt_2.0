@@ -3,15 +3,22 @@ import 'package:flutter/material.dart';
 import '../../../repositories/repositories.dart';
 import '../../widget/widget.dart';
 
-class PlanPageBody extends StatelessWidget {
+/// A widget displaying the list of travel items of a plan.
+class PlanItemList extends StatelessWidget {
+  /// The plan.
   final PlanEntity plan;
+
+  /// The list of travel items.
   final List<TravelItemEntity> travelItems;
-  const PlanPageBody({
+
+  /// Creates a new instance of [PlanItemList].
+  const PlanItemList({
     required this.plan,
     required this.travelItems,
     super.key,
   });
 
+  /// Builds a tile for a travel item.
   Widget _buildTile(BuildContext context, TravelItemEntity item) {
     if (item is TextWidgetModel) {
       return ListTile(
@@ -37,7 +44,10 @@ class PlanPageBody extends StatelessWidget {
           // TODO: Implement folder widgets
           throw UnimplementedError('Folder widgets are not supported yet');
         } else {
+          // TODO: wrap each item with its own cubit/bloc
           return TravelItemWidget(
+            key: ValueKey(item.id),
+            index: index,
             travelItem: item,
             child: _buildTile(context, item),
           );

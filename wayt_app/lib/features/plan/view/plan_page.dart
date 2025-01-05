@@ -9,8 +9,7 @@ import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
 import '../../add_edit_widget/view/add_widget_mbs.dart';
-import '../bloc/fetch_plan/fetch_plan_cubit.dart';
-import 'plan_page_body.dart';
+import '../plan.dart';
 
 class PlanPage {
   const PlanPage._();
@@ -24,7 +23,7 @@ class PlanPage {
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: BlocProvider(
-            create: (context) => FetchPlanCubit(
+            create: (context) => PlanCubit(
               planRepository: $.repo.plan(),
               widgetRepository: $.repo.widget(),
               travelItemRepository: $.repo.travelItem(),
@@ -66,22 +65,42 @@ class PlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FetchPlanCubit, FetchPlanState>(
+    return BlocBuilder<PlanCubit, PlanState>(
+      buildWhen: (previous, current) => current is PlanFetchState,
       builder: (context, state) {
+        assert(state is PlanFetchState, 'Invalid state: $state');
         late final Widget content;
-        if (state.status.isSuccess) {
+        var isSuccess = false;
+        PlanEntity? fetchedPlan;
+        if (state is PlanFetchSuccess) {
+          isSuccess = true;
+          fetchedPlan = state.plan;
           content = SliverMainAxisGroup(
             slivers: [
-              PlanPageBody(
-                plan: state.response!.plan,
-                travelItems: state.response!.travelItems,
+              BlocBuilder<PlanCubit, PlanState>(
+                buildWhen: (previous, current) =>
+                    current is PlanItemListUpdateSuccess,
+                builder: (context, state) {
+                  if (state is PlanStateWithData) {
+                    return PlanItemList(
+                      plan: state.plan,
+                      travelItems: state.travelItems,
+                    );
+                  }
+
+                  throw ArgumentError.value(
+                    state,
+                    'state',
+                    'Invalid state: $state. Expected $PlanStateWithData',
+                  );
+                },
               ),
               getScrollableBottomPadding(context).asVSpan.asSliver,
             ],
           );
-        } else if (state.status.isFailure) {
+        } else if (state is PlanFetchFailure) {
           content = Center(
-            child: Text(state.error!.userIntlMessage(context)),
+            child: Text(state.error.userIntlMessage(context)),
           ).asSliver;
         } else {
           content = const SliverFillRemaining(
@@ -89,27 +108,33 @@ class PlanView extends StatelessWidget {
           );
         }
         return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => AddWidgetMbs.show(
-              context,
-              id: PlanOrJournalId.plan(planId),
-              // Add the widget at the end of the list.
-              index: null,
-            ),
-            child: const Icon(Icons.add),
-          ),
+          // Show the floating action button only when the plan has been fetched
+          // successfully.
+          floatingActionButton: isSuccess
+              ? FloatingActionButton(
+                  onPressed: () => AddWidgetMbs.show(
+                    context,
+                    id: PlanOrJournalId.plan(planId),
+                    // Index=null adds the widget at the end of the list.
+                    index: null,
+                  ),
+                  child: const Icon(Icons.add),
+                )
+              : null,
           body: CustomScrollView(
             slivers: [
               SliverAppBar.large(
                 title: Text(
-                  state.response?.plan.name ?? planSummary?.name ?? '',
+                  fetchedPlan?.name ?? planSummary?.name ?? '',
                 ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {},
-                  ),
-                ],
+                actions: isSuccess
+                    ? [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {},
+                        ),
+                      ]
+                    : null,
               ),
               content,
             ],

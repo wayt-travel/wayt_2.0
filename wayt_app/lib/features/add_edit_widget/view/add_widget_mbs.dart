@@ -13,6 +13,7 @@ class AddWidgetMbs extends StatelessWidget {
   final PlanOrJournalId id;
   final int? index;
   final ScrollController? scrollController;
+  
   const AddWidgetMbs({
     required this.id,
     required this.index,

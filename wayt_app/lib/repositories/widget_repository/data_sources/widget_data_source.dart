@@ -6,7 +6,8 @@ abstract interface class WidgetDataSource {
   ///
   /// The widget.order in the model is disregarded and recomputed using the
   /// provided [index] and based on the existing widgets in the plan or journal.
-  /// If [index] is `null`, the widget will be added at the end of the list.
+  /// If [index] is `null`, the widget will be added at the end of the list. If
+  /// [index] is out of bounds, the widget will be added at the end of the list.
   ///
   /// The response includes the newly created widget (with correct order) and a
   /// map of the existing widgets whose order was updated as a result of the

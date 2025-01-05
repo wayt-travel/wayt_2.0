@@ -14,7 +14,7 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
     // Get the widgets of the plan or journal and insert the widget at the
     // specified index.
     var widgets = _dataHelper.getWidgetsOfPlanOrJournal(widget.planOrJournalId);
-    if (index != null) {
+    if (index != null && index < widgets.length) {
       widgets.insert(index, widget);
     } else {
       widgets.add(widget);
@@ -45,8 +45,7 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   }
 
   @override
-  Future<WidgetModel> read(String id) async =>
-      _dataHelper.getWidget(id);
+  Future<WidgetModel> read(String id) async => _dataHelper.getWidget(id);
 
   @override
   Future<void> delete(String id) {

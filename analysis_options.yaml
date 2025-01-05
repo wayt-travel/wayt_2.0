@@ -1,1 +1,4 @@
 include: package:a2f_sdk/analysis_options.yaml
+analyzer:
+  errors:
+    no_runtimetype_tostring: ignore

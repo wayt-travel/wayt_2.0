@@ -83,7 +83,7 @@ abstract class ModalBottomSheetActions {
   static ModalBottomSheetAction delete(BuildContext context) {
     return ModalBottomSheetAction(
       // FIXME: l10n
-      title: 'context.l10n.deleteAction',
+      title: 'Delete',
       iconData: Icons.delete_forever_rounded,
       isDangerous: true,
       onTap: (context) => SnackBarHelper.I.showError(
@@ -97,8 +97,8 @@ abstract class ModalBottomSheetActions {
   static ModalBottomSheetAction edit(BuildContext context) {
     return ModalBottomSheetAction(
       // FIXME: l10n
-      title: 'context.l10n.editAction',
-      subtitle: 'context.l10n.editActionSubtitle',
+      title: 'Edit',
+      subtitle: null,
       iconData: Icons.edit_rounded,
       titleStyle: context.tt.bodyMedium,
       onTap: (context) => SnackBarHelper.I.showWarning(
