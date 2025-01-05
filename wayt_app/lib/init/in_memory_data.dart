@@ -10,12 +10,11 @@ import 'package:world_countries/world_countries.dart';
 
 import '../core/context/context.dart';
 import '../repositories/repositories.dart';
-import '../repositories/widget_repository/models/widget_feature/features/text/feature_text_style.dart';
 
 Future<void> waitFakeTime() async {
   // Do not wait in local test.
   if ($.env.isLocalTest) return;
-  await Future<void>.delayed(const Duration(milliseconds: 2000));
+  await Future<void>.delayed(const Duration(milliseconds: 300));
 }
 
 const String loremIpsum =
@@ -47,14 +46,14 @@ class _Data {
   });
 }
 
-class InMemoryData with LoggerMixin {
+class InMemoryDataHelper with LoggerMixin {
   final _data = _Data(
     users: Cache(),
     plans: Cache(),
     travelItems: Cache(),
   );
 
-  InMemoryData() {
+  InMemoryDataHelper() {
     _data.users.save(
       authUserId,
       UserModel(
@@ -67,7 +66,7 @@ class InMemoryData with LoggerMixin {
     _addPlans();
   }
 
-  List<String> _addWidgets(String planId) {
+  void _addWidgets(String planId) {
     final titles = [
       'This is a heading!',
       'Stop #1',
@@ -75,23 +74,22 @@ class InMemoryData with LoggerMixin {
       'Stop #3',
       'Stop #4',
     ];
-    final ids = <String>[];
-
+    var order = 0;
     for (final title in titles) {
       final widgets = [
         TextWidgetModel(
-          id: (ids..add(_uuid.v4())).last,
+          id: _uuid.v4(),
+          order: order++,
           createdAt: DateTime.now().toUtc(),
-          planId: planId,
-          journalId: null,
+          planOrJournalId: PlanOrJournalId.plan(planId),
           text: title,
           textStyle: const FeatureTextStyle.h1(),
         ),
         TextWidgetModel(
-          id: (ids..add(_uuid.v4())).last,
+          id: _uuid.v4(),
+          order: order++,
           createdAt: DateTime.now().toUtc(),
-          planId: planId,
-          journalId: null,
+          planOrJournalId: PlanOrJournalId.plan(planId),
           text: 'We plan to visit this place. Here, then there, etc.'
               '\n\n$loremIpsum',
           textStyle: const FeatureTextStyle.body(),
@@ -101,7 +99,6 @@ class InMemoryData with LoggerMixin {
         for (final widget in widgets) widget.id: widget,
       });
     }
-    return ids;
   }
 
   void _addPlans() {
@@ -138,22 +135,69 @@ class InMemoryData with LoggerMixin {
           tags: [country.name.name],
           name: 'Trip to ${country.name.name}',
           updatedAt: null,
-          itemIds: _addWidgets(id),
         ),
       );
+      _addWidgets(id);
     }
   }
 
   String generateUuid() => _uuid.v4();
 
-  Cache<String, PlanModel> get plans => _data.plans;
-  Cache<String, UserModel> get users => _data.users;
-  Cache<String, TravelItemModel> get travelItems => _data.travelItems;
-  Cache<String, WidgetModel> get widgets => _data.travelItems.entries
-      .where((e) => e.value is WidgetModel)
-      .map((e) => MapEntry(e.key, e.value as WidgetModel))
-      .let(Map.fromEntries)
-      .let(Cache.fromMap);
   String get authUserId => _data.authUserId;
+
   UserModel get authUser => _data.users.getOrThrow(authUserId);
+
+  UserModel getUser(String id) => _data.users.getOrThrow(id);
+
+  UserModel? tryGetUserByEmail(String email) =>
+      _data.users.values.firstWhereOrNull((e) => e.email == email);
+
+  PlanModel getPlan(String id) => _data.plans.getOrThrow(id);
+
+  void savePlan(PlanModel plan) {
+    _data.plans.save(plan.id, plan);
+  }
+
+  void deletePlan(String id) {
+    _data.plans.delete(id);
+  }
+
+  List<PlanModel> get plans => _data.plans.values.toList();
+
+  List<PlanModel> getPlansWhere(bool Function(PlanModel plan) predicate) =>
+      _data.plans.values.where(predicate).sortedByCompare(
+        (plan) => plan.plannedAt,
+        (p1, p2) {
+          if (p2 == null) return -1;
+          if (p1 == null) return 1;
+          return p1.compareTo(p2);
+        },
+      );
+
+  void saveTravelItems(List<TravelItemModel> items) {
+    _data.travelItems.saveAll({
+      for (final item in items) item.id: item,
+    });
+  }
+
+  TravelItemModel getTravelItem(String id) => _data.travelItems.getOrThrow(id);
+
+  WidgetModel getWidget(String id) =>
+      _data.travelItems.getOrThrow(id) as WidgetModel;
+
+  List<WidgetModel> getWidgetsOfPlanOrJournal(
+    PlanOrJournalId planOrJournalId,
+  ) =>
+      _data.travelItems.values
+          .whereType<WidgetModel>()
+          .where((e) => e.planOrJournalId == planOrJournalId)
+          .sortedBy<num>((e) => e.order)
+          .toList();
+
+  List<TravelItemModel> getTravelItemsOfPlanOrJournal(
+    PlanOrJournalId planOrJournalId,
+  ) =>
+      _data.travelItems.values
+          .where((e) => e.planOrJournalId == planOrJournalId)
+          .toList();
 }

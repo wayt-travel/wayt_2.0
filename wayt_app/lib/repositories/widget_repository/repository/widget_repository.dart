@@ -1,6 +1,8 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:flext/flext.dart';
 
-import '../widget_repository.dart';
+import '../../../util/util.dart';
+import '../../repositories.dart';
 
 part '_widget_repository_impl.dart';
 part 'widget_repository_state.dart';
@@ -9,36 +11,39 @@ abstract interface class WidgetRepository
     extends Repository<String, WidgetEntity, WidgetRepositoryState> {
   /// Creates a new instance of [WidgetRepository] that uses the provided data
   /// source.
-  factory WidgetRepository(WidgetDataSource dataSource) =>
-      _WidgetRepositoryImpl(dataSource);
+  factory WidgetRepository({
+    required WidgetDataSource dataSource,
+    required SummaryHelperRepository summaryHelperRepository,
+  }) =>
+      _WidgetRepositoryImpl(dataSource, summaryHelperRepository);
 
-  /// Creates a new Widget.
-  Future<void> create(CreateWidgetInput input);
-
-  /// Fetches all widget.
-  Future<List<WidgetEntity>> fetchMany();
-
-  /// Fetches a widget by its [id].
-  Future<WidgetEntity> fetchOne(String id);
+  /// Creates a new Widget at the given [index] in the plan or journal.
+  ///
+  /// The widget.order in model is disregarded as it will be recomputed using
+  /// the provided [index] based on the existing widgets in the plan or journal.
+  /// If [index] is `null`, the widget will be added at the end of the list.
+  /// If [index] is out of bounds, the widget will be added at the end of the
+  /// list.
+  ///
+  /// The response includes also a map of the widgets of the plan or journal
+  /// whose order has been updated with the corresponding updated value.
+  ///
+  /// See [UpsertWidgetOutput].
+  Future<UpsertWidgetOutput> create(WidgetModel widget, int? index);
 
   /// Deletes a widget by its [id].
   Future<void> delete(String id);
 
-  /// Adds a widget to the repository without fetching it from the data source
-  /// and without triggering a state change.
+  /// Adds all [widgets] of [planOrJournalId] into the repository without
+  /// fetching them from the data source.
   ///
-  /// If [shouldEmit] is `true`, the repository will emit a state change.
-  ///
-  /// See also [addAll].
-  void add(WidgetEntity widget, {bool shouldEmit = true});
-
-  /// Adds multiple widgets to the repository without fetching them from the
-  /// data source and without triggering a state change.
-  ///
-  /// If [shouldEmit] is `true`, the repository will emit a state change.
-  ///
-  /// See also [add].
-  void addAll(Iterable<WidgetEntity> widgets, {bool shouldEmit = true});
+  /// If [shouldEmit] is `false`, the repository will not emit a state change
+  /// upon adding the widgets.
+  void addAll({
+    required PlanOrJournalId planOrJournalId,
+    required Iterable<WidgetEntity> widgets,
+    bool shouldEmit = true,
+  });
 
   /// Gets all widgets of a plan with the given [planId] from the cache.
   List<WidgetEntity> getAllOfPlan(String planId);

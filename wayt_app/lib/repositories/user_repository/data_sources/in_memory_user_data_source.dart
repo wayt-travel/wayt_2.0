@@ -1,17 +1,17 @@
 import 'package:get_it/get_it.dart';
 
-import '../../../error/error.dart';
+import '../../../error/errors.dart';
 import '../../../init/in_memory_data.dart';
 import '../../repositories.dart';
 
 /// In-memory implementation of the User data source.
 final class InMemoryUserDataSource implements UserDataSource {
-  final InMemoryData _data;
+  final InMemoryDataHelper _dataHelper;
 
-  InMemoryUserDataSource(this._data);
+  InMemoryUserDataSource(this._dataHelper);
 
   @override
-  Future<UserModel> read(String id) async => _data.users.getOrThrow(id);
+  Future<UserModel> read(String id) async => _dataHelper.getUser(id);
 
   @override
   Future<UserEntity> readMe() async {

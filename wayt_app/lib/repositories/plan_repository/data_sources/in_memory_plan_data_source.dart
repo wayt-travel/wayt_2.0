@@ -1,12 +1,10 @@
-import 'package:flext/flext.dart';
-
 import '../../../init/in_memory_data.dart';
-import '../../plan_repository/plan_repository.dart';
+import '../../repositories.dart';
 
 final class InMemoryPlanDataSource implements PlanDataSource {
-  final InMemoryData _data;
+  final InMemoryDataHelper _dataHelper;
 
-  InMemoryPlanDataSource(this._data);
+  InMemoryPlanDataSource(this._dataHelper);
 
   @override
   Future<PlanModel> create(CreatePlanInput input) async {
@@ -14,17 +12,16 @@ final class InMemoryPlanDataSource implements PlanDataSource {
     final plan = PlanModel(
       userId: input.userId,
       createdAt: DateTime.now().toUtc(),
-      id: _data.generateUuid(),
+      id: _dataHelper.generateUuid(),
       isDaySet: input.isDaySet,
       isMonthSet: input.isMonthSet,
       plannedAt: input.plannedAt,
       tags: input.tags,
       name: input.name,
       updatedAt: null,
-      itemIds: [],
     );
 
-    _data.plans.save(plan.id, plan);
+    _dataHelper.savePlan(plan);
 
     return plan;
   }
@@ -32,36 +29,23 @@ final class InMemoryPlanDataSource implements PlanDataSource {
   @override
   Future<void> delete(String id) async {
     await waitFakeTime();
-    _data.plans.delete(id);
+    _dataHelper.deletePlan(id);
   }
 
   @override
-  Future<List<PlanSummaryModel>> readAllOfUser(String userId) async =>
+  Future<List<PlanModel>> readAllOfUser(String userId) async =>
       waitFakeTime().then(
-        (_) => _data.plans.values
-            .where((plan) => plan.userId == userId)
-            .toList()
-            .sortedByCompare(
-          (plan) => plan.plannedAt,
-          (p1, p2) {
-            if (p2 == null) return -1;
-            if (p1 == null) return 1;
-            return p1.compareTo(p2);
-          },
+        (_) => _dataHelper.getPlansWhere(
+          (plan) => plan.userId == userId,
         ),
       );
 
   @override
-  Future<FetchPlanResponse> readById(String id) async {
+  Future<PlanWithItems> readById(String id) async {
     await waitFakeTime();
-    final plan = _data.plans.getOrThrow(id);
-    final items = _data.travelItems.values
-        .where((item) => plan.itemIds.contains(item.id))
-        .toList()
-        .sorted(
-          (i1, i2) => plan.itemIds.indexOf(i1.id) - plan.itemIds.indexOf(i2.id),
-        )
-        .toList();
+    final plan = _dataHelper.getPlan(id);
+    final items =
+        _dataHelper.getTravelItemsOfPlanOrJournal(PlanOrJournalId.plan(id));
     return (plan: plan, travelItems: items);
   }
 }

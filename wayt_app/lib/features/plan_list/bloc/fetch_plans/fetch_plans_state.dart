@@ -1,7 +1,7 @@
 part of 'fetch_plans_cubit.dart';
 
 final class FetchPlansState extends SuperBlocState<WError> {
-  final List<PlanSummaryEntity> plans;
+  final List<PlanEntity> plans;
 
   const FetchPlansState._({
     required this.plans,
@@ -16,7 +16,7 @@ final class FetchPlansState extends SuperBlocState<WError> {
   @override
   FetchPlansState copyWith({
     required StateStatus status,
-    List<PlanSummaryEntity>? plans,
+    List<PlanEntity>? plans,
   }) =>
       FetchPlansState._(
         plans: plans ?? this.plans,

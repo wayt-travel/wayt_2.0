@@ -1,4 +1,3 @@
-import 'package:flext/flext.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../repositories/repositories.dart';
@@ -20,11 +19,15 @@ final class FetchPlanOrchestrator with LoggerMixin {
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The summary helper repository.
+  final SummaryHelperRepository summaryHelperRepository;
+
   /// Creates a new instance of [FetchPlanOrchestrator].
   FetchPlanOrchestrator({
     required PlanRepository planRepository,
     required this.widgetRepository,
     required this.travelItemRepository,
+    required this.summaryHelperRepository,
   }) : planRepository = planRepository as PlanRepositoryWithDataSource;
 
   /// Fetches a plan by its [planId].
@@ -39,32 +42,20 @@ final class FetchPlanOrchestrator with LoggerMixin {
         logger.d(
           'Plan with id $planId not found in repository. It will be fetched',
         );
-      } else if (cachedPlan is PlanEntity) {
-        // Check that all the items of the plan are in the repository.
-        final repoItems = travelItemRepository
-            .getAllOfPlan(planId)
-            .map((item) => item.id)
-            .toSet();
-        final planItems = cachedPlan.itemIds.toSet();
-        if (const SetEquality<String>().equals(repoItems, planItems)) {
-          logger.i(
-            '${cachedPlan.toShortString()} found in repository cache. No need '
-            'to fetch it. It will be used as is',
-          );
-          planRepository.add(cachedPlan, shouldEmit: true);
-          return cachedPlan;
-        } else {
-          logger.v(
-            'Plan with id $planId found in repository cache but it is '
-            'not a PlanEntity or its items are not loaded into the items '
-            'repository. It will be fully fetched',
-          );
-        }
-      } else {
+      } else if (!summaryHelperRepository
+          .isFullyLoaded(PlanOrJournalId.plan(planId))) {
         logger.v(
           'Plan with id $planId found in repository cache but it is '
-          'not a PlanEntity. It will be fully fetched',
+          'not fully loaded, it will be fully fetched',
         );
+      } else {
+        logger.i(
+          '${cachedPlan.toShortString()} found in repository cache. No need '
+          'to fetch it. It will be used as is',
+        );
+        // Readd the plan to the repository to trigger a state change.
+        planRepository.add(cachedPlan, shouldEmit: true);
+        return cachedPlan;
       }
     }
 
@@ -72,11 +63,18 @@ final class FetchPlanOrchestrator with LoggerMixin {
     final response = await planRepository.dataSource.readById(planId);
     final (:plan, :travelItems) = response;
 
-    logger.i('${plan.toShortString()} fetched from the data source');
+    logger.i(
+      '${plan.toShortString()} and ${travelItems.length} travel items fetched '
+      'from the data source',
+    );
     final widgets =
         travelItems.where((item) => !item.isFolderWidget).cast<WidgetEntity>();
     // No need to emit the state here as the plan has just been fetched.
-    widgetRepository.addAll(widgets, shouldEmit: false);
+    widgetRepository.addAll(
+      planOrJournalId: PlanOrJournalId.plan(planId),
+      widgets: widgets,
+      shouldEmit: false,
+    );
 
     // TODO: add widget folders to repository
     // final widgetFolders = travelItems
@@ -87,7 +85,8 @@ final class FetchPlanOrchestrator with LoggerMixin {
 
     // NB: The plan is added to the repository after the widgets and widget
     // folders as it will trigger a state change in the repository.
-    // The emission of the state is the trigger to update the UI.
+    // The emission of the state is the trigger to update the UI and the
+    // UI should be updated only after all the data has been fetched and loaded.
     planRepository.add(plan, shouldEmit: true);
 
     return plan;

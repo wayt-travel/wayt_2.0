@@ -1,14 +1,16 @@
-import 'error.dart';
+import 'errors.dart';
 
 export 'exceptions/exceptions.dart';
 export 'w_error.dart';
+
+const _somethingWentWrongMessage = 'Oops, Something went wrong.';
 
 final $errors = (
   generic: WError(
     code: 'GENERIC_ERROR',
     defaultMessage: 'A generic error occurred.',
     // FIXME: l10n
-    userIntlMessage: (context) => 'Something went wrong.',
+    userIntlMessage: (context) => _somethingWentWrongMessage,
   ),
   auth: (
     unauthenticated: WError(
@@ -16,6 +18,15 @@ final $errors = (
       defaultMessage: 'The user is not authenticated.',
       // FIXME: l10n
       userIntlMessage: (context) => 'The user is not authenticated.',
+    )
+  ),
+  validation: (
+    invalidCubitState: WError(
+      code: 'INVALID_CUBIT_STATE',
+      defaultMessage: 'The cubit state is invalid. It should have been '
+          'validated before reaching this point.',
+      // FIXME: l10n
+      userIntlMessage: (context) => _somethingWentWrongMessage,
     )
   ),
   server: (

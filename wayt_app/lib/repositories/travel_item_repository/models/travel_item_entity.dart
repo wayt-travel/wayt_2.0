@@ -7,13 +7,16 @@ import '../../repositories.dart';
 /// In general it can be a widget or a folder of widgets.
 abstract interface class TravelItemEntity implements Entity, ResourceEntity {
   /// The id of the Plan or Journal that contains the Widget.
-  String get journalOrPlanId;
+  PlanOrJournalId get planOrJournalId;
 
-  /// The id of the Journal that contains the Widget.
-  String? get journalId;
-
-  /// The id of the Plan that contains the Widget.
-  String? get planId;
+  /// Determines the order of the item in a plan or journal.
+  ///
+  /// It is not guaranteed that the order is sequential, i.e., does not have
+  /// gaps. E.g., [1, 2, 5, 10, 100] is a valid order.
+  ///
+  /// If the item is contained inside a folder widget, the order is relative to
+  /// the folder.
+  int get order;
 
   /// Whether the item is a folder widget.
   bool get isFolderWidget;

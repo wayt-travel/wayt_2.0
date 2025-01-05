@@ -7,12 +7,12 @@ abstract interface class PlanDataSource {
   /// Read all plans of a user.
   ///
   /// The plans are returned in order of their planned date ASC.
-  Future<List<PlanSummaryModel>> readAllOfUser(String userId);
+  Future<List<PlanModel>> readAllOfUser(String userId);
 
   /// Read a plan by its id.
   ///
   /// It returns the plan with its items.
-  Future<FetchPlanResponse> readById(String id);
+  Future<PlanWithItems> readById(String id);
 
   /// Delete a plan by its id.
   Future<void> delete(String id);
