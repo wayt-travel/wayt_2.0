@@ -81,7 +81,7 @@ class InMemoryDataHelper with LoggerMixin {
           id: _uuid.v4(),
           order: order++,
           createdAt: DateTime.now().toUtc(),
-          planOrJournalId: PlanOrJournalId.plan(planId),
+          travelDocumentId: TravelDocumentId.plan(planId),
           text: title,
           textStyle: const FeatureTextStyle.h1(),
         ),
@@ -89,7 +89,7 @@ class InMemoryDataHelper with LoggerMixin {
           id: _uuid.v4(),
           order: order++,
           createdAt: DateTime.now().toUtc(),
-          planOrJournalId: PlanOrJournalId.plan(planId),
+          travelDocumentId: TravelDocumentId.plan(planId),
           text: 'We plan to visit this place. Here, then there, etc.'
               '\n\n$loremIpsum',
           textStyle: const FeatureTextStyle.body(),
@@ -107,7 +107,7 @@ class InMemoryDataHelper with LoggerMixin {
     for (final i in List.generate(planCount, (i) => i)) {
       final id = _uuid.v4();
       final country = countries.removeLast();
-      final today = DateTime.now().toDate();
+      final today = DateTime.now().toUtc().toDate();
       // Every 1.5 months approximately
       final dayOffset = ((i * 1.25 + 1) * 45).toInt();
       final plannedAt = DateTime.utc(
@@ -185,19 +185,22 @@ class InMemoryDataHelper with LoggerMixin {
   WidgetModel getWidget(String id) =>
       _data.travelItems.getOrThrow(id) as WidgetModel;
 
-  List<WidgetModel> getWidgetsOfPlanOrJournal(
-    PlanOrJournalId planOrJournalId,
+  WidgetFolderModel getWidgetFolder(String id) =>
+      _data.travelItems.getOrThrow(id) as WidgetFolderModel;
+
+  List<WidgetModel> getWidgetsOfTravelDocument(
+    TravelDocumentId travelDocumentId,
   ) =>
       _data.travelItems.values
           .whereType<WidgetModel>()
-          .where((e) => e.planOrJournalId == planOrJournalId)
+          .where((e) => e.travelDocumentId == travelDocumentId)
           .sortedBy<num>((e) => e.order)
           .toList();
 
-  List<TravelItemModel> getTravelItemsOfPlanOrJournal(
-    PlanOrJournalId planOrJournalId,
+  List<TravelItemModel> getTravelItemsOfTravelDocument(
+    TravelDocumentId travelDocumentId,
   ) =>
       _data.travelItems.values
-          .where((e) => e.planOrJournalId == planOrJournalId)
+          .where((e) => e.travelDocumentId == travelDocumentId)
           .toList();
 }

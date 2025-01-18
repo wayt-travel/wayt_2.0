@@ -46,7 +46,7 @@ final class AppState extends Equatable {
       status: AppStatus.unauthenticated,
       error: error,
       isUpToDate: isUpToDate,
-      dateTime: DateTime.now(),
+      dateTime: DateTime.now().toUtc(),
     );
   }
 
@@ -55,7 +55,7 @@ final class AppState extends Equatable {
       status: AppStatus.authenticated,
       isUpToDate: isUpToDate,
       user: user,
-      dateTime: DateTime.now(),
+      dateTime: DateTime.now().toUtc(),
     );
   }
 

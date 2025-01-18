@@ -7,15 +7,18 @@ extension _X on _WidgetRepositoryImpl {
   /// Gets the widgets of the plan or journal with the given [id] from the
   /// cache.
   // ignore: unused_element
-  List<WidgetEntity> _getWidgetsOfPlanOrJournal(PlanOrJournalId id) =>
+  List<WidgetEntity> _getWidgetsOfTravelDocument(TravelDocumentId id) =>
       _widgetMap[id]?.map(cache.getOrThrow).toList() ?? [];
 
   /// Updates the orders of widgets of plan/journal with the given [id] using
   /// the to match the provided [updatedOrders] map.
-  void _updateWidgetOrders(PlanOrJournalId id, Map<String, int> updatedOrders) {
+  void _updateWidgetOrders(
+    TravelDocumentId id,
+    Map<String, int> updatedOrders,
+  ) {
     for (final entry in updatedOrders.entries) {
       final widget = cache.getOrThrow(entry.key) as WidgetModel;
-      if (widget.planOrJournalId != id) {
+      if (widget.travelDocumentId != id) {
         throw ArgumentError(
           'Widget ${widget.id} does not belong to plan/journal $id.',
         );
@@ -39,14 +42,14 @@ extension _X on _WidgetRepositoryImpl {
     cache.save(widget.id, widget);
 
     // Remove the widget from the map if it is already present.
-    _widgetMap[widget.planOrJournalId]?.remove(widget.id);
+    _widgetMap[widget.travelDocumentId]?.remove(widget.id);
     // Remove the widget from the folder map if it is already present.
     _folderWidgetMap[widget.folderId]?.remove(widget.id);
 
     // Add the widget to the map of widgets of the plan or journal.
     _widgetMap
         .putIfAbsent(
-          widget.planOrJournalId,
+          widget.travelDocumentId,
           // Create a new list with sorting based on the widget.order field
           () => ListWithSortedAdd.by(_getOrderField),
         )
@@ -73,14 +76,7 @@ extension _X on _WidgetRepositoryImpl {
     }
   }
 
-  /// Removes a [widget] from the cache and maps.
-  void _removeFromCacheAndMaps(WidgetEntity widget) {
-    cache.delete(widget.id);
-    _widgetMap.remove(widget.planOrJournalId);
-    if (widget.folderId != null) {
-      _folderWidgetMap.remove(widget.folderId);
-    }
-  }
+
 }
 
 class _WidgetRepositoryImpl
@@ -89,7 +85,7 @@ class _WidgetRepositoryImpl
   final WidgetDataSource _dataSource;
 
   /// Map of plan/journal ids to the ids of the widgets they contain.
-  final Map<PlanOrJournalId, ListWithSortedAdd<String>> _widgetMap = {};
+  final Map<TravelDocumentId, ListWithSortedAdd<String>> _widgetMap = {};
 
   /// Map of folder ids (of plans/journals) to the ids of the widgets they
   /// contain.
@@ -103,56 +99,29 @@ class _WidgetRepositoryImpl
 
   @override
   Future<UpsertWidgetOutput> create(WidgetModel widget, int? index) async {
-    logger.v('Creating widget with input: $widget');
-    final response = await _dataSource.create(widget, index);
-    final (widget: created, :updatedOrders) = response;
-    logger.v(
-      '${created.toShortString()} created and ${updatedOrders.length} other '
-      'widget orders updated.',
-    );
-    _upsertInCacheAndMaps(created);
-    _updateWidgetOrders(created.planOrJournalId, updatedOrders);
-    emit(
-      WidgetRepositoryWidgetOrdersUpdated(
-        planOrJournalId: created.planOrJournalId,
-        updatedOrders: updatedOrders,
-      ),
-    );
-    emit(WidgetRepositoryWidgetAdded(created));
-    logger.i(
-      'Widget created, added to cache and maps [$created] and orders updated',
-    );
-    return response;
+    
   }
 
   @override
   Future<void> delete(String id) async {
-    logger.v('Deleting widget with id: $id');
-    final deletedItem = cache.getOrThrow(id);
-    await _dataSource.delete(id);
-    logger.v(
-      'Widget ${deletedItem.id} deleted. Removing it from cache and maps.',
-    );
-    _removeFromCacheAndMaps(deletedItem);
-    emit(WidgetRepositoryWidgetDeleted(deletedItem));
-    logger.i('Widget deleted and removed from cache and maps [$deletedItem].');
+
   }
 
   @override
   void addAll({
-    required PlanOrJournalId planOrJournalId,
+    required TravelDocumentId travelDocumentId,
     required Iterable<WidgetEntity> widgets,
     bool shouldEmit = true,
   }) {
     logger.v(
-      'Adding ${widgets.length} widgets to cache and maps for $planOrJournalId',
+      'Adding ${widgets.length} widgets to cache and maps for $travelDocumentId',
     );
     _upsertAllInCacheAndMaps(widgets);
     logger.i(
-      '${widgets.length} widgets added to cache and maps for $planOrJournalId',
+      '${widgets.length} widgets added to cache and maps for $travelDocumentId',
     );
     // When all widgets are added, the plan/journal is fully loaded.
-    _summaryHelperRepository.setFullyLoaded(planOrJournalId);
+    _summaryHelperRepository.setFullyLoaded(travelDocumentId);
     if (shouldEmit) {
       emit(WidgetRepositoryWidgetCollectionFetched(widgets.toList()));
     }
@@ -160,14 +129,14 @@ class _WidgetRepositoryImpl
 
   @override
   List<WidgetEntity> getAllOfJournal(String journalId) =>
-      _widgetMap[PlanOrJournalId.journal(journalId)]
+      _widgetMap[TravelDocumentId.journal(journalId)]
           ?.map(cache.getOrThrow)
           .toList() ??
       [];
 
   @override
   List<WidgetEntity> getAllOfPlan(String planId) =>
-      _widgetMap[PlanOrJournalId.plan(planId)]
+      _widgetMap[TravelDocumentId.plan(planId)]
           ?.map(cache.getOrThrow)
           .toList() ??
       [];

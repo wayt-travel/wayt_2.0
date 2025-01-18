@@ -43,7 +43,7 @@ final class FetchPlanOrchestrator with LoggerMixin {
           'Plan with id $planId not found in repository. It will be fetched',
         );
       } else if (!summaryHelperRepository
-          .isFullyLoaded(PlanOrJournalId.plan(planId))) {
+          .isFullyLoaded(TravelDocumentId.plan(planId))) {
         logger.v(
           'Plan with id $planId found in repository cache but it is '
           'not fully loaded, it will be fully fetched',
@@ -71,7 +71,7 @@ final class FetchPlanOrchestrator with LoggerMixin {
         travelItems.where((item) => !item.isFolderWidget).cast<WidgetEntity>();
     // No need to emit the state here as the plan has just been fetched.
     widgetRepository.addAll(
-      planOrJournalId: PlanOrJournalId.plan(planId),
+      travelDocumentId: TravelDocumentId.plan(planId),
       widgets: widgets,
       shouldEmit: false,
     );

@@ -31,7 +31,7 @@ class TextWidgetModal extends StatelessWidget {
           fullscreenDialog: true,
           child: BlocProvider(
             create: (context) => AddEditTextWidgetCubit(
-              id: PlanOrJournalId.plan(state.pathParameters['planId']!),
+              id: TravelDocumentId.plan(state.pathParameters['planId']!),
               index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
               text: null,
               textScale: state.uri.queryParameters['format'] != null
@@ -53,7 +53,7 @@ class TextWidgetModal extends StatelessWidget {
           fullscreenDialog: true,
           child: BlocProvider(
             create: (context) => AddEditTextWidgetCubit(
-              id: PlanOrJournalId.journal(state.pathParameters['journalId']!),
+              id: TravelDocumentId.journal(state.pathParameters['journalId']!),
               index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
               text: null,
               textScale: state.uri.queryParameters['format'] != null
@@ -71,7 +71,7 @@ class TextWidgetModal extends StatelessWidget {
   /// Pushes the modal to the navigator.
   static void show({
     required BuildContext context,
-    required PlanOrJournalId id,
+    required TravelDocumentId id,
     required int? index,
     FeatureTextStyleScale? style,
   }) {

@@ -65,15 +65,15 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
     _widgetSubscription = widgetRepository.listen((repoState) {
       // Whether a new widget has been added to the plan.
       final hasAddedWidget = repoState is WidgetRepositoryWidgetAdded &&
-          repoState.item.planOrJournalId.planId == planId;
+          repoState.item.travelDocumentId.planId == planId;
       // Whether a widget has been deleted from the plan.
       final hasDeletedWidget = repoState is WidgetRepositoryWidgetDeleted &&
-          repoState.item.planOrJournalId.planId == planId;
+          repoState.item.travelDocumentId.planId == planId;
       // Whether the collection of widgets has been fetched.
       final hasFetchedCollection =
           repoState is WidgetRepositoryWidgetCollectionFetched &&
               repoState.items
-                  .any((widget) => widget.planOrJournalId.planId == planId);
+                  .any((widget) => widget.travelDocumentId.planId == planId);
       // If any of the above conditions is true, emit a new state to update
       // the plan items list.
       if (hasAddedWidget || hasDeletedWidget || hasFetchedCollection) {

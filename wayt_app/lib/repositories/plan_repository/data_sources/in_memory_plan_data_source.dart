@@ -45,7 +45,7 @@ final class InMemoryPlanDataSource implements PlanDataSource {
     await waitFakeTime();
     final plan = _dataHelper.getPlan(id);
     final items =
-        _dataHelper.getTravelItemsOfPlanOrJournal(PlanOrJournalId.plan(id));
+        _dataHelper.getTravelItemsOfTravelDocument(TravelDocumentId.plan(id));
     return (plan: plan, travelItems: items);
   }
 }

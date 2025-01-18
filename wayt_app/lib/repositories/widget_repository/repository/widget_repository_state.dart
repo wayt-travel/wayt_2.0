@@ -12,13 +12,13 @@ typedef WidgetRepositoryWidgetDeleted = RepositoryItemDeleted<WidgetEntity>;
 /// State for when the order of widgets is updated.
 class WidgetRepositoryWidgetOrdersUpdated extends WidgetRepositoryState {
   const WidgetRepositoryWidgetOrdersUpdated({
-    required this.planOrJournalId,
+    required this.travelDocumentId,
     required this.updatedOrders,
   });
 
-  final PlanOrJournalId planOrJournalId;
+  final TravelDocumentId travelDocumentId;
   final Map<String, int> updatedOrders;
 
   @override
-  List<Object?> get props => [planOrJournalId, updatedOrders];
+  List<Object?> get props => [travelDocumentId, updatedOrders];
 }

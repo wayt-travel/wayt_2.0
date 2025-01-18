@@ -34,13 +34,13 @@ abstract interface class WidgetRepository
   /// Deletes a widget by its [id].
   Future<void> delete(String id);
 
-  /// Adds all [widgets] of [planOrJournalId] into the repository without
+  /// Adds all [widgets] of [travelDocumentId] into the repository without
   /// fetching them from the data source.
   ///
   /// If [shouldEmit] is `false`, the repository will not emit a state change
   /// upon adding the widgets.
   void addAll({
-    required PlanOrJournalId planOrJournalId,
+    required TravelDocumentId travelDocumentId,
     required Iterable<WidgetEntity> widgets,
     bool shouldEmit = true,
   });

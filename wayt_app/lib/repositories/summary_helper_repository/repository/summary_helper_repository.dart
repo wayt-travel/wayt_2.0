@@ -10,16 +10,16 @@ part 'summary_helper_repository_state.dart';
 /// journal by telling for each plan or journal whether it has been fully loaded
 /// or not.
 abstract interface class SummaryHelperRepository
-    extends Repository<PlanOrJournalId, bool, SummaryHelperRepositoryState> {
+    extends Repository<TravelDocumentId, bool, SummaryHelperRepositoryState> {
   /// Creates a new instance of [SummaryHelperRepository].
   factory SummaryHelperRepository() => _SummaryHelperRepositoryImpl();
 
   /// Whether the plan or journal with the given [id] is fully loaded.
-  bool isFullyLoaded(PlanOrJournalId id);
+  bool isFullyLoaded(TravelDocumentId id);
 
   /// Sets the plan or journal with the given [id] as fully loaded.
-  void setFullyLoaded(PlanOrJournalId id);
+  void setFullyLoaded(TravelDocumentId id);
 
   /// Unsets the info about the plan or journal with the given [id].
-  void unset(PlanOrJournalId id);
+  void unset(TravelDocumentId id);
 }
