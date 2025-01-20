@@ -12,3 +12,17 @@ typedef TravelItemRepositoryTravelItemUpdated
     = RepositoryItemUpdated<TravelItemEntity>;
 typedef TravelItemRepositoryTravelItemDeleted
     = RepositoryItemDeleted<TravelItemEntity>;
+
+/// State for when the order of travel items is updated.
+class TravelItemRepositoryItemOrdersUpdated extends TravelItemRepositoryState {
+  const TravelItemRepositoryItemOrdersUpdated({
+    required this.travelDocumentId,
+    required this.updatedOrders,
+  });
+
+  final TravelDocumentId travelDocumentId;
+  final Map<String, int> updatedOrders;
+
+  @override
+  List<Object?> get props => [travelDocumentId, updatedOrders];
+}

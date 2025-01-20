@@ -25,7 +25,6 @@ class PlanPage {
           child: BlocProvider(
             create: (context) => PlanCubit(
               planRepository: $.repo.plan(),
-              widgetRepository: $.repo.widget(),
               travelItemRepository: $.repo.travelItem(),
               summaryHelperRepository: $.repo.summaryHelper(),
               planId: state.pathParameters['planId']!,

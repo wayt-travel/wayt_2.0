@@ -19,12 +19,13 @@ RepositoryPack inMemoryRepositories() {
     dataSource: InMemoryPlanDataSource(data),
     summaryHelperRepository: summaryHelperRepository,
   );
-  final widgetRepository = WidgetRepository(
-    dataSource: InMemoryWidgetDataSource(data),
-    summaryHelperRepository: summaryHelperRepository,
-  );
   final travelItemRepository = TravelItemRepository(
-    widgetRepository: widgetRepository,
+    summaryHelperRepository: summaryHelperRepository,
+    widgetDataSource: InMemoryWidgetDataSource(data),
+    widgetFolderDataSource: InMemoryWidgetFolderDataSource(data),
+  );
+  final widgetRepository = WidgetRepository(
+    travelItemRepository: travelItemRepository,
   );
 
   return (

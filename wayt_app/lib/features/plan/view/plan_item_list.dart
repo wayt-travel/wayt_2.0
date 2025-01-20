@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../repositories/repositories.dart';
+import '../../../repositories/travel_item_repository/models/travel_item_entity_wrapper.dart';
 import '../../widget/widget.dart';
 
 /// A widget displaying the list of travel items of a plan.
@@ -9,7 +10,7 @@ class PlanItemList extends StatelessWidget {
   final PlanEntity plan;
 
   /// The list of travel items.
-  final List<TravelItemEntity> travelItems;
+  final List<TravelItemEntityWrapper> travelItems;
 
   /// Creates a new instance of [PlanItemList].
   const PlanItemList({
@@ -39,17 +40,17 @@ class PlanItemList extends StatelessWidget {
     return SliverList.builder(
       itemCount: travelItems.length,
       itemBuilder: (context, index) {
-        final item = travelItems[index];
-        if (item.isFolderWidget) {
+        final wrapper = travelItems[index];
+        if (wrapper.value.isFolderWidget) {
           // TODO: Implement folder widgets
           throw UnimplementedError('Folder widgets are not supported yet');
         } else {
           // TODO: wrap each item with its own cubit/bloc
           return TravelItemWidget(
-            key: ValueKey(item.id),
+            key: ValueKey(wrapper.value.id),
             index: index,
-            travelItem: item,
-            child: _buildTile(context, item),
+            travelItem: wrapper.value,
+            child: _buildTile(context, wrapper.value),
           );
         }
       },

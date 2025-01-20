@@ -12,7 +12,7 @@ sealed class PlanState extends Equatable {
 /// [PlanInitial] and the fetch in progress/failure states.
 sealed class PlanStateWithData extends PlanState {
   final PlanEntity plan;
-  final List<TravelItemEntity> travelItems;
+  final List<TravelItemEntityWrapper> travelItems;
 
   const PlanStateWithData({
     required this.plan,
