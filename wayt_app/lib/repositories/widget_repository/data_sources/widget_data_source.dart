@@ -12,7 +12,7 @@ abstract interface class WidgetDataSource {
   /// The response includes the newly created widget (with correct order) and a
   /// map of the existing widgets whose order was updated as a result of the
   /// insertion.
-  Future<UpsertWidgetOutput> create(WidgetModel widget, int? index);
+  Future<UpsertWidgetOutput> create(WidgetModel widget, {int? index});
 
   /// Reads a widget by its [id].
   Future<WidgetEntity> read(String id);

@@ -236,14 +236,14 @@ class TravelItemRepositoryImpl
     int? index,
   ) async {
     logger.v('Creating widget with input: $widget');
-    final response = await widgetDataSource.create(widget, index);
+    final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
     logger.v(
       '${created.toShortString()} created and ${updatedOrders.length} other '
       'item orders updated.',
     );
-    upsertInCacheAndMaps(created);
     updateItemOrders(created.travelDocumentId, updatedOrders);
+    upsertInCacheAndMaps(created);
     emit(
       TravelItemRepositoryItemOrdersUpdated(
         travelDocumentId: created.travelDocumentId,

@@ -10,15 +10,29 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   InMemoryWidgetDataSource(this._dataHelper);
 
   @override
-  Future<UpsertWidgetOutput> create(WidgetModel widget, int? index) {
+  Future<UpsertWidgetOutput> create(WidgetModel widget, {int? index}) {
+    if (!_dataHelper.containsTravelDocument(widget.travelDocumentId)) {
+      throw ArgumentError.value(
+        widget.travelDocumentId,
+        'widget.travelDocumentId',
+        'The travel document does not exist.',
+      );
+    }
     // Get the travel items of the plan or journal and insert the widget at the
     // specified index.
     var travelItems =
         _dataHelper.getTravelItemsOfTravelDocument(widget.travelDocumentId);
-    if (index != null && index < travelItems.length) {
+
+    if (index == null) {
+      travelItems.add(widget);
+    } else if (index.isBetween(0, travelItems.length)) {
       travelItems.insert(index, widget);
     } else {
-      travelItems.add(widget);
+      throw ArgumentError.value(
+        index,
+        'index',
+        'The index is out of bounds.',
+      );
     }
 
     // Recompute the order of the travel items after the insertion.

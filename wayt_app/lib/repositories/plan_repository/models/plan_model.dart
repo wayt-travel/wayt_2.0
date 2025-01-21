@@ -88,4 +88,7 @@ class PlanModel extends Model implements PlanEntity {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
+
+  @override
+  TravelDocumentId get tid => TravelDocumentId.plan(id);
 }

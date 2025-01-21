@@ -37,11 +37,14 @@ class _Data {
   final String authUserId = _uuid.v4();
   final Cache<String, UserModel> users;
   final Cache<String, PlanModel> plans;
+  // FIXME: add journals
+  final Cache<String, TravelDocument> journals;
   final Cache<String, TravelItemModel> travelItems;
 
   _Data({
     required this.users,
     required this.plans,
+    required this.journals,
     required this.travelItems,
   });
 }
@@ -50,6 +53,7 @@ class InMemoryDataHelper with LoggerMixin {
   final _data = _Data(
     users: Cache(),
     plans: Cache(),
+    journals: Cache(),
     travelItems: Cache(),
   );
 
@@ -152,6 +156,9 @@ class InMemoryDataHelper with LoggerMixin {
   UserModel? tryGetUserByEmail(String email) =>
       _data.users.values.firstWhereOrNull((e) => e.email == email);
 
+  bool containsTravelDocument(TravelDocumentId id) =>
+      travelDocuments.any((e) => e.tid == id);
+
   PlanModel getPlan(String id) => _data.plans.getOrThrow(id);
 
   void savePlan(PlanModel plan) {
@@ -161,6 +168,11 @@ class InMemoryDataHelper with LoggerMixin {
   void deletePlan(String id) {
     _data.plans.delete(id);
   }
+
+  List<TravelDocument> get travelDocuments => [
+        ..._data.plans.values,
+        ..._data.journals.values,
+      ];
 
   List<PlanModel> get plans => _data.plans.values.toList();
 
@@ -191,10 +203,8 @@ class InMemoryDataHelper with LoggerMixin {
   List<WidgetModel> getWidgetsOfTravelDocument(
     TravelDocumentId travelDocumentId,
   ) =>
-      _data.travelItems.values
+      getTravelItemsOfTravelDocument(travelDocumentId)
           .whereType<WidgetModel>()
-          .where((e) => e.travelDocumentId == travelDocumentId)
-          .sortedBy<num>((e) => e.order)
           .toList();
 
   List<TravelItemModel> getTravelItemsOfTravelDocument(
@@ -202,5 +212,6 @@ class InMemoryDataHelper with LoggerMixin {
   ) =>
       _data.travelItems.values
           .where((e) => e.travelDocumentId == travelDocumentId)
+          .sortedBy<num>((e) => e.order)
           .toList();
 }
