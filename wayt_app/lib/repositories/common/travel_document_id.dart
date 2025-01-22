@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 
 /// Wrapper class for either a plan or a journal id.
-final class PlanOrJournalId extends Equatable {
+final class TravelDocumentId extends Equatable {
   final String? journalId;
   final String? planId;
 
-  const PlanOrJournalId.journal(String this.journalId) : planId = null;
-  const PlanOrJournalId.plan(String this.planId) : journalId = null;
+  const TravelDocumentId.journal(String this.journalId) : planId = null;
+  const TravelDocumentId.plan(String this.planId) : journalId = null;
 
   bool get isJournal => journalId != null;
   bool get isPlan => planId != null;
@@ -30,5 +30,5 @@ final class PlanOrJournalId extends Equatable {
 
   @override
   String toString() =>
-      '$PlanOrJournalId(id: $id, ${isJournal ? 'JOURNAL' : 'PLAN'})';
+      '$TravelDocumentId(id: $id, ${isJournal ? 'JOURNAL' : 'PLAN'})';
 }

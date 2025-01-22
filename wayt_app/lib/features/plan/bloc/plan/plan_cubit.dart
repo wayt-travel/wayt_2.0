@@ -7,6 +7,7 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import '../../../../error/errors.dart';
 import '../../../../orchestration/fetch_plan_orchestrator.dart';
 import '../../../../repositories/repositories.dart';
+import '../../../../repositories/travel_item_repository/models/travel_item_entity_wrapper.dart';
 
 part 'plan_state.dart';
 
@@ -17,25 +18,22 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
 
   final TravelItemRepository travelItemRepository;
   final PlanRepository planRepository;
-  final WidgetRepository widgetRepository;
   final FetchPlanOrchestrator fetchPlanOrchestrator;
 
   /// The subscription to the [planRepository].
   StreamSubscription<PlanRepositoryState>? _planSubscription;
 
-  /// The subscription to the [widgetRepository].
-  StreamSubscription<WidgetRepositoryState>? _widgetSubscription;
+  /// The subscription to the [travelItemRepository].
+  StreamSubscription<TravelItemRepositoryState>? _travelItemRepoSub;
 
   /// Creates a [PlanCubit].
   PlanCubit({
     required this.planId,
     required this.planRepository,
-    required this.widgetRepository,
     required this.travelItemRepository,
     required SummaryHelperRepository summaryHelperRepository,
   })  : fetchPlanOrchestrator = FetchPlanOrchestrator(
           planRepository: planRepository,
-          widgetRepository: widgetRepository,
           travelItemRepository: travelItemRepository,
           summaryHelperRepository: summaryHelperRepository,
         ),
@@ -62,18 +60,19 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
     });
 
     // Listen to the widget repository and update the state accordingly
-    _widgetSubscription = widgetRepository.listen((repoState) {
+    _travelItemRepoSub = travelItemRepository.listen((repoState) {
       // Whether a new widget has been added to the plan.
-      final hasAddedWidget = repoState is WidgetRepositoryWidgetAdded &&
-          repoState.item.planOrJournalId.planId == planId;
+      final hasAddedWidget = repoState is TravelItemRepositoryTravelItemAdded &&
+          repoState.item.travelDocumentId.planId == planId;
       // Whether a widget has been deleted from the plan.
-      final hasDeletedWidget = repoState is WidgetRepositoryWidgetDeleted &&
-          repoState.item.planOrJournalId.planId == planId;
+      final hasDeletedWidget =
+          repoState is TravelItemRepositoryTravelItemDeleted &&
+              repoState.item.travelDocumentId.planId == planId;
       // Whether the collection of widgets has been fetched.
       final hasFetchedCollection =
-          repoState is WidgetRepositoryWidgetCollectionFetched &&
+          repoState is TravelItemRepositoryTravelItemCollectionFetched &&
               repoState.items
-                  .any((widget) => widget.planOrJournalId.planId == planId);
+                  .any((widget) => widget.travelDocumentId.planId == planId);
       // If any of the above conditions is true, emit a new state to update
       // the plan items list.
       if (hasAddedWidget || hasDeletedWidget || hasFetchedCollection) {
@@ -109,7 +108,7 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
   @override
   Future<void> close() {
     _planSubscription?.cancel().ignore();
-    _widgetSubscription?.cancel().ignore();
+    _travelItemRepoSub?.cancel().ignore();
     return super.close();
   }
 }

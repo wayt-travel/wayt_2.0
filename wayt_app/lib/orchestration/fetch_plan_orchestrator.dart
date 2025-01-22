@@ -13,8 +13,6 @@ final class FetchPlanOrchestrator with LoggerMixin {
   /// The plan repository.
   final PlanRepositoryWithDataSource planRepository;
 
-  /// The widget repository.
-  final WidgetRepository widgetRepository;
 
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
@@ -25,7 +23,6 @@ final class FetchPlanOrchestrator with LoggerMixin {
   /// Creates a new instance of [FetchPlanOrchestrator].
   FetchPlanOrchestrator({
     required PlanRepository planRepository,
-    required this.widgetRepository,
     required this.travelItemRepository,
     required this.summaryHelperRepository,
   }) : planRepository = planRepository as PlanRepositoryWithDataSource;
@@ -43,7 +40,7 @@ final class FetchPlanOrchestrator with LoggerMixin {
           'Plan with id $planId not found in repository. It will be fetched',
         );
       } else if (!summaryHelperRepository
-          .isFullyLoaded(PlanOrJournalId.plan(planId))) {
+          .isFullyLoaded(TravelDocumentId.plan(planId))) {
         logger.v(
           'Plan with id $planId found in repository cache but it is '
           'not fully loaded, it will be fully fetched',
@@ -67,21 +64,13 @@ final class FetchPlanOrchestrator with LoggerMixin {
       '${plan.toShortString()} and ${travelItems.length} travel items fetched '
       'from the data source',
     );
-    final widgets =
-        travelItems.where((item) => !item.isFolderWidget).cast<WidgetEntity>();
+    
     // No need to emit the state here as the plan has just been fetched.
-    widgetRepository.addAll(
-      planOrJournalId: PlanOrJournalId.plan(planId),
-      widgets: widgets,
+    travelItemRepository.addAll(
+      travelDocumentId: TravelDocumentId.plan(planId),
+      travelItems: travelItems,
       shouldEmit: false,
     );
-
-    // TODO: add widget folders to repository
-    // final widgetFolders = travelItems
-    //     .where((item) => item.isFolderWidget)
-    //     .cast<WidgetFolderEntity>();
-    // No need to emit the state here as the plan has just been fetched.
-    // widgetFolderRepository.addAll(widgetFolders, shouldEmit: false);
 
     // NB: The plan is added to the repository after the widgets and widget
     // folders as it will trigger a state change in the repository.

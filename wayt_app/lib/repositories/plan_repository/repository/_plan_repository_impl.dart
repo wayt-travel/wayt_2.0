@@ -42,7 +42,8 @@ class _PlanRepositoryImpl
     emit(PlanRepositoryPlanAdded(created));
     // When the plan is created, it is fully loaded because it does not have
     // any items yet.
-    summaryHelperRepository.setFullyLoaded(PlanOrJournalId.journal(created.id));
+    summaryHelperRepository
+        .setFullyLoaded(TravelDocumentId.journal(created.id));
     logger.i('Plan created and added to cache and map [$created].');
     return created;
   }
@@ -58,7 +59,7 @@ class _PlanRepositoryImpl
     // The plan has been fully fetched but its items have not been loaded
     // completely yet, e.g., widgets have not been added to the widget
     // repository cache, so it is not fully loaded.
-    summaryHelperRepository.unset(PlanOrJournalId.journal(plan.id));
+    summaryHelperRepository.unset(TravelDocumentId.journal(plan.id));
     logger.i('Plan fetched and added to cache and map [$plan].');
     return response;
   }
@@ -74,7 +75,7 @@ class _PlanRepositoryImpl
     _removeFromCacheAndMap(deletedItem);
     emit(PlanRepositoryPlanDeleted(deletedItem));
     // Remove the plan from the summary helper repository when it is deleted.
-    summaryHelperRepository.unset(PlanOrJournalId.journal(deletedItem.id));
+    summaryHelperRepository.unset(TravelDocumentId.journal(deletedItem.id));
     logger.i('Plan deleted and removed from cache and map [$deletedItem].');
   }
 
@@ -86,7 +87,7 @@ class _PlanRepositoryImpl
     _addAllToCacheAndMap(plans);
     // Unsets all plans of the user from the summary helper repository.
     for (final plan in plans) {
-      summaryHelperRepository.unset(PlanOrJournalId.journal(plan.id));
+      summaryHelperRepository.unset(TravelDocumentId.journal(plan.id));
     }
     emit(PlanRepositoryPlanCollectionFetched(plans));
     logger.i('${plans.length} plans fetched and added to cache and map.');

@@ -11,7 +11,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   final String id;
 
   @override
-  final PlanOrJournalId planOrJournalId;
+  final TravelDocumentId travelDocumentId;
 
   @override
   final DateTime createdAt;
@@ -20,7 +20,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   final DateTime? updatedAt;
 
   const TravelItemModel({
-    required this.planOrJournalId,
+    required this.travelDocumentId,
     required this.createdAt,
     required this.id,
     required this.updatedAt,
@@ -32,8 +32,12 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
       : throw StateError('The item is not a widget.');
 
   @override
-  // FIXME: check FolderWidget type.
-  bool get isFolderWidget => this is! WidgetEntity;
+  WidgetFolderEntity get asFolderWidget => isFolderWidget
+      ? this as WidgetFolderEntity
+      : throw StateError('The item is not a folder widget.');
+
+  @override
+  bool get isFolderWidget => this is WidgetFolderEntity;
 
   @override
   bool get isWidget => this is WidgetEntity;
@@ -41,7 +45,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   Map<String, dynamic> $toMap() => {
         'id': id,
-        'planOrJournalId': planOrJournalId,
+        'travelDocumentId': travelDocumentId,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt?.toIso8601String(),
       };
@@ -49,8 +53,14 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   List<Object?> get props => [
         id,
-        planOrJournalId,
+        travelDocumentId,
         createdAt,
         updatedAt,
       ];
+
+  /// Creates a copy of the model with the provided fields.
+  TravelItemModel copyWith({
+    int? order,
+    DateTime? updatedAt,
+  });
 }

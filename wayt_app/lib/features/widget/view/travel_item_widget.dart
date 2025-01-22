@@ -45,7 +45,7 @@ class _TravelItemWidgetState extends State<TravelItemWidget> {
               iconData: Icons.arrow_upward,
               onTap: (context) => AddWidgetMbs.show(
                 context,
-                id: widget.travelItem.planOrJournalId,
+                id: widget.travelItem.travelDocumentId,
                 // By passing the same index as the current widget, the new
                 // widget will be inserted above the current widget.
                 index: widget.index,
@@ -57,7 +57,7 @@ class _TravelItemWidgetState extends State<TravelItemWidget> {
               iconData: Icons.arrow_downward,
               onTap: (context) => AddWidgetMbs.show(
                 context,
-                id: widget.travelItem.planOrJournalId,
+                id: widget.travelItem.travelDocumentId,
                 // By passing the index + 1, the new widget will be inserted
                 // below the current widget. It is not a problem if the index is
                 // >= the number of widgets in the list, as in such case the new

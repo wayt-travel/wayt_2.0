@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-// TODO: move into sdk package
+import '../../util/util.dart';
+
 /// Converts a [Stream] into a [Listenable]
 ///
 /// {@tool snippet}
@@ -14,6 +15,7 @@ import 'package:flutter/widgets.dart';
 /// );
 /// ```
 /// {@end-tool}
+@SdkCandidate()
 class GoRouterRefreshStream extends ChangeNotifier {
   /// Creates a [GoRouterRefreshStream].
   ///

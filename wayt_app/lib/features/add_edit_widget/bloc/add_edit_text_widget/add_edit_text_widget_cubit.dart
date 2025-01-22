@@ -16,7 +16,7 @@ part 'add_edit_text_widget_state.dart';
 class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
     with LoggerMixin {
   /// The id of the plan or journal where the widget will be added.
-  final PlanOrJournalId id;
+  final TravelDocumentId id;
 
   /// The index where the widget will be added.
   ///
@@ -82,7 +82,7 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
           id: const Uuid().v4(),
           text: state.text!,
           textStyle: state.featureTextStyle,
-          planOrJournalId: id,
+          travelDocumentId: id,
           // The order is neglected at creation time.
           order: -1,
         ),

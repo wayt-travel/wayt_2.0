@@ -1,4 +1,4 @@
-import '../../repositories.dart';
+import '../../../repositories.dart';
 
 typedef UpsertWidgetOutput = ({
   WidgetModel widget,

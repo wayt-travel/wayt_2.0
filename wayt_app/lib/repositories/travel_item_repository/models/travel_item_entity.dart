@@ -7,7 +7,7 @@ import '../../repositories.dart';
 /// In general it can be a widget or a folder of widgets.
 abstract interface class TravelItemEntity implements Entity, ResourceEntity {
   /// The id of the Plan or Journal that contains the Widget.
-  PlanOrJournalId get planOrJournalId;
+  TravelDocumentId get travelDocumentId;
 
   /// Determines the order of the item in a plan or journal.
   ///
@@ -29,5 +29,8 @@ abstract interface class TravelItemEntity implements Entity, ResourceEntity {
   /// [isWidget] must be true.
   WidgetEntity get asWidget;
 
-  // TODO: add asFolderWidget to cast item to a folder widget
+  /// Casts the item to a folder widget.
+  ///
+  /// [isFolderWidget] must be true.
+  WidgetFolderEntity get asFolderWidget;
 }

@@ -1,4 +1,4 @@
-import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:uuid/uuid.dart';
 
@@ -31,7 +31,7 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
     required this.version,
     required this.order,
     required super.createdAt,
-    required super.planOrJournalId,
+    required super.travelDocumentId,
     required super.updatedAt,
   });
 
@@ -45,7 +45,7 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
     required String? folderId,
     required WidgetType type,
     required int order,
-    required PlanOrJournalId planOrJournalId,
+    required TravelDocumentId travelDocumentId,
     required DateTime createdAt,
     required DateTime? updatedAt,
   }) =>
@@ -56,7 +56,7 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
             features: features,
             folderId: folderId,
             createdAt: createdAt,
-            planOrJournalId: planOrJournalId,
+            travelDocumentId: travelDocumentId,
             updatedAt: updatedAt,
           ),
         // TODO: Handle this case.
@@ -65,8 +65,9 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
         WidgetType.place => throw UnimplementedError(),
       };
 
+  @override
   WidgetModel copyWith({
-    Optional<String?> folderId = const Optional.absent(),
+    Option<String?> folderId = const Option.none(),
     int? order,
     WidgetType? type,
     DateTime? updatedAt,

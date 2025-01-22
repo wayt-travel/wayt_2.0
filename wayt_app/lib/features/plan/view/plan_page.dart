@@ -25,7 +25,6 @@ class PlanPage {
           child: BlocProvider(
             create: (context) => PlanCubit(
               planRepository: $.repo.plan(),
-              widgetRepository: $.repo.widget(),
               travelItemRepository: $.repo.travelItem(),
               summaryHelperRepository: $.repo.summaryHelper(),
               planId: state.pathParameters['planId']!,
@@ -114,7 +113,7 @@ class PlanView extends StatelessWidget {
               ? FloatingActionButton(
                   onPressed: () => AddWidgetMbs.show(
                     context,
-                    id: PlanOrJournalId.plan(planId),
+                    id: TravelDocumentId.plan(planId),
                     // Index=null adds the widget at the end of the list.
                     index: null,
                   ),

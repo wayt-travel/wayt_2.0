@@ -1,13 +1,10 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
+import '../../repositories.dart';
+
 /// Travel plan entity.
-abstract interface class PlanEntity implements Entity, ResourceEntity {
-  /// The name of the travel plan.
-  String get name;
-
-  /// The id of the owner of the travel plan.
-  String get userId;
-
+abstract interface class PlanEntity
+    implements TravelDocument, Entity, ResourceEntity {
   /// The tags associated with the travel plan.
   List<String> get tags;
 

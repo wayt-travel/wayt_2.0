@@ -11,7 +11,7 @@ final class TextWidgetModel extends WidgetModel {
     required String text,
     required int order,
     required FeatureTextStyle textStyle,
-    required PlanOrJournalId planOrJournalId,
+    required TravelDocumentId travelDocumentId,
     String? folderId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -29,7 +29,7 @@ final class TextWidgetModel extends WidgetModel {
         ],
         folderId: folderId,
         createdAt: createdAt ?? DateTime.now().toUtc(),
-        planOrJournalId: planOrJournalId,
+        travelDocumentId: travelDocumentId,
         updatedAt: updatedAt,
       );
 
@@ -39,7 +39,7 @@ final class TextWidgetModel extends WidgetModel {
     required super.features,
     required super.folderId,
     required super.createdAt,
-    required super.planOrJournalId,
+    required super.travelDocumentId,
     required super.updatedAt,
   })  : assert(
           features.length == 1 && features.first is TextWidgetFeatureEntity,
@@ -55,7 +55,7 @@ final class TextWidgetModel extends WidgetModel {
   TextWidgetModel copyWith({
     String? text,
     FeatureTextStyle? textStyle,
-    Optional<String?> folderId = const Optional.absent(),
+    Option<String?> folderId = const Option.none(),
     int? order,
     WidgetType? type,
     DateTime? updatedAt,
@@ -72,9 +72,9 @@ final class TextWidgetModel extends WidgetModel {
           textStyle: textStyle ?? feature.textStyle,
         ),
       ],
-      folderId: folderId.orElseIfAbsent(this.folderId),
+      folderId: folderId.getOrElse(() => this.folderId),
       createdAt: createdAt,
-      planOrJournalId: planOrJournalId,
+      travelDocumentId: travelDocumentId,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }

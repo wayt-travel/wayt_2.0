@@ -1,7 +1,7 @@
-import 'package:a2f_sdk/a2f_sdk.dart';
-import 'package:flext/flext.dart';
+import 'dart:async';
 
-import '../../../util/util.dart';
+import 'package:a2f_sdk/a2f_sdk.dart';
+
 import '../../repositories.dart';
 
 part '_widget_repository_impl.dart';
@@ -9,13 +9,11 @@ part 'widget_repository_state.dart';
 
 abstract interface class WidgetRepository
     extends Repository<String, WidgetEntity, WidgetRepositoryState> {
-  /// Creates a new instance of [WidgetRepository] that uses the provided data
-  /// source.
+  /// Creates a new instance of [WidgetRepository].
   factory WidgetRepository({
-    required WidgetDataSource dataSource,
-    required SummaryHelperRepository summaryHelperRepository,
+    required TravelItemRepository travelItemRepository,
   }) =>
-      _WidgetRepositoryImpl(dataSource, summaryHelperRepository);
+      _WidgetRepositoryImpl(travelItemRepository);
 
   /// Creates a new Widget at the given [index] in the plan or journal.
   ///
@@ -33,21 +31,4 @@ abstract interface class WidgetRepository
 
   /// Deletes a widget by its [id].
   Future<void> delete(String id);
-
-  /// Adds all [widgets] of [planOrJournalId] into the repository without
-  /// fetching them from the data source.
-  ///
-  /// If [shouldEmit] is `false`, the repository will not emit a state change
-  /// upon adding the widgets.
-  void addAll({
-    required PlanOrJournalId planOrJournalId,
-    required Iterable<WidgetEntity> widgets,
-    bool shouldEmit = true,
-  });
-
-  /// Gets all widgets of a plan with the given [planId] from the cache.
-  List<WidgetEntity> getAllOfPlan(String planId);
-
-  /// Gets all widgets of a journal with the given [journalId] from the cache.
-  List<WidgetEntity> getAllOfJournal(String journalId);
 }

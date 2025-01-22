@@ -8,7 +8,7 @@ sealed class SummaryHelperRepositoryState extends RepositoryState<void>
 
 /// State for when a repository item changes.
 class SummaryHelperRepositoryChanged extends SummaryHelperRepositoryState {
-  final PlanOrJournalId id;
+  final TravelDocumentId id;
   final bool isFullyLoaded;
 
   const SummaryHelperRepositoryChanged({

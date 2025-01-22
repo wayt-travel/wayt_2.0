@@ -10,10 +10,10 @@ import 'text/scales/text_widget_scale_button.dart';
 import 'text/text_widget_modal.dart';
 
 class AddWidgetMbs extends StatelessWidget {
-  final PlanOrJournalId id;
+  final TravelDocumentId id;
   final int? index;
   final ScrollController? scrollController;
-  
+
   const AddWidgetMbs({
     required this.id,
     required this.index,
@@ -23,7 +23,7 @@ class AddWidgetMbs extends StatelessWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required PlanOrJournalId id,
+    required TravelDocumentId id,
     required int? index,
   }) =>
       ModalBottomSheet.of(context).showExpanded(
