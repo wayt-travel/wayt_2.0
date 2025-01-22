@@ -174,7 +174,7 @@ void main() {
       );
     });
 
-    test('should throw if adding two items with the same order', () {
+    test('should give no problem if adding two items with the same order', () {
       final widget1 = _buildWidget(
         travelDocumentId: travelDocumentId,
         order: 0,
@@ -183,10 +183,21 @@ void main() {
         travelDocumentId: travelDocumentId,
         order: 0,
       );
-      repository.upsertInCacheAndMaps(widget1);
+      final widget3 = _buildWidget(
+        travelDocumentId: travelDocumentId,
+        order: 0,
+      );
+      repository
+        ..upsertInCacheAndMaps(widget1)
+        ..upsertInCacheAndMaps(widget2)
+        ..upsertInCacheAndMaps(widget3);
       expect(
-        () => repository.upsertInCacheAndMaps(widget2),
-        throwsA(isA<StateError>()),
+        const ListEquality<String>().equals(
+          repository.travelDocumentToItemsMap[travelDocumentId]!.keys.toList(),
+          // it should be sorted by id if the order is the same
+          [widget1.id, widget2.id, widget3.id].sorted(),
+        ),
+        isTrue,
       );
     });
 

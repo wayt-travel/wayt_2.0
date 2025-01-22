@@ -77,14 +77,12 @@ class TravelItemRepositoryImpl
           final o1 = get(k1)?.order ?? double.negativeInfinity;
           final o2 = get(k2)?.order ?? double.negativeInfinity;
           final compareResult = o1.compareTo(o2);
-          if (compareResult == 0 && k1 != k2 && o1 != double.negativeInfinity) {
+          if (compareResult == 0 && k1 != k2) {
             // If we're comparing two items with different keys but the same
-            // order, we throw an error because the SplayTreeMap should not
-            // contain two different items with the same order.
-            throw StateError(
-              'SplayTreeMap should not contain two items with the same '
-              'order or it can malfunction',
-            );
+            // order, we cannot return 0 because the SplayTreeMap will think
+            // that the items are the same and will not insert the second item.
+            // Sp we return a comparison based on the keys.
+            return k1.compareTo(k2);
           }
           return compareResult;
         },
