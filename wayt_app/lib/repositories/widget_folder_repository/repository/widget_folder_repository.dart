@@ -15,9 +15,6 @@ abstract interface class WidgetFolderRepository extends Repository<String,
   /// Creates a new WidgetFolder.
   Future<UpsertWidgetFolderOutput> create(CreateWidgetFolderInput input);
 
-  /// Fetches all widget_folder.
-  Future<List<WidgetFolderEntity>> fetchMany();
-
   /// Fetches a widget_folder by its [id].
   Future<WidgetFolderEntity> fetchOne(String id);
 

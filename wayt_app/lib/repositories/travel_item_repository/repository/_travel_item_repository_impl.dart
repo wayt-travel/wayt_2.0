@@ -223,9 +223,35 @@ class TravelItemRepositoryImpl
   }
 
   @override
-  Future<UpsertWidgetFolderOutput> createFolder(CreateWidgetFolderInput input) {
-    // TODO: implement createFolder
-    throw UnimplementedError();
+  Future<UpsertWidgetFolderOutput> createFolder(
+    CreateWidgetFolderInput input,
+  ) async {
+    logger.v('Creating folder with input: $input');
+    final response = await widgetFolderDataSource.create(input);
+    final (widgetFolder: created, :updatedOrders) = response;
+    logger.v(
+      '${created.toShortString()} created and ${updatedOrders.length} other '
+      'item orders updated.',
+    );
+    updateItemOrders(created.travelDocumentId, updatedOrders);
+    upsertInCacheAndMaps(created);
+    emit(
+      TravelItemRepositoryItemOrdersUpdated(
+        travelDocumentId: created.travelDocumentId,
+        updatedOrders: updatedOrders,
+      ),
+    );
+    emit(
+      TravelItemRepositoryItemOrdersUpdated(
+        travelDocumentId: created.travelDocumentId,
+        updatedOrders: updatedOrders,
+      ),
+    );
+    emit(TravelItemRepositoryTravelItemAdded(created));
+    logger.i(
+      'Folder created, added to cache and maps [$created] and orders updated',
+    );
+    return response;
   }
 
   @override

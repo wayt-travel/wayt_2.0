@@ -41,22 +41,7 @@ class PlanTile extends StatelessWidget {
       ),
       leading: CircleAvatar(
         backgroundColor: accentColor,
-        child:
-            // Icon(
-            //   // TEMP:
-            //   // Shows a random icon based on the plan id.
-            //   IconData(
-            //     0xe000 +
-            //         int.parse(
-            //               plan.id.substring(plan.id.length - 8),
-            //               radix: 16,
-            //             ) %
-            //             1790,
-            //     fontFamily: 'MaterialIcons',
-            //   ),
-            //   color: context.col.primaryContainer,
-            // ),
-            Text(
+        child: Text(
           '${index + 1}',
           style: context.tt.bodyMedium?.copyWith(
             color: context.col.onInverseSurface,

@@ -22,11 +22,6 @@ class _WidgetFolderRepositoryImpl
   }
 
   @override
-  Future<List<WidgetFolderEntity>> fetchMany() {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<WidgetFolderEntity> fetchOne(String id) async {
     final item = await _dataSource.read(id);
     cache.save(item.id, item);
