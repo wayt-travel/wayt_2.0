@@ -156,8 +156,15 @@ class TravelItemRepositoryImpl
   /// Updates the orders of items of the travel document with the given [id] to
   /// match the provided [updatedOrders] map.
   ///
-  /// The [updatedOrders] map has entries whose keys are the ids of the items
-  /// whose order has changed and values their new order value.
+  /// It supports updating the order of items in the root of the travel document
+  /// as well as the order of items in folders.
+  ///
+  /// The [updatedOrders] map has entries where:
+  /// - the key is the id of a travel item
+  /// - the value is the new order of the item
+  ///
+  /// If the item is not present in the [updatedOrders] map, it is assumed that
+  /// the item order has not changed.
   @visibleForTesting
   @protected
   void updateItemOrders(
@@ -174,9 +181,10 @@ class TravelItemRepositoryImpl
     // First we make sure to remove all items in the root of a travel document.
     // This is needed in order for the SplayTreeMap to function properly without
     // too much complicated logic below.
+    // NB: the items are not removed from the cache, only from the map!
     for (final itemId in updatedOrders.keys) {
-      final item = cache.getOrThrow(itemId) as WidgetModel;
-      if (item.isFolderWidget || item.folderId == null) {
+      final item = cache.getOrThrow(itemId);
+      if (item.isFolderWidget || item.asWidget.folderId == null) {
         _travelDocumentToItemsMap[id]!.remove(itemId);
       }
     }
@@ -184,7 +192,7 @@ class TravelItemRepositoryImpl
     for (final entry in updatedOrders.entries) {
       final itemId = entry.key;
       final newOrder = entry.value;
-      final item = cache.getOrThrow(itemId) as WidgetModel;
+      final item = cache.getOrThrow(itemId);
       if (item.travelDocumentId != id) {
         throw ArgumentError(
           'Item ${item.id} does not belong to travel document $id.',
@@ -192,6 +200,8 @@ class TravelItemRepositoryImpl
       }
       // Update the item with the new order.
       final updated = item.copyWith(order: newOrder);
+      // Writes the item into the cache (override) and adds the item back to the
+      // map (since before it has been removed)
       upsertInCacheAndMaps(updated);
     }
   }
@@ -247,7 +257,11 @@ class TravelItemRepositoryImpl
         updatedOrders: updatedOrders,
       ),
     );
-    emit(TravelItemRepositoryTravelItemAdded(created));
+    emit(
+      TravelItemRepositoryTravelItemAdded(
+        TravelItemEntityWrapper.folder(created, []),
+      ),
+    );
     logger.i(
       'Folder created, added to cache and maps [$created] and orders updated',
     );
@@ -259,7 +273,7 @@ class TravelItemRepositoryImpl
     WidgetModel widget,
     int? index,
   ) async {
-    logger.v('Creating widget with input: $widget');
+    logger.v('Creating widget with input: ${widget.toStringVerbose()}');
     final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
     logger.v(
@@ -274,7 +288,11 @@ class TravelItemRepositoryImpl
         updatedOrders: updatedOrders,
       ),
     );
-    emit(TravelItemRepositoryTravelItemAdded(created));
+    emit(
+      TravelItemRepositoryTravelItemAdded(
+        TravelItemEntityWrapper.widget(created),
+      ),
+    );
     logger.i(
       'Widget created, added to cache and maps [$created] and orders updated',
     );
@@ -287,36 +305,42 @@ class TravelItemRepositoryImpl
     required bool deleteContent,
   }) async {
     logger.v('Deleting folder with id: $id');
-    final deletedItem = cache.getOrThrow(id);
+    final deletedItemWrapper = getWrappedOrThrow(id);
+    final deletedItem = deletedItemWrapper.value;
     await widgetFolderDataSource.delete(id);
     logger.v(
       'Folder ${deletedItem.id} deleted. Removing it from cache and maps.',
     );
     removeFromCacheAndMaps(deletedItem);
-    emit(TravelItemRepositoryTravelItemDeleted(deletedItem));
+    emit(
+      TravelItemRepositoryTravelItemDeleted(deletedItemWrapper),
+    );
     logger.i('Folder deleted and removed from cache and maps [$deletedItem].');
   }
 
   @override
   Future<void> deleteWidget(String id) async {
     logger.v('Deleting widget with id: $id');
-    final deletedItem = cache.getOrThrow(id);
+    final deletedItemWrapper = getWrappedOrThrow(id);
+    final deletedItem = deletedItemWrapper.value;
     await widgetDataSource.delete(id);
     logger.v(
       'Widget ${deletedItem.id} deleted. Removing it from cache and maps.',
     );
     removeFromCacheAndMaps(deletedItem);
-    emit(TravelItemRepositoryTravelItemDeleted(deletedItem));
+    emit(TravelItemRepositoryTravelItemDeleted(deletedItemWrapper));
     logger.i('Widget deleted and removed from cache and maps [$deletedItem].');
   }
 
   /// Wraps a travel item in a [TravelItemEntityWrapper].
   TravelItemEntityWrapper _wrapItem(TravelItemRepoHelper item) => item.isFolder
       ? TravelItemEntityWrapper.folder(
-          cache.getOrThrow(item.id),
-          item.widgetIds!.map(cache.getOrThrow).toList(),
+          cache.getOrThrow(item.id).asFolderWidget,
+          item.widgetIds!.map(cache.getOrThrow).cast<WidgetEntity>().toList(),
         )
-      : TravelItemEntityWrapper.widget(cache.getOrThrow(item.id));
+      : TravelItemEntityWrapper.widget(
+          cache.getOrThrow(item.id).asWidget,
+        );
 
   /// Gets all items of a journal or plan with the given `String`
   /// [travelDocumentId].
@@ -348,11 +372,28 @@ class TravelItemRepositoryImpl
   @override
   void addAll({
     required TravelDocumentId travelDocumentId,
-    required Iterable<TravelItemEntity> travelItems,
+    required Iterable<TravelItemEntityWrapper> travelItems,
     bool shouldEmit = true,
   }) {
     logger.v('Adding ${travelItems.length} items to cache and maps');
-    for (final item in travelItems) {
+    // We need to insert folders before widgets because when inserting a widget
+    // that is contained in a folder it is required that the folder is already
+    // in the cache and maps.
+    final travelItemsWithFoldersBefore = travelItems
+        .flatMap(
+          (item) => <TravelItemEntity>[
+            item.value,
+            if (item.isFolderWidget) ...item.asFolderWidgetWrapper.children,
+          ],
+        )
+        .sorted(
+          (i1, i2) => i1.isFolderWidget
+              ? -1
+              : i2.isFolderWidget
+                  ? 1
+                  : 0,
+        );
+    for (final item in travelItemsWithFoldersBefore) {
       upsertInCacheAndMaps(item);
     }
     logger.i('${travelItems.length} items added to cache and maps');
@@ -377,11 +418,16 @@ class TravelItemRepositoryImpl
           _travelDocumentToItemsMap[item.travelDocumentId]?[item.id];
       if (itemHelper == null) return orElse?.call();
       return TravelItemEntityWrapper.folder(
-        item,
-        itemHelper.widgetIds!.map(cache.getOrThrow).toList(),
+        item.asFolderWidget,
+        itemHelper.widgetIds!
+            .map(cache.getOrThrow)
+            .cast<WidgetEntity>()
+            .toList(),
       );
     }
-    return TravelItemEntityWrapper.widget(cache.getOrThrow(item.id));
+    return TravelItemEntityWrapper.widget(
+      cache.getOrThrow(item.id).asWidget,
+    );
   }
 
   @override

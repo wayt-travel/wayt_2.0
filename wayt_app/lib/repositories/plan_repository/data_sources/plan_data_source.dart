@@ -12,7 +12,7 @@ abstract interface class PlanDataSource {
   /// Read a plan by its id.
   ///
   /// It returns the plan with its items.
-  Future<PlanWithItems> readById(String id);
+  Future<TravelDocumentWrapper<PlanModel>> readById(String id);
 
   /// Delete a plan by its id.
   Future<void> delete(String id);

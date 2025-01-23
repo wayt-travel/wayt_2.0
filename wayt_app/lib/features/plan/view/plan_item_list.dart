@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
-import '../../../repositories/travel_item_repository/models/travel_item_entity_wrapper.dart';
-import '../../widget/widget.dart';
+import '../../folder_display/bloc/folder/folder_cubit.dart';
+import '../../folder_display/view/folder_widget.dart';
+import '../../widget_display/widget_display.dart';
 
 /// A widget displaying the list of travel items of a plan.
 class PlanItemList extends StatelessWidget {
-  /// The plan.
-  final PlanEntity plan;
-
   /// The list of travel items.
   final List<TravelItemEntityWrapper> travelItems;
 
   /// Creates a new instance of [PlanItemList].
   const PlanItemList({
-    required this.plan,
     required this.travelItems,
     super.key,
   });
@@ -42,17 +41,21 @@ class PlanItemList extends StatelessWidget {
       itemBuilder: (context, index) {
         final wrapper = travelItems[index];
         if (wrapper.value.isFolderWidget) {
-          // TODO: Implement folder widgets
-          throw UnimplementedError('Folder widgets are not supported yet');
-        } else {
-          // TODO: wrap each item with its own cubit/bloc
-          return TravelItemWidget(
+          return BlocProvider(
             key: ValueKey(wrapper.value.id),
-            index: index,
-            travelItem: wrapper.value,
-            child: _buildTile(context, wrapper.value),
+            create: (context) => FolderCubit(
+              folderId: wrapper.value.id,
+              travelItemRepository: $.repo.travelItem(),
+            ),
+            child: FolderWidget(index: index),
           );
         }
+        return TravelWidget(
+          key: ValueKey(wrapper.value.id),
+          index: index,
+          travelItem: wrapper.value,
+          child: _buildTile(context, wrapper.value),
+        );
       },
     );
   }

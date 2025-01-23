@@ -49,10 +49,10 @@ class _PlanRepositoryImpl
   }
 
   @override
-  Future<PlanWithItems> fetchOne(String id) async {
+  Future<TravelDocumentWrapper<PlanEntity>> fetchOne(String id) async {
     logger.v('Fetching plan with id: $id');
-    final response = await dataSource.readById(id);
-    final (:plan, :travelItems) = response;
+    final wrapper = await dataSource.readById(id);
+    final plan = wrapper.travelDocument;
     logger.v('${plan.toShortString()} fetched. Adding it to cache and map.');
     _addToCacheAndMap(plan);
     emit(PlanRepositoryPlanFetched(plan));
@@ -61,7 +61,7 @@ class _PlanRepositoryImpl
     // repository cache, so it is not fully loaded.
     summaryHelperRepository.unset(TravelDocumentId.journal(plan.id));
     logger.i('Plan fetched and added to cache and map [$plan].');
-    return response;
+    return wrapper;
   }
 
   @override

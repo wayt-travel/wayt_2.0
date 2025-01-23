@@ -7,11 +7,13 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import '../../../../error/errors.dart';
 import '../../../../orchestration/fetch_plan_orchestrator.dart';
 import '../../../../repositories/repositories.dart';
-import '../../../../repositories/travel_item_repository/models/travel_item_entity_wrapper.dart';
 
 part 'plan_state.dart';
 
 /// Cubit for the plan screen.
+///
+/// TODO: turn it into a TravelItemCubit that supports plans and journals as
+/// well
 class PlanCubit extends Cubit<PlanState> with LoggerMixin {
   /// The ID of the plan.
   final String planId;
@@ -40,6 +42,7 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
         super(PlanInitial()) {
     // Listen to the plan repository and update the state accordingly
     _planSubscription = planRepository.listen((repoState) {
+      if (isClosed) return;
       if (repoState is PlanRepositoryPlanFetched &&
           repoState.item.id == planId) {
         emit(
@@ -63,16 +66,16 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
     _travelItemRepoSub = travelItemRepository.listen((repoState) {
       // Whether a new widget has been added to the plan.
       final hasAddedWidget = repoState is TravelItemRepositoryTravelItemAdded &&
-          repoState.item.travelDocumentId.planId == planId;
+          repoState.item.value.travelDocumentId.id == planId;
       // Whether a widget has been deleted from the plan.
       final hasDeletedWidget =
           repoState is TravelItemRepositoryTravelItemDeleted &&
-              repoState.item.travelDocumentId.planId == planId;
+              repoState.item.value.travelDocumentId.id == planId;
       // Whether the collection of widgets has been fetched.
       final hasFetchedCollection =
           repoState is TravelItemRepositoryTravelItemCollectionFetched &&
               repoState.items
-                  .any((widget) => widget.travelDocumentId.planId == planId);
+                  .any((widget) => widget.value.travelDocumentId.id == planId);
       // If any of the above conditions is true, emit a new state to update
       // the plan items list.
       if (hasAddedWidget || hasDeletedWidget || hasFetchedCollection) {

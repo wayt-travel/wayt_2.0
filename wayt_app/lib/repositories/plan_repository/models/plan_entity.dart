@@ -4,7 +4,7 @@ import '../../repositories.dart';
 
 /// Travel plan entity.
 abstract interface class PlanEntity
-    implements TravelDocument, Entity, ResourceEntity {
+    implements TravelDocumentEntity, Entity, ResourceEntity {
   /// The tags associated with the travel plan.
   List<String> get tags;
 

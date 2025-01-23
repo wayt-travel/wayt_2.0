@@ -3,11 +3,12 @@ import 'dart:collection';
 
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flext/flext.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../util/util.dart';
 import '../../repositories.dart';
-import '../models/travel_item_entity_wrapper.dart';
 
 part '_travel_item_repository_impl.dart';
 part 'travel_item_repository_state.dart';
@@ -88,11 +89,13 @@ abstract interface class TravelItemRepository
   /// Adds all [travelItems] of [travelDocumentId] into the repository without
   /// fetching them from the data source.
   ///
+  /// This operation supports overriding existing items (with the same id).
+  ///
   /// If [shouldEmit] is `false`, the repository will not emit a state change
   /// upon adding the travel items.
   void addAll({
     required TravelDocumentId travelDocumentId,
-    required Iterable<TravelItemEntity> travelItems,
+    required Iterable<TravelItemEntityWrapper> travelItems,
     bool shouldEmit = true,
   });
 }

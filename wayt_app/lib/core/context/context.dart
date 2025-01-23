@@ -18,14 +18,12 @@ final class $ {
     AuthRepository Function() auth,
     PlanRepository Function() plan,
     UserRepository Function() user,
-    WidgetRepository Function() widget,
     TravelItemRepository Function() travelItem,
     SummaryHelperRepository Function() summaryHelper,
   }) get repo => (
         auth: GetIt.I.get<AuthRepository>,
         user: GetIt.I.get<UserRepository>,
         plan: GetIt.I.get<PlanRepository>,
-        widget: GetIt.I.get<WidgetRepository>,
         travelItem: GetIt.I.get<TravelItemRepository>,
         summaryHelper: GetIt.I.get<SummaryHelperRepository>,
       );

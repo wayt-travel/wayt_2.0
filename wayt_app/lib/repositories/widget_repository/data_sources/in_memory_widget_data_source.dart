@@ -18,10 +18,20 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
         'The travel document does not exist.',
       );
     }
-    // Get the travel items of the plan or journal and insert the widget at the
-    // specified index.
-    var travelItems =
-        _dataHelper.getTravelItemsOfTravelDocument(widget.travelDocumentId);
+    late List<TravelItemEntity> travelItems;
+    if (widget.folderId != null) {
+      // The widget must be inserted in a folder.
+      final folderWrapper =
+          _dataHelper.getWidgetFolderWrapper(widget.folderId!);
+      // The travel items are the children of the folder.
+      travelItems = folderWrapper.children;
+    } else {
+      // Get the travel items in the root of the travel document.
+      travelItems = _dataHelper
+          .getTravelDocumentWrapper(widget.travelDocumentId)
+          .rootTravelItems
+          .toList();
+    }
 
     if (index == null) {
       travelItems.add(widget);
@@ -37,7 +47,10 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
 
     // Recompute the order of the travel items after the insertion.
     travelItems = travelItems
-        .mapIndexed((i, w) => w.order != i ? w.copyWith(order: i) : w)
+        .mapIndexed(
+          (i, w) =>
+              w.order != i ? (w as TravelItemModel).copyWith(order: i) : w,
+        )
         .toList();
 
     // Save the updated widgets.

@@ -66,6 +66,12 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
       };
 
   @override
+  bool get belongsToAFolder => folderId != null;
+
+  @override
+  bool get doesNotBelongToAFolder => folderId == null;
+
+  @override
   WidgetModel copyWith({
     Option<String?> folderId = const Option.none(),
     int? order,

@@ -24,7 +24,7 @@ abstract interface class PlanRepository
   /// Fetches a full plan by its [id].
   ///
   /// The plan is returned with its items.
-  Future<PlanWithItems> fetchOne(String id);
+  Future<TravelDocumentWrapper<PlanEntity>> fetchOne(String id);
 
   /// Deletes a plan by its [id].
   Future<void> delete(String id);

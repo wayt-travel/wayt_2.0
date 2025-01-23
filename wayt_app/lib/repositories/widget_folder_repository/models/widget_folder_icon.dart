@@ -1,27 +1,41 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 /// Model for the Icon of a folder.
-final class WidgetFolderIcon extends Model
-    with EquatableMixin
-    implements IModel {
-  /// The code of the icon.
-  final int code;
-
-  /// The font family of the icon.
-  final String fontFamily;
-
+final class WidgetFolderIcon extends IconData
+    with EquatableMixin, ModelToStringMixin
+    implements Entity, IModel {
   WidgetFolderIcon({
-    required this.code,
-    required this.fontFamily,
-  });
+    required int codePoint,
+    String? fontFamily,
+  }) : super(
+          codePoint,
+          fontFamily: fontFamily,
+        );
+
+  WidgetFolderIcon.fromIconData(IconData iconData)
+      : super(
+          iconData.codePoint,
+          fontFamily: iconData.fontFamily,
+          fontPackage: iconData.fontPackage,
+          fontFamilyFallback: iconData.fontFamilyFallback,
+          matchTextDirection: iconData.matchTextDirection,
+        );
 
   @override
-  List<Object?> get props => [code, fontFamily];
+  List<Object?> get props => [
+        codePoint,
+        fontFamily,
+        fontFamilyFallback,
+        fontPackage,
+        matchTextDirection,
+      ];
 
   @override
   Map<String, dynamic> $toMap() => {
-        'code': code,
+        'codePoint': codePoint,
         'fontFamily': fontFamily,
+        'fontPackage': fontPackage,
       };
 }

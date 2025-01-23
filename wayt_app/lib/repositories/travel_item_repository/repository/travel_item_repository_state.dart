@@ -1,17 +1,15 @@
 part of 'travel_item_repository.dart';
 
-typedef TravelItemRepositoryState = RepositoryState<TravelItemEntity>;
+typedef TravelItemRepositoryState = RepositoryState<TravelItemEntityWrapper>;
 
 typedef TravelItemRepositoryTravelItemAdded
-    = RepositoryItemAdded<TravelItemEntity>;
+    = RepositoryItemAdded<TravelItemEntityWrapper>;
 typedef TravelItemRepositoryTravelItemCollectionFetched
-    = RepositoryCollectionFetched<TravelItemEntity>;
-typedef TravelItemRepositoryTravelItemFetched
-    = RepositoryItemFetched<TravelItemEntity>;
+    = RepositoryCollectionFetched<TravelItemEntityWrapper>;
 typedef TravelItemRepositoryTravelItemUpdated
-    = RepositoryItemUpdated<TravelItemEntity>;
+    = RepositoryItemUpdated<TravelItemEntityWrapper>;
 typedef TravelItemRepositoryTravelItemDeleted
-    = RepositoryItemDeleted<TravelItemEntity>;
+    = RepositoryItemDeleted<TravelItemEntityWrapper>;
 
 /// State for when the order of travel items is updated.
 class TravelItemRepositoryItemOrdersUpdated extends TravelItemRepositoryState {

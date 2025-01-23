@@ -13,7 +13,6 @@ final class FetchPlanOrchestrator with LoggerMixin {
   /// The plan repository.
   final PlanRepositoryWithDataSource planRepository;
 
-
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
@@ -28,7 +27,7 @@ final class FetchPlanOrchestrator with LoggerMixin {
   }) : planRepository = planRepository as PlanRepositoryWithDataSource;
 
   /// Fetches a plan by its [planId].
-  Future<PlanEntity> fetchPlan({
+  Future<void> fetchPlan({
     required String planId,
     required bool force,
   }) async {
@@ -52,23 +51,24 @@ final class FetchPlanOrchestrator with LoggerMixin {
         );
         // Readd the plan to the repository to trigger a state change.
         planRepository.add(cachedPlan, shouldEmit: true);
-        return cachedPlan;
+        return;
       }
     }
 
     logger.v('Fetching plan $planId from the data source');
-    final response = await planRepository.dataSource.readById(planId);
-    final (:plan, :travelItems) = response;
+    final wrapper = await planRepository.dataSource.readById(planId);
+    final plan = wrapper.travelDocument;
+    final travelItems = wrapper.travelItems;
 
     logger.i(
       '${plan.toShortString()} and ${travelItems.length} travel items fetched '
       'from the data source',
     );
-    
+
     // No need to emit the state here as the plan has just been fetched.
     travelItemRepository.addAll(
       travelDocumentId: TravelDocumentId.plan(planId),
-      travelItems: travelItems,
+      travelItems: wrapper.travelItems,
       shouldEmit: false,
     );
 
@@ -77,7 +77,5 @@ final class FetchPlanOrchestrator with LoggerMixin {
     // The emission of the state is the trigger to update the UI and the
     // UI should be updated only after all the data has been fetched and loaded.
     planRepository.add(plan, shouldEmit: true);
-
-    return plan;
   }
 }

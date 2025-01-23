@@ -16,7 +16,12 @@ part 'add_edit_text_widget_state.dart';
 class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
     with LoggerMixin {
   /// The id of the plan or journal where the widget will be added.
-  final TravelDocumentId id;
+  final TravelDocumentId travelDocumentId;
+
+  /// The id of the folder where the widget will be added.
+  ///
+  /// Null if the widget is being added to the root of the travel document.
+  final String? folderId;
 
   /// The index where the widget will be added.
   ///
@@ -25,14 +30,15 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
   final int? index;
 
   /// The widget repository.
-  final WidgetRepository widgetRepository;
+  final TravelItemRepository travelItemRepository;
 
   AddEditTextWidgetCubit({
     required FeatureTextStyleScale textScale,
     required String? text,
     required this.index,
-    required this.id,
-    required this.widgetRepository,
+    required this.travelDocumentId,
+    required this.folderId,
+    required this.travelItemRepository,
   }) : super(
           AddEditTextWidgetState.initial(
             featureTextStyle: FeatureTextStyle(scale: textScale),
@@ -63,7 +69,9 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
   }
 
   Future<void> submit() async {
-    logger.v('Submitting text widget in $id');
+    logger.v(
+      'Submitting text widget in $travelDocumentId and folderId=$folderId...',
+    );
     emit(
       state.copyWith(status: StateStatus.progress),
     );
@@ -77,12 +85,13 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
     }
 
     try {
-      await widgetRepository.create(
+      await travelItemRepository.createWidget(
         TextWidgetModel(
           id: const Uuid().v4(),
           text: state.text!,
           textStyle: state.featureTextStyle,
-          travelDocumentId: id,
+          travelDocumentId: travelDocumentId,
+          folderId: folderId,
           // The order is neglected at creation time.
           order: -1,
         ),
