@@ -11,18 +11,21 @@ import 'text/text_widget_modal.dart';
 
 class AddWidgetMbs extends StatelessWidget {
   final TravelDocumentId id;
+  final String? folderId;
   final int? index;
   final ScrollController? scrollController;
 
   const AddWidgetMbs({
     required this.id,
     required this.index,
+    required this.folderId,
     super.key,
     this.scrollController,
   });
 
   static Future<void> show(
     BuildContext context, {
+    required String? folderId,
     required TravelDocumentId id,
     required int? index,
   }) =>
@@ -31,6 +34,7 @@ class AddWidgetMbs extends StatelessWidget {
           bottom: false,
           child: AddWidgetMbs(
             scrollController: scrollController,
+            folderId: folderId,
             index: index,
             id: id,
           ),
@@ -73,9 +77,10 @@ class AddWidgetMbs extends StatelessWidget {
                           context.navRoot.pop();
                           TextWidgetModal.show(
                             context: context,
-                            id: id,
+                            travelDocumentId: id,
                             index: index,
-                            style: scale,
+                            textScale: scale,
+                            folderId: folderId,
                           );
                         },
                       ),

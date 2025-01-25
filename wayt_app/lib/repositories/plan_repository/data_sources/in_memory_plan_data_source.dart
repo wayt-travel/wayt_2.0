@@ -21,7 +21,7 @@ final class InMemoryPlanDataSource implements PlanDataSource {
       updatedAt: null,
     );
 
-    _dataHelper.savePlan(plan);
+    _dataHelper.saveTravelDocument(plan);
 
     return plan;
   }
@@ -35,17 +35,14 @@ final class InMemoryPlanDataSource implements PlanDataSource {
   @override
   Future<List<PlanModel>> readAllOfUser(String userId) async =>
       waitFakeTime().then(
-        (_) => _dataHelper.getPlansWhere(
+        (_) => _dataHelper.getSortedPlansWhere(
           (plan) => plan.userId == userId,
         ),
       );
 
   @override
-  Future<PlanWithItems> readById(String id) async {
+  Future<TravelDocumentWrapper<PlanModel>> readById(String id) async {
     await waitFakeTime();
-    final plan = _dataHelper.getPlan(id);
-    final items =
-        _dataHelper.getTravelItemsOfTravelDocument(TravelDocumentId.plan(id));
-    return (plan: plan, travelItems: items);
+    return _dataHelper.getTravelDocumentWrapper(TravelDocumentId.plan(id));
   }
 }

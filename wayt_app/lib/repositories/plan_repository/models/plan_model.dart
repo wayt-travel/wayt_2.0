@@ -2,13 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 
 import '../../repositories.dart';
 
-class PlanModel extends Model implements PlanEntity {
-  @override
-  final String id;
-
-  @override
-  final String userId;
-
+class PlanModel extends TravelDocumentModel implements PlanEntity {
   @override
   final DateTime? plannedAt;
 
@@ -19,53 +13,36 @@ class PlanModel extends Model implements PlanEntity {
   final bool isMonthSet;
 
   @override
-  final String name;
-
-  @override
   final List<String> tags;
 
-  @override
-  final DateTime createdAt;
-
-  @override
-  final DateTime? updatedAt;
-
   PlanModel({
-    required this.createdAt,
-    required this.id,
-    required this.userId,
+    required super.createdAt,
+    required super.id,
+    required super.userId,
     required this.isDaySet,
     required this.isMonthSet,
     required this.plannedAt,
     required this.tags,
-    required this.name,
-    required this.updatedAt,
+    required super.name,
+    required super.updatedAt,
   });
 
   @override
   List<Object?> get props => [
-        id,
-        userId,
+        ...super.props,
         isDaySet,
         isMonthSet,
         plannedAt,
         tags,
-        name,
-        createdAt,
-        updatedAt,
       ];
 
   @override
   Map<String, dynamic> $toMap() => {
-        'id': id,
-        'name': name,
-        'userId': userId,
+        ...super.$toMap(),
         'plannedAt': plannedAt,
         'isDaySet': isDaySet,
         'isMonthSet': isMonthSet,
         'tags': tags.join(', '),
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
       };
 
   PlanModel copyWith({
@@ -88,7 +65,4 @@ class PlanModel extends Model implements PlanEntity {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
-
-  @override
-  TravelDocumentId get tid => TravelDocumentId.plan(id);
 }

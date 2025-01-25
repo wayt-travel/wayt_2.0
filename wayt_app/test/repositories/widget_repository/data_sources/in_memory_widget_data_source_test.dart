@@ -16,16 +16,18 @@ void main() {
   }) {
     return TextWidgetModel(
       id: id ?? const Uuid().v4(),
-      travelDocumentId:
-          travelDocumentId ?? TravelDocumentId.plan(dataHelper.plans.first.id),
+      travelDocumentId: travelDocumentId ??
+          TravelDocumentId.plan(dataHelper.sortedPlans.first.id),
       order: order,
       text: 'text',
       textStyle: const FeatureTextStyle.body(),
     );
   }
 
-  List<TravelItemModel> getTravelItems() =>
-      dataHelper.getTravelItemsOfTravelDocument(travelDocumentId);
+  List<TravelItemModel> getTravelItems() => dataHelper
+      .getTravelDocumentWrapper(travelDocumentId)
+      .rootTravelItems
+      .cast<TravelItemModel>();
 
   void addWidgets(int count) {
     final widgetCount = getTravelItems().length;
@@ -47,7 +49,7 @@ void main() {
 
   setUp(() {
     dataHelper = InMemoryDataHelper();
-    travelDocumentId = dataHelper.plans.first.tid;
+    travelDocumentId = dataHelper.sortedPlans.first.tid;
     dataSource = InMemoryWidgetDataSource(dataHelper);
   });
 

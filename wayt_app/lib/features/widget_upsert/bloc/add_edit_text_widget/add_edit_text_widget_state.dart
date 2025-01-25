@@ -35,7 +35,7 @@ final class AddEditTextWidgetState extends SuperBlocState<WError> {
         text: text,
         featureTextStyle: featureTextStyle,
         error: error,
-        status: status,
+        status: StateStatus.failure,
       );
 
   @override

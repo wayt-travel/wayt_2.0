@@ -11,9 +11,10 @@ class MockPlan extends Mock implements PlanEntity {}
 void main() {
   late MockPlanDataSource mockPlanDataSource;
   late PlanRepository repo;
-  final inMemoryData = InMemoryDataHelper();
+  late InMemoryDataHelper inMemoryData;
 
   setUp(() {
+    inMemoryData = InMemoryDataHelper();
     mockPlanDataSource = MockPlanDataSource();
     repo = PlanRepository(
       dataSource: mockPlanDataSource,
@@ -71,9 +72,9 @@ void main() {
         (invocation) async => inMemoryData
             .getPlan(invocation.positionalArguments[0] as String)
             .let(
-              (response) => (
-                plan: response,
-                travelItems: <TravelItemEntity>[],
+              (response) => TravelDocumentWrapper(
+                travelDocument: response,
+                travelItems: [],
               ),
             ),
       );
@@ -82,7 +83,7 @@ void main() {
         expect(state, isA<PlanRepositoryPlanFetched>());
         emitted = true;
       });
-      final plan = inMemoryData.plans.first;
+      final plan = inMemoryData.sortedPlans.first;
       final fetched = await repo.fetchOne(plan.id);
 
       // Wait for the state to be emitted.
@@ -91,7 +92,7 @@ void main() {
       verify(() => mockPlanDataSource.readById(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, hasLength(1));
-      expect(repo.items.single.id, fetched.plan.id);
+      expect(repo.items.single.id, fetched.travelDocument.id);
     });
   });
 
@@ -101,7 +102,8 @@ void main() {
         (invocation) async => inMemoryData
             .deletePlan(invocation.positionalArguments[0] as String),
       );
-      final plan = inMemoryData.plans.first;
+      final plan = inMemoryData.sortedPlans.first;
+      repo.add(plan, shouldEmit: false);
       var emitted = false;
       repo.listen((state) {
         expect(state, isA<PlanRepositoryPlanDeleted>());
@@ -115,7 +117,7 @@ void main() {
       verify(() => mockPlanDataSource.delete(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, isEmpty);
-      expect(inMemoryData.getPlan(plan.id), isNull);
+      expect(inMemoryData.containsTravelDocument(plan.tid), isFalse);
     });
   });
 }

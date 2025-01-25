@@ -6,8 +6,11 @@ import 'modal.dart';
 /// Tile for a [ModalBottomSheet].
 class ModalBottomSheetTile extends StatelessWidget {
   final ModalBottomSheetAction action;
+  final bool dense;
+
   const ModalBottomSheetTile({
     required this.action,
+    this.dense = false,
     super.key,
   });
 
@@ -17,6 +20,7 @@ class ModalBottomSheetTile extends StatelessWidget {
       return Divider(color: context.col.onSurface.withValues(alpha: 0.16));
     }
     return ListTile(
+      minTileHeight: dense ? 42 : null,
       dense: true,
       onTap: () {
         if (action.popOnTap) {

@@ -6,7 +6,6 @@ typedef RepositoryPack = ({
   UserRepository userRepo,
   SummaryHelperRepository summaryHelperRepo,
   PlanRepository planRepo,
-  WidgetRepository widgetRepo,
   TravelItemRepository travelItemRepo,
 });
 
@@ -24,16 +23,12 @@ RepositoryPack inMemoryRepositories() {
     widgetDataSource: InMemoryWidgetDataSource(data),
     widgetFolderDataSource: InMemoryWidgetFolderDataSource(data),
   );
-  final widgetRepository = WidgetRepository(
-    travelItemRepository: travelItemRepository,
-  );
 
   return (
     authRepo: authRepository,
     userRepo: userRepository,
     summaryHelperRepo: summaryHelperRepository,
     planRepo: planRepository,
-    widgetRepo: widgetRepository,
     travelItemRepo: travelItemRepository,
   );
 }

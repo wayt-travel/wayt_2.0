@@ -8,12 +8,10 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
-import '../../add_edit_widget/view/add_widget_mbs.dart';
+import '../../widget_upsert/view/add_widget_mbs.dart';
 import '../plan.dart';
 
 class PlanPage {
-  const PlanPage._();
-
   static const String routeName = 'plan';
   static const String path = '/plans/:planId';
 
@@ -82,7 +80,6 @@ class PlanView extends StatelessWidget {
                 builder: (context, state) {
                   if (state is PlanStateWithData) {
                     return PlanItemList(
-                      plan: state.plan,
                       travelItems: state.travelItems,
                     );
                   }
@@ -114,6 +111,9 @@ class PlanView extends StatelessWidget {
                   onPressed: () => AddWidgetMbs.show(
                     context,
                     id: TravelDocumentId.plan(planId),
+                    // folderId=null adds the widget in the root of the travel
+                    // document.
+                    folderId: null,
                     // Index=null adds the widget at the end of the list.
                     index: null,
                   ),

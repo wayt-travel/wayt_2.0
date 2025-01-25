@@ -33,4 +33,7 @@ abstract interface class TravelItemEntity implements Entity, ResourceEntity {
   ///
   /// [isFolderWidget] must be true.
   WidgetFolderEntity get asFolderWidget;
+
+  /// Creates a copy of the item with the provided [order].
+  TravelItemEntity copyWith({int? order});
 }

@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/context/context.dart';
+import '../../../repositories/repositories.dart';
 import '../../../widgets/modal/modal.dart';
-import 'travel_item_widget.dart';
+import '../../folder_display/view/folder_page.dart';
+import '../../widget_upsert/view/add_widget_mbs.dart';
+import 'travel_widget.dart';
 
 /// The steps to determine the position of the context menu on the y-axis
 /// based on the tap position.
@@ -24,7 +27,7 @@ const _ySteps = [.4, .6];
 /// Same as [_ySteps] but for the x-axis.
 const _xSteps = [.25, .75];
 
-/// A context menu for a [TravelItemWidget].
+/// A context menu for a [TravelWidget].
 class TravelItemWidgetContextMenu extends StatelessWidget {
   final List<ModalBottomSheetAction> actions;
 
@@ -106,7 +109,63 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
     );
   }
 
-  static Future<void> show(
+  static Future<void> showForItem({
+    required int index,
+    required BuildContext context,
+    required TravelItemEntity travelItem,
+    required Offset position,
+    String? folderId,
+  }) =>
+      TravelItemWidgetContextMenu._show(
+        context,
+        position: position,
+        actions: [
+          if (travelItem.isFolderWidget)
+            ModalBottomSheetAction(
+              // FIXME: l10n
+              title: 'Open',
+              iconData: Icons.launch,
+              onTap: (context) => FolderPage.push(
+                context,
+                travelDocumentId: travelItem.travelDocumentId,
+                folderId: travelItem.id,
+              ),
+            ),
+          ModalBottomSheetAction(
+            // FIXME: l10n
+            title: 'Add widget above',
+            iconData: Icons.arrow_upward,
+            onTap: (context) => AddWidgetMbs.show(
+              context,
+              folderId: folderId,
+              id: travelItem.travelDocumentId,
+              // By passing the same index as the current widget, the new
+              // widget will be inserted above the current widget.
+              index: index,
+            ),
+          ),
+          ModalBottomSheetAction(
+            // FIXME: l10n
+            title: 'Add widget below',
+            iconData: Icons.arrow_downward,
+            onTap: (context) => AddWidgetMbs.show(
+              context,
+              folderId: folderId,
+              id: travelItem.travelDocumentId,
+              // By passing the index + 1, the new widget will be inserted
+              // below the current widget. It is not a problem if the index is
+              // >= the number of widgets in the list, as in such case the new
+              // widget will be added at the end of the list.
+              index: index + 1,
+            ),
+          ),
+          ModalBottomSheetActions.edit(context),
+          ModalBottomSheetActions.divider,
+          ModalBottomSheetActions.delete(context),
+        ],
+      );
+
+  static Future<void> _show(
     BuildContext context, {
     required Offset position,
     required List<ModalBottomSheetAction> actions,
@@ -174,7 +233,12 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
         borderRadius: $.style.corners.md.asBorderRadius,
         child: Column(
           children: actions
-              .map((action) => ModalBottomSheetTile(action: action))
+              .map(
+                (action) => ModalBottomSheetTile(
+                  dense: true,
+                  action: action,
+                ),
+              )
               .toList(),
         ),
       ),

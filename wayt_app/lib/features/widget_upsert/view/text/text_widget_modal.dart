@@ -15,77 +15,29 @@ import 'text_widget_modal_bottom_bar.dart';
 class TextWidgetModal extends StatelessWidget {
   const TextWidgetModal({super.key});
 
-  /// Path for adding a text widget to a plan.
-  static const planPathAdd = '/plans/:planId/widgets/text/add';
-
-  /// Path for adding a text widget to a journal.
-  static const journalPathAdd = '/journals/:journalId/widgets/text/add';
-
-  /// Routes added to the GoRouter.
-  static final routes = [planAddRoute, journalAddRoute];
-
-  /// Route for adding a text widget to a plan.
-  static GoRoute get planAddRoute => GoRoute(
-        path: planPathAdd,
-        pageBuilder: (context, state) => MaterialPage(
-          fullscreenDialog: true,
-          child: BlocProvider(
-            create: (context) => AddEditTextWidgetCubit(
-              id: TravelDocumentId.plan(state.pathParameters['planId']!),
-              index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
-              text: null,
-              textScale: state.uri.queryParameters['format'] != null
-                  ? FeatureTextStyleScale.fromName(
-                      state.uri.queryParameters['format']!,
-                    )
-                  : FeatureTextStyleScale.body,
-              widgetRepository: $.repo.widget(),
-            ),
-            child: const TextWidgetModal(),
-          ),
-        ),
-      );
-
-  /// Route for adding a text widget to a journal.
-  static GoRoute get journalAddRoute => GoRoute(
-        path: journalPathAdd,
-        pageBuilder: (context, state) => MaterialPage(
-          fullscreenDialog: true,
-          child: BlocProvider(
-            create: (context) => AddEditTextWidgetCubit(
-              id: TravelDocumentId.journal(state.pathParameters['journalId']!),
-              index: int.tryParse(state.uri.queryParameters['index'] ?? ''),
-              text: null,
-              textScale: state.uri.queryParameters['format'] != null
-                  ? FeatureTextStyleScale.fromName(
-                      state.uri.queryParameters['format']!,
-                    )
-                  : FeatureTextStyleScale.body,
-              widgetRepository: $.repo.widget(),
-            ),
-            child: const TextWidgetModal(),
-          ),
-        ),
-      );
-
   /// Pushes the modal to the navigator.
   static void show({
     required BuildContext context,
-    required TravelDocumentId id,
+    required TravelDocumentId travelDocumentId,
     required int? index,
-    FeatureTextStyleScale? style,
+    required String? folderId,
+    required FeatureTextStyleScale textScale,
   }) {
-    context.router.push(
-      Uri.parse(
-        id.isJournal
-            ? journalPathAdd.replaceFirst(':journalId', id.journalId!)
-            : planPathAdd.replaceFirst(':planId', id.planId!),
-      ).replace(
-        queryParameters: {
-          if (index != null) 'index': index.toString(),
-          if (style != null) 'format': style.name,
-        },
-      ).toString(),
+    context.navRoot.push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (context) => BlocProvider(
+          create: (context) => AddEditTextWidgetCubit(
+            travelDocumentId: travelDocumentId,
+            index: index,
+            text: null,
+            textScale: textScale,
+            folderId: folderId,
+            travelItemRepository: $.repo.travelItem(),
+          ),
+          child: const TextWidgetModal(),
+        ),
+      ),
     );
   }
 

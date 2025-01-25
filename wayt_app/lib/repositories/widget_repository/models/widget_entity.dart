@@ -15,6 +15,16 @@ abstract interface class WidgetEntity
   /// If the Widget is not in a folder, this value is `null`.
   String? get folderId;
 
+  /// Whether the Widget is within a folder.
+  ///
+  /// This is `true` if [folderId] is not `null`.
+  bool get belongsToAFolder;
+
+  /// Whether the Widget is in the root of the travel document.
+  ///
+  /// This is `true` if [folderId] is `null`.
+  bool get doesNotBelongToAFolder;
+
   /// The type of the Widget.
   WidgetType get type;
 

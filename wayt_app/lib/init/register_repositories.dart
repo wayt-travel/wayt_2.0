@@ -29,6 +29,5 @@ void registerRepositories() {
     repositories.summaryHelperRepo,
   );
   GetIt.I.registerSingleton<PlanRepository>(repositories.planRepo);
-  GetIt.I.registerSingleton<WidgetRepository>(repositories.widgetRepo);
   GetIt.I.registerSingleton<TravelItemRepository>(repositories.travelItemRepo);
 }

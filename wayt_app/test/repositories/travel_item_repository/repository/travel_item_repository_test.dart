@@ -54,7 +54,9 @@ void main() {
     )..addAll(
         travelDocumentId: travelDocumentId2,
         travelItems: [
-          _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
+          TravelItemEntityWrapper.widget(
+            _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
+          ),
         ],
       );
   });

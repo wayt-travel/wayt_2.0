@@ -59,6 +59,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
       ];
 
   /// Creates a copy of the model with the provided fields.
+  @override
   TravelItemModel copyWith({
     int? order,
     DateTime? updatedAt,
