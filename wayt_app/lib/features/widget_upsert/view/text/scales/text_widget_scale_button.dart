@@ -1,8 +1,7 @@
-import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/context/context.dart';
 import '../../../../../repositories/repositories.dart';
+import '../../new_item_button.dart';
 import 'text_widget_scale_icon.dart';
 
 class TextWidgetScaleButton extends StatelessWidget {
@@ -21,18 +20,13 @@ class TextWidgetScaleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onTap?.call(context),
-      child: Column(
-        children: [
-          TextWidgetScaleIcon(
-            scale: scale,
-            size: size,
-            borderRadius: borderRadius,
-          ),
-          $.style.insets.xs.asVSpan,
-          Text(scale.getLocalizedName(context)),
-        ],
+    return NewItemButton(
+      label: scale.getLocalizedName(context),
+      onTap: onTap,
+      child: TextWidgetScaleIcon(
+        scale: scale,
+        size: size,
+        borderRadius: borderRadius,
       ),
     );
   }

@@ -50,14 +50,14 @@ class _FolderWidgetState extends State<FolderWidget> {
                     : Colors.transparent,
                 child: Card.filled(
                   color: folder.color
-                      ?.toFlutterColor(context)
+                      .toFlutterColor(context)
                       .withValues(alpha: 0.4),
                   child: Column(
                     children: [
                       ListTile(
                         leading: Icon(
-                          folder.icon ?? Icons.folder,
-                          color: folder.color?.toFlutterColor(context),
+                          folder.icon,
+                          color: folder.color.toFlutterColor(context),
                         ),
                         title: Text(folder.name),
                         trailing: IconButton(

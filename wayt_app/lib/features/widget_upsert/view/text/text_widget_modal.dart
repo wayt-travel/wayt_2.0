@@ -8,7 +8,7 @@ import 'package:luthor/luthor.dart';
 import '../../../../core/context/context.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/snack_bar/snack_bar_helper.dart';
-import '../../bloc/add_edit_text_widget/add_edit_text_widget_cubit.dart';
+import '../../bloc/upsert_text_widget/upsert_text_widget_cubit.dart';
 import 'text_widget_modal_bottom_bar.dart';
 
 /// Modal for adding or editing a text widget.
@@ -27,7 +27,7 @@ class TextWidgetModal extends StatelessWidget {
       MaterialPageRoute<void>(
         fullscreenDialog: true,
         builder: (context) => BlocProvider(
-          create: (context) => AddEditTextWidgetCubit(
+          create: (context) => UpsertTextWidgetCubit(
             travelDocumentId: travelDocumentId,
             index: index,
             text: null,
@@ -51,13 +51,13 @@ class TextWidgetModal extends StatelessWidget {
         ),
       ),
       body: Form(
-        child: BlocBuilder<AddEditTextWidgetCubit, AddEditTextWidgetState>(
+        child: BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
           builder: (context, state) {
             return TextFormField(
               initialValue: state.text,
               style: state.featureTextStyle.toFlutterTextStyle(context),
               onChanged: (changed) {
-                context.read<AddEditTextWidgetCubit>().updateText(changed);
+                context.read<UpsertTextWidgetCubit>().updateText(changed);
               },
             );
           },
@@ -67,7 +67,7 @@ class TextWidgetModal extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result =
-              context.read<AddEditTextWidgetCubit>().validate(context);
+              context.read<UpsertTextWidgetCubit>().validate(context);
 
           if (!result.isValid) {
             SnackBarHelper.I.showWarning(
@@ -75,10 +75,10 @@ class TextWidgetModal extends StatelessWidget {
               message: (result as SingleValidationError).errors.first,
             );
           } else {
-            await context.navRoot.pushBlocListenerBarrier<
-                AddEditTextWidgetCubit, AddEditTextWidgetState>(
-              bloc: context.read<AddEditTextWidgetCubit>(),
-              trigger: () => context.read<AddEditTextWidgetCubit>().submit(),
+            await context.navRoot.pushBlocListenerBarrier<UpsertTextWidgetCubit,
+                UpsertTextWidgetState>(
+              bloc: context.read<UpsertTextWidgetCubit>(),
+              trigger: () => context.read<UpsertTextWidgetCubit>().submit(),
               listener: (context, state) {
                 if (state.status == StateStatus.success) {
                   context.navRoot

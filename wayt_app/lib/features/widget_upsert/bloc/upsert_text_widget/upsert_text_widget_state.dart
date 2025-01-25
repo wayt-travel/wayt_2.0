@@ -1,28 +1,28 @@
-part of 'add_edit_text_widget_cubit.dart';
+part of 'upsert_text_widget_cubit.dart';
 
-final class AddEditTextWidgetState extends SuperBlocState<WError> {
+final class UpsertTextWidgetState extends SuperBlocState<WError> {
   final FeatureTextStyle featureTextStyle;
   final String? text;
 
-  const AddEditTextWidgetState._({
+  const UpsertTextWidgetState._({
     required this.featureTextStyle,
     required this.text,
     required super.status,
     super.error,
   });
 
-  const AddEditTextWidgetState.initial({
+  const UpsertTextWidgetState.initial({
     required this.featureTextStyle,
     this.text,
   }) : super.initial();
 
   @override
-  AddEditTextWidgetState copyWith({
+  UpsertTextWidgetState copyWith({
     required StateStatus status,
     Optional<String?> text = const Optional.absent(),
     FeatureTextStyle? featureTextStyle,
   }) =>
-      AddEditTextWidgetState._(
+      UpsertTextWidgetState._(
         text: text.orElseIfAbsent(this.text),
         featureTextStyle: featureTextStyle ?? this.featureTextStyle,
         error: error,
@@ -30,8 +30,7 @@ final class AddEditTextWidgetState extends SuperBlocState<WError> {
       );
 
   @override
-  AddEditTextWidgetState copyWithError(WError error) =>
-      AddEditTextWidgetState._(
+  UpsertTextWidgetState copyWithError(WError error) => UpsertTextWidgetState._(
         text: text,
         featureTextStyle: featureTextStyle,
         error: error,

@@ -1,5 +1,3 @@
-import 'package:fpdart/fpdart.dart';
-
 import '../../repositories.dart';
 
 /// Model implementation for a folder of widgets in a travel plan or journal.
@@ -8,10 +6,10 @@ class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {
   final String name;
 
   @override
-  final WidgetFolderIcon? icon;
+  final WidgetFolderIcon icon;
 
   @override
-  final FeatureTextStyleColor? color;
+  final FeatureColor color;
 
   @override
   final int order;
@@ -52,8 +50,8 @@ class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {
   WidgetFolderModel copyWith({
     int? order,
     String? name,
-    Option<WidgetFolderIcon?> icon = const Option.none(),
-    Option<FeatureTextStyleColor?> color = const Option.none(),
+    WidgetFolderIcon? icon,
+    FeatureColor? color,
     DateTime? updatedAt,
   }) =>
       WidgetFolderModel(
@@ -61,9 +59,9 @@ class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {
         travelDocumentId: travelDocumentId,
         createdAt: createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
-        icon: icon.getOrElse(() => this.icon),
+        icon: icon ?? this.icon,
         name: name ?? this.name,
-        color: color.getOrElse(() => this.color),
+        color: color ?? this.color,
         order: order ?? this.order,
       );
 }

@@ -10,10 +10,10 @@ import '../../../../error/errors.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../util/util.dart';
 
-part 'add_edit_text_widget_state.dart';
+part 'upsert_text_widget_state.dart';
 
 /// Cubit for adding or editing a text widget.
-class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
+class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
     with LoggerMixin {
   /// The id of the plan or journal where the widget will be added.
   final TravelDocumentId travelDocumentId;
@@ -29,10 +29,10 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
   /// widget is being added at the end of the list.
   final int? index;
 
-  /// The widget repository.
+  /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
-  AddEditTextWidgetCubit({
+  UpsertTextWidgetCubit({
     required FeatureTextStyleScale textScale,
     required String? text,
     required this.index,
@@ -40,7 +40,7 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
     required this.folderId,
     required this.travelItemRepository,
   }) : super(
-          AddEditTextWidgetState.initial(
+          UpsertTextWidgetState.initial(
             featureTextStyle: FeatureTextStyle(scale: textScale),
             text: text,
           ),
@@ -65,7 +65,9 @@ class AddEditTextWidgetCubit extends Cubit<AddEditTextWidgetState>
   }
 
   SingleValidationResult<dynamic> validate(BuildContext? context) {
-    return L10nValidators.text1ToInf(context).validateValue(state.text);
+    return Validators.l10n(context)
+        .textInfiniteRequired()
+        .validateValue(state.text);
   }
 
   Future<void> submit() async {

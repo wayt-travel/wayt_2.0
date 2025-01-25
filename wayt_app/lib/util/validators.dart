@@ -1,24 +1,43 @@
+import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:luthor/luthor.dart';
 
+export 'validator_extension.dart';
+
 /// Common validators with localization.
-abstract interface class L10nValidators {
-  static Validator text1To144([BuildContext? context]) => l
+final class Validators {
+  static const _maxTextShortLength = 144;
+
+  final BuildContext? context;
+
+  const Validators() : context = null;
+
+  const Validators.l10n(this.context);
+
+  Validator required() => l.required(
+        // FIXME: l10n
+        message: 'It cannot be empty',
+      );
+
+  Validator textShortRequired() => textShortOptional()
       // FIXME: l10n
       .required(message: 'It cannot be empty')
-      .string()
+      .let((o) => o as StringValidator)
       // FIXME: l10n
-      .min(1, message: 'It cannot be empty')
-      // FIXME: l10n
-      .max(144, message: 'It should be at most 144 characters long');
+      .min(1, message: 'It cannot be empty');
 
-  static Validator text1ToInf([BuildContext? context]) => l
+  Validator textShortOptional() => l.string().max(
+        _maxTextShortLength,
+        message: 'It should be at most $_maxTextShortLength characters long',
+      );
+
+  Validator textInfiniteRequired() => l
       // FIXME: l10n
       .required(message: 'It cannot be empty')
       .string()
       .min(1);
 
-  static Validator coordinates([BuildContext? context]) => l
+  Validator coordinates() => l
           // FIXME: l10n
           .required(message: 'It cannot be empty')
           .custom(

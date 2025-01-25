@@ -1,4 +1,5 @@
 import 'package:flext/flext.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:uuid/uuid.dart';
@@ -34,9 +35,9 @@ WidgetFolderModel _buildFolder({
       id: const Uuid().v4(),
       travelDocumentId: travelDocumentId,
       order: order,
-      color: null,
+      color: FeatureColor.amber,
       createdAt: DateTime.now(),
-      icon: null,
+      icon: WidgetFolderIcon.fromIconData(Icons.folder),
       name: 'name',
       updatedAt: null,
     );

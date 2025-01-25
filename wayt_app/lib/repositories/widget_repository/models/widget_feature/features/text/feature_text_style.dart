@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
+import '../features.dart';
+
 /// Scale property for the [FeatureTextStyle] feature.
 enum FeatureTextStyleScale {
   h1,
@@ -43,62 +45,6 @@ enum FeatureTextStyleScale {
       };
 }
 
-/// Color property for the [FeatureTextStyle] feature.
-///
-/// It mirrors the colors of Material 3 spec.
-///
-/// It does not include black and white because they behave differently in
-/// Flutter, i.e., they're not defined as [MaterialColor].
-enum FeatureTextStyleColor {
-  red,
-  pink,
-  purple,
-  deepPurple,
-  blue,
-  lightBlue,
-  cyan,
-  teal,
-  green,
-  lightGreen,
-  lime,
-  yellow,
-  amber,
-  orange,
-  deepOrange,
-  brown,
-  grey,
-  blueGrey;
-
-  /// Factory constructor that creates a [FeatureTextStyleColor] from its string
-  /// name.
-  factory FeatureTextStyleColor.fromName(String name) => values.firstWhere(
-        (e) => e.name.toLowerCase() == name.toLowerCase(),
-        orElse: () => throw ArgumentError.value(name, 'name', 'Invalid name'),
-      );
-
-  /// Converts the [FeatureTextStyleColor] to a Flutter [Color].
-  Color toFlutterColor(BuildContext context) => switch (this) {
-        red => Colors.red,
-        pink => Colors.pink,
-        purple => Colors.purple,
-        deepPurple => Colors.deepPurple,
-        blue => Colors.blue,
-        lightBlue => Colors.lightBlue,
-        cyan => Colors.cyan,
-        teal => Colors.teal,
-        green => Colors.green,
-        lightGreen => Colors.lightGreen,
-        lime => Colors.lime,
-        yellow => Colors.yellow,
-        amber => Colors.amber,
-        orange => Colors.orange,
-        deepOrange => Colors.deepOrange,
-        brown => Colors.brown,
-        grey => Colors.grey,
-        blueGrey => Colors.blueGrey,
-      }[context.theme.brightness == Brightness.dark ? 400 : 800]!;
-}
-
 /// Text style feature for the widget.
 final class FeatureTextStyle extends Equatable {
   /// Scale property for the text style.
@@ -110,7 +56,7 @@ final class FeatureTextStyle extends Equatable {
   ///
   /// If not provided, normally, the text should be rendered in the theme
   /// default color for text.
-  final FeatureTextStyleColor? color;
+  final FeatureColor? color;
 
   /// Font weight property for the text style.
   ///
@@ -153,7 +99,7 @@ final class FeatureTextStyle extends Equatable {
   /// Creates a copy of the [FeatureTextStyle] with the provided properties.
   FeatureTextStyle copyWith({
     FeatureTextStyleScale? scale,
-    FeatureTextStyleColor? color,
+    FeatureColor? color,
     FontWeight? fontWeight,
     TextDecoration? decoration,
   }) =>

@@ -5,8 +5,8 @@ typedef CreateWidgetFolderInput = ({
   TravelDocumentId travelDocumentId,
   String name,
   int? index,
-  WidgetFolderIcon? icon,
-  FeatureTextStyleColor? color,
+  WidgetFolderIcon icon,
+  FeatureColor color,
 });
 
 /// Input to update an existing widget folder.
