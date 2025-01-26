@@ -8,6 +8,9 @@ import 'context.dart';
 
 export 'app_context.dart';
 
+final $insets = $.style.insets;
+final $corners = $.style.corners;
+
 final class $ {
   static final style = $style;
   static final errors = $errors;

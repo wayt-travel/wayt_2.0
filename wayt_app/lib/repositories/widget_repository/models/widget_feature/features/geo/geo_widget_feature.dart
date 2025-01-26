@@ -34,7 +34,7 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
     this.name,
     this.address,
   })  : assert(
-          L10nValidators.coordinates().validateValue(coordinates).isValid,
+          const Validators().coordinates().validateValue(coordinates).isValid,
           'Invalid coordinates',
         ),
         super(

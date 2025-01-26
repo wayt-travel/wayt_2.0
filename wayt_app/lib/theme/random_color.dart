@@ -72,4 +72,12 @@ class RandomColor {
     return materialColors[_lastPick = _random.nextInt(materialColors.length)]
         [intensity]!;
   }
+
+  List<Color> nextColors(int count) {
+    final colors = <Color>[];
+    for (var i = 0; i < count; i++) {
+      colors.add(nextColor());
+    }
+    return colors;
+  }
 }

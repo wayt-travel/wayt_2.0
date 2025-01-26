@@ -15,6 +15,7 @@ class ModalBottomSheet {
 
   Future<T?> showExpanded<T>({
     required ScrollableWidgetBuilder builder,
+    bool startExpanded = false,
   }) {
     FocusScope.of(context).unfocus();
     return showModalBottomSheet<T>(
@@ -27,6 +28,7 @@ class ModalBottomSheet {
       builder: (ctx) {
         return DraggableScrollableSheet(
           snap: true,
+          initialChildSize: startExpanded ? .9 : .5,
           snapSizes: const [],
           maxChildSize: .9,
           expand: false,

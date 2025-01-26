@@ -12,7 +12,9 @@ scripts:
     exec: fvm dart fix ./lib --apply && fvm dart format ./lib
 
   generate:
-    run: fvm dart run build_runner build --delete-conflicting-outputs
+    run: |-
+      fvm dart run build_runner build --delete-conflicting-outputs
+      dart run flutter_iconpicker:generate_packs --packs material
     exec: 
       concurrency: 1
       orderDependents: true

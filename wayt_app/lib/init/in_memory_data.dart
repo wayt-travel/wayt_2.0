@@ -96,7 +96,7 @@ class InMemoryDataHelper with LoggerMixin {
         travelDocumentId: tid,
         name: name,
         icon: WidgetFolderIcon.fromIconData(Icons.folder),
-        color: FeatureTextStyleColor.values.pickOneRandom(_rnd),
+        color: FeatureColor.values.pickOneRandom(_rnd),
         updatedAt: null,
       );
 

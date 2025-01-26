@@ -8,7 +8,6 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../features.dart';
-import '../../widget_upsert/view/add_widget_mbs.dart';
 import '../bloc/folder/folder_cubit.dart';
 
 /// The page for displaying a folder of a plan or journal.
@@ -95,14 +94,14 @@ class FolderView extends StatelessWidget {
                 return Row(
                   children: [
                     Icon(
-                      folder.icon ?? Icons.folder,
-                      color: folder.color?.toFlutterColor(context),
+                      folder.icon,
+                      color: folder.color.toFlutterColor(context),
                     ),
                     $.style.insets.sm.asHSpan,
                     Text(
                       folder.name,
                       style: TextStyle(
-                        color: folder.color?.toFlutterColor(context),
+                        color: folder.color.toFlutterColor(context),
                       ),
                     ),
                   ],
