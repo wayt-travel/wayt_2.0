@@ -233,6 +233,10 @@ class InMemoryDataHelper with LoggerMixin {
     _data.travelDocuments.delete(tid);
   }
 
+  void deleteItem(String id) {
+    _data.travelItems.delete(id);
+  }
+
   /// Gets the list of all travel documents.
   List<TravelDocumentEntity> get travelDocuments =>
       [..._data.travelDocuments.values];

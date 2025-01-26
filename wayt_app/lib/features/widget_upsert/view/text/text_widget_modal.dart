@@ -50,17 +50,23 @@ class TextWidgetModal extends StatelessWidget {
           'Add text widget',
         ),
       ),
-      body: Form(
-        child: BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
-          builder: (context, state) {
-            return TextFormField(
-              initialValue: state.text,
-              style: state.featureTextStyle.toFlutterTextStyle(context),
-              onChanged: (changed) {
-                context.read<UpsertTextWidgetCubit>().updateText(changed);
-              },
-            );
-          },
+      body: Padding(
+        padding: $insets.screenH.asPaddingH,
+        child: Form(
+          child: BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
+            builder: (context, state) {
+              return TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                textInputAction: TextInputAction.newline,
+                initialValue: state.text,
+                style: state.featureTextStyle.toFlutterTextStyle(context),
+                onChanged: (changed) {
+                  context.read<UpsertTextWidgetCubit>().updateText(changed);
+                },
+              );
+            },
+          ),
         ),
       ),
       bottomNavigationBar: const TextWidgetModalBottomBar(),

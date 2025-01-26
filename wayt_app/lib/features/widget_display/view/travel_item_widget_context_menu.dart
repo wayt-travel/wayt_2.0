@@ -2,11 +2,13 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
-import '../../../widgets/modal/modal.dart';
+import '../../../widgets/widgets.dart';
 import '../../folder_display/view/folder_page.dart';
+import '../../item_delete/bloc/delete_item/delete_item_cubit.dart';
 import '../../widget_upsert/view/add_widget_mbs.dart';
 import 'travel_widget.dart';
 
@@ -29,7 +31,14 @@ const _xSteps = [.25, .75];
 
 /// A context menu for a [TravelWidget].
 class TravelItemWidgetContextMenu extends StatelessWidget {
+  final TravelItemEntity travelItem;
   final List<ModalBottomSheetAction> actions;
+
+  const TravelItemWidgetContextMenu({
+    required this.travelItem,
+    required this.actions,
+    super.key,
+  });
 
   /// Computes the position of the context menu based on the tap position.
   static ({
@@ -118,6 +127,7 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
   }) =>
       TravelItemWidgetContextMenu._show(
         context,
+        travelItem: travelItem,
         position: position,
         actions: [
           if (travelItem.isFolderWidget)
@@ -161,13 +171,56 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
           ),
           ModalBottomSheetActions.edit(context),
           ModalBottomSheetActions.divider,
-          ModalBottomSheetActions.delete(context),
+          ModalBottomSheetActions.delete(context).copyWith(
+            onTap: (innerContext) {
+              // FIXME: l10n
+              var subtitle = 'This action cannot be undone.';
+
+              if (travelItem.isFolderWidget) {
+                // FIXME: l10n
+                subtitle +=
+                    ' All widgets inside this folder will be deleted too.';
+              }
+              WConfirmDialog.show(
+                context: innerContext,
+                // FIXME: l10n
+                title: 'Are you sure?',
+                subtitle: subtitle,
+                onConfirm: () async {
+                  final bloc = DeleteItemCubit(
+                    item: travelItem,
+                    repository: $.repo.travelItem(),
+                  );
+                  await context.navRoot.pushBlocListenerBarrier<DeleteItemCubit,
+                      DeleteItemState>(
+                    bloc: bloc,
+                    trigger: bloc.delete,
+                    listener: (context, state) {
+                      if (state.status == StateStatus.success) {
+                        context.navRoot.pop();
+                      } else if (state.status == StateStatus.failure) {
+                        SnackBarHelper.I.showError(
+                          context: context,
+                          message: state.error.toString(),
+                        );
+                        context.pop();
+                      }
+                    },
+                  );
+
+                  bloc.close().ignore();
+                },
+              );
+            },
+            isDangerous: true,
+          ),
         ],
       );
 
   static Future<void> _show(
     BuildContext context, {
     required Offset position,
+    required TravelItemEntity travelItem,
     required List<ModalBottomSheetAction> actions,
   }) =>
       context.navRoot.push(
@@ -205,7 +258,10 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
                               alignment: animationAlignment,
                             ),
                           ],
-                          child: TravelItemWidgetContextMenu(actions),
+                          child: TravelItemWidgetContextMenu(
+                            actions: actions,
+                            travelItem: travelItem,
+                          ),
                         ),
                       ),
                     ),
@@ -220,8 +276,6 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
           transitionDuration: Duration.zero,
         ),
       );
-
-  const TravelItemWidgetContextMenu(this.actions, {super.key});
 
   @override
   Widget build(BuildContext context) {

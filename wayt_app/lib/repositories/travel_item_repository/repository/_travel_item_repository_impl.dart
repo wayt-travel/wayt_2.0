@@ -300,10 +300,7 @@ class TravelItemRepositoryImpl
   }
 
   @override
-  Future<void> deleteFolder({
-    required String id,
-    required bool deleteContent,
-  }) async {
+  Future<void> deleteFolder(String id) async {
     logger.v('Deleting folder with id: $id');
     final deletedItemWrapper = getWrappedOrThrow(id);
     final deletedItem = deletedItemWrapper.value;

@@ -51,14 +51,7 @@ abstract interface class TravelItemRepository
   Future<void> deleteWidget(String id);
 
   /// Deletes a folder by its [id].
-  ///
-  /// If [deleteContent] is `true`, all the travel items of the folder will be
-  /// deleted as well, otherwise they will be moved inside the travel document
-  /// that contains the folder at the index of the folder.
-  Future<void> deleteFolder({
-    required String id,
-    required bool deleteContent,
-  });
+  Future<void> deleteFolder(String id);
 
   /// Gets the travel item wrapper of the travel item with the given [id] from
   /// the cache.

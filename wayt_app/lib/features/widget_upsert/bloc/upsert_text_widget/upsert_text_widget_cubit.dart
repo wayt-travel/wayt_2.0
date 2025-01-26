@@ -67,7 +67,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
   SingleValidationResult<dynamic> validate(BuildContext? context) {
     return Validators.l10n(context)
         .textInfiniteRequired()
-        .validateValue(state.text);
+        .validateValue(state.text?.trim());
   }
 
   Future<void> submit() async {
@@ -90,7 +90,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       await travelItemRepository.createWidget(
         TextWidgetModel(
           id: const Uuid().v4(),
-          text: state.text!,
+          text: state.text!.trim(),
           textStyle: state.featureTextStyle,
           travelDocumentId: travelDocumentId,
           folderId: folderId,
