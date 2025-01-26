@@ -82,9 +82,8 @@ final class InMemoryWidgetFolderDataSource implements WidgetFolderDataSource {
       _dataHelper.getWidgetFolder(id);
 
   @override
-  Future<void> delete(String id) {
-    throw UnsupportedError(
-      'In-memory data source does not support deleting WidgetFolder.',
-    );
+  Future<void> delete(String id) async {
+    await waitFakeTime();
+    _dataHelper.deleteItem(id);
   }
 }

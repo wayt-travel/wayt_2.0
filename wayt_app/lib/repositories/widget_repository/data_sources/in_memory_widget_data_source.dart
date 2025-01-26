@@ -76,9 +76,8 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   Future<WidgetModel> read(String id) async => _dataHelper.getWidget(id);
 
   @override
-  Future<void> delete(String id) {
-    throw UnsupportedError(
-      'In-memory data source does not support deleting Widget.',
-    );
+  Future<void> delete(String id) async {
+    await waitFakeTime();
+    _dataHelper.deleteItem(id);
   }
 }
