@@ -4,8 +4,12 @@ import '../../../repositories/repositories.dart';
 import '../../../theme/random_color.dart';
 import 'plan_tile/plan_tile.dart';
 
+/// The body of the plan list.
 class PlanListBody extends StatefulWidget {
+  /// The list of plans to display.
   final List<PlanEntity> plans;
+  
+  /// Creates a new instance of [PlanListBody].
   const PlanListBody(this.plans, {super.key});
 
   @override

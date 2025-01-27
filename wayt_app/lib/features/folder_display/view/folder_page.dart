@@ -26,23 +26,38 @@ class FolderPage {
 
   static GoRoute _getRoute(bool isPlan) => GoRoute(
         path: planPath,
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: BlocProvider(
-            create: (_) => FolderCubit(
-              folderId: state.pathParameters['folderId']!,
-              travelItemRepository: $.repo.travelItem(),
+        pageBuilder: (context, state) {
+          final tid = isPlan
+              ? TravelDocumentId.plan(state.pathParameters['planId']!)
+              : TravelDocumentId.journal(
+                  state.pathParameters['journalId']!,
+                );
+          final folderId = state.pathParameters['folderId']!;
+          return MaterialPage(
+            key: state.pageKey,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => FolderCubit(
+                    folderId: folderId,
+                    travelItemRepository: $.repo.travelItem(),
+                  ),
+                ),
+                BlocProvider(
+                  create: (_) => ReorderItemsCubit(
+                    travelDocumentId: tid,
+                    folderId: folderId,
+                    travelItemRepository: $.repo.travelItem(),
+                  ),
+                ),
+              ],
+              child: FolderView(
+                travelDocumentId: tid,
+                folderId: folderId,
+              ),
             ),
-            child: FolderView(
-              travelDocumentId: isPlan
-                  ? TravelDocumentId.plan(state.pathParameters['planId']!)
-                  : TravelDocumentId.journal(
-                      state.pathParameters['journalId']!,
-                    ),
-              folderId: state.pathParameters['folderId']!,
-            ),
-          ),
-        ),
+          );
+        },
       );
 
   /// Pushes the [FolderPage] onto the navigation stack.
@@ -63,9 +78,13 @@ class FolderPage {
 
 /// The view of a folder screen.
 class FolderView extends StatelessWidget {
+  /// The ID of the travel document.
   final TravelDocumentId travelDocumentId;
+
+  /// The ID of the folder.
   final String folderId;
 
+  /// Creates a new instance of [FolderView].
   const FolderView({
     required this.travelDocumentId,
     required this.folderId,
@@ -109,6 +128,7 @@ class FolderView extends StatelessWidget {
               },
             ),
             actions: [
+              const TravelDocumentReorderIconButton(),
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {},
@@ -118,6 +138,11 @@ class FolderView extends StatelessWidget {
           BlocSelector<FolderCubit, FolderState, List<TravelItemEntity>>(
             selector: (state) => state.folderWrapper.children,
             builder: (context, items) => PlanItemList(
+              // Force the rebuild of the widget when the list of travel items
+              // changes.
+              key: ValueKey(items),
+              folderId: folderId,
+              travelDocumentId: travelDocumentId,
               travelItems: items
                   .map((e) => TravelItemEntityWrapper.widget(e.asWidget))
                   .toList(),

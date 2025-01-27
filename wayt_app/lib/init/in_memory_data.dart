@@ -12,13 +12,17 @@ import 'package:world_countries/world_countries.dart';
 import '../core/context/context.dart';
 import '../repositories/repositories.dart';
 
+/// Waits for a fake time.
+///
+/// Used in in-memory data sources to simulate asynchronous API operations.
 Future<void> waitFakeTime() async {
   // Do not wait in local test.
   if ($.env.isLocalTest) return;
   await Future<void>.delayed(const Duration(milliseconds: 300));
 }
 
-const String loremIpsum =
+/// Lorem ipsum text.
+const String kLoremIpsum =
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
     'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim '
     'veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
@@ -47,6 +51,9 @@ class _Data {
   });
 }
 
+/// In-memory data helper.
+///
+/// Contains test data of the application in memory.
 class InMemoryDataHelper with LoggerMixin {
   final _data = _Data(
     users: Cache(),
@@ -54,6 +61,8 @@ class InMemoryDataHelper with LoggerMixin {
     travelItems: Cache(),
   );
 
+  /// Creates a new instance of [InMemoryDataHelper] and populates it with test
+  /// data.
   InMemoryDataHelper() {
     _data.users.save(
       authUserId,
@@ -141,7 +150,7 @@ class InMemoryDataHelper with LoggerMixin {
         _buildTextWidget(
           order: order++,
           text: 'We plan to visit this place. Here, then there, etc.'
-              '\n\n$loremIpsum',
+              '\n\n$kLoremIpsum',
           tid: tid,
         ),
       ];
@@ -233,6 +242,7 @@ class InMemoryDataHelper with LoggerMixin {
     _data.travelDocuments.delete(tid);
   }
 
+  /// Deletes the item with the given [id].
   void deleteItem(String id) {
     _data.travelItems.delete(id);
   }
@@ -245,6 +255,11 @@ class InMemoryDataHelper with LoggerMixin {
   List<PlanModel> get _plans =>
       _data.travelDocuments.values.whereType<PlanModel>().toList();
 
+  /// Gets the list of all plans sorted by the planned date.
+  ///
+  /// If the planned date is `null`, the plan is considered to be
+  /// planned in the far future, meaning all plans with planned date `null`
+  /// will be placed at the end of the list.
   List<PlanModel> get sortedPlans => _plans.sortedByCompare(
         (plan) => plan.plannedAt,
         (p1, p2) {

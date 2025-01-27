@@ -9,24 +9,35 @@ class TravelItemRepoHelper extends Equatable {
   /// The ids of the widgets in the folder. If this is a widget, this is null.
   final ListWithSortedAdd<String>? widgetIds;
 
+  /// Create a new instance of [TravelItemRepoHelper] for a widget.
   const TravelItemRepoHelper.widget(this.id) : widgetIds = null;
 
+  /// Create a new instance of [TravelItemRepoHelper] for a folder.
   const TravelItemRepoHelper.folder(
     this.id,
     ListWithSortedAdd<String> this.widgetIds,
   );
 
+  /// Whether the helper represents a folder.
   bool get isFolder => widgetIds != null;
+
+  /// Whether the helper represents a widget.
   bool get isWidget => !isFolder;
 
   @override
   List<Object?> get props => [id, widgetIds];
 }
 
+/// Implementation of [TravelItemRepository].
+///
+/// Visible for testing.
 @visibleForTesting
 class TravelItemRepositoryImpl
     extends Repository<String, TravelItemEntity, TravelItemRepositoryState>
     implements TravelItemRepository {
+  /// The travel item data source.
+  final TravelItemDataSource travelItemDataSource;
+
   /// The widget folder data source.
   final WidgetFolderDataSource widgetFolderDataSource;
 
@@ -56,15 +67,123 @@ class TravelItemRepositoryImpl
   final Map<TravelDocumentId, SplayTreeMap<String, TravelItemRepoHelper>>
       _travelDocumentToItemsMap = {};
 
+  /// Creates a new instance of [TravelItemRepositoryImpl].
   TravelItemRepositoryImpl({
+    required this.travelItemDataSource,
     required this.summaryHelperRepository,
     required this.widgetDataSource,
     required this.widgetFolderDataSource,
   });
 
+  /// Gets the map of travel document ids to the items they contain IN THE ROOT.
   Map<TravelDocumentId, SplayTreeMap<String, TravelItemRepoHelper>>
       get travelDocumentToItemsMap =>
           Map.unmodifiable(_travelDocumentToItemsMap);
+
+  /// Checks if the repository contains the travel document with the given [id].
+  ///
+  /// Throws an [ArgumentError] if the travel document is not found.
+  void _checkThrowContainsTravelDocument(TravelDocumentId id) {
+    if (!_travelDocumentToItemsMap.containsKey(id)) {
+      throw ArgumentError(
+        'Travel document $id not found in the repository.',
+      );
+    }
+  }
+
+  /// Checks if the repository contains the item with the given [itemId] in
+  /// the root of the travel document with the given [travelDocumentId].
+  ///
+  /// Throws an [ArgumentError] otherwise.
+  void _checkThrowContainsRootItem({
+    required TravelDocumentId travelDocumentId,
+    required String itemId,
+  }) {
+    _checkThrowContainsTravelDocument(travelDocumentId);
+    if (cache.get(itemId) == null) {
+      throw ArgumentError(
+        'Root item $itemId not found in the repository cache.',
+      );
+    }
+    if (!_travelDocumentToItemsMap[travelDocumentId]!.containsKey(itemId)) {
+      throw ArgumentError(
+        'Root item $itemId not found in the repository map.',
+      );
+    }
+  }
+
+  /// Checks if the repository contains the folder with the given [folderId] in
+  /// the root of the travel document with the given [travelDocumentId].
+  ///
+  /// Throws an [ArgumentError] otherwise.
+  void _checkThrowContainsFolder({
+    required TravelDocumentId travelDocumentId,
+    required String folderId,
+  }) =>
+      _checkThrowContainsRootItem(
+        travelDocumentId: travelDocumentId,
+        itemId: folderId,
+      );
+
+  /// Checks if the repository contains the widget with the given [itemId] in
+  /// the folder with the given [folderId] in the travel document with the given
+  /// [travelDocumentId].
+  ///
+  /// Throws an [ArgumentError] otherwise.
+  void _checkThrowFolderContainsWidget({
+    required TravelDocumentId travelDocumentId,
+    required String folderId,
+    required String itemId,
+  }) {
+    _checkThrowContainsFolder(
+      travelDocumentId: travelDocumentId,
+      folderId: folderId,
+    );
+    final item = cache.get(itemId);
+    if (item == null) {
+      throw ArgumentError(
+        'Widget $itemId not found in the repository cache.',
+      );
+    }
+    if (folderId != item.asWidget.folderId) {
+      throw ArgumentError(
+        'Widget $itemId is not contained in folder $folderId.',
+      );
+    }
+    final folder = _travelDocumentToItemsMap[travelDocumentId]![folderId]!;
+    if (!folder.widgetIds!.contains(itemId)) {
+      throw ArgumentError(
+        'Widget $itemId not found in folder $folderId.',
+      );
+    }
+  }
+
+  /// Checks if the repository contains the item with the given [itemId] in the
+  /// travel document with the given [travelDocumentId].
+  ///
+  /// If the [folderId] is `null`, it checks if the item is in the root of the
+  /// travel document. Otherwise, it checks if the item is in the folder with
+  /// the given [folderId].
+  ///
+  /// Throws an [ArgumentError] otherwise.
+  void _checkThrowContainsItem({
+    required TravelDocumentId travelDocumentId,
+    required String? folderId,
+    required String itemId,
+  }) {
+    if (folderId == null) {
+      _checkThrowContainsRootItem(
+        travelDocumentId: travelDocumentId,
+        itemId: itemId,
+      );
+      return;
+    }
+    _checkThrowFolderContainsWidget(
+      travelDocumentId: travelDocumentId,
+      folderId: folderId,
+      itemId: itemId,
+    );
+  }
 
   /// Gets the order field of the item with the given [itemId].
   num _getOrderField(String itemId) => getOrThrow(itemId).order;
@@ -182,10 +301,16 @@ class TravelItemRepositoryImpl
     // This is needed in order for the SplayTreeMap to function properly without
     // too much complicated logic below.
     // NB: the items are not removed from the cache, only from the map!
+    final removedFolders = <String, TravelItemRepoHelper>{};
     for (final itemId in updatedOrders.keys) {
       final item = cache.getOrThrow(itemId);
       if (item.isFolderWidget || item.asWidget.folderId == null) {
-        _travelDocumentToItemsMap[id]!.remove(itemId);
+        final removed = _travelDocumentToItemsMap[id]!.remove(itemId);
+        if (removed != null && removed.isFolder) {
+          // If the item is a folder, we need to store it in order to readd its
+          // children later.
+          removedFolders[removed.id] = removed;
+        }
       }
     }
 
@@ -203,6 +328,12 @@ class TravelItemRepositoryImpl
       // Writes the item into the cache (override) and adds the item back to the
       // map (since before it has been removed)
       upsertInCacheAndMaps(updated);
+      if (updated.isFolderWidget && removedFolders.containsKey(updated.id)) {
+        // If the item is a folder, we need to readd its children.
+        _travelDocumentToItemsMap[id]![updated.id]
+            ?.widgetIds
+            ?.addAll(removedFolders[updated.id]!.widgetIds!);
+      }
     }
   }
 
@@ -327,6 +458,71 @@ class TravelItemRepositoryImpl
     removeFromCacheAndMaps(deletedItem);
     emit(TravelItemRepositoryTravelItemDeleted(deletedItemWrapper));
     logger.i('Widget deleted and removed from cache and maps [$deletedItem].');
+  }
+
+  @override
+  Future<Map<String, int>> reorderItems({
+    required TravelDocumentId travelDocumentId,
+    required List<String> reorderedItemIds,
+    String? folderId,
+  }) async {
+    logger.v(
+      'Reordering ${reorderedItemIds.length} items in travel document '
+      '$travelDocumentId (folderId=$folderId)',
+    );
+
+    if (folderId != null) {
+      _checkThrowContainsFolder(
+        travelDocumentId: travelDocumentId,
+        folderId: folderId,
+      );
+    } else {
+      _checkThrowContainsTravelDocument(travelDocumentId);
+    }
+
+    final items = _travelDocumentToItemsMap[travelDocumentId];
+    late final Set<String>? itemsInTd;
+    if (folderId != null) {
+      itemsInTd = items?[folderId]?.widgetIds?.toSet();
+    } else {
+      itemsInTd = items?.keys.toSet();
+    }
+    if (!const SetEquality<String>()
+        .equals(reorderedItemIds.toSet(), itemsInTd)) {
+      throw ArgumentError.value(
+        reorderedItemIds,
+        'reorderedItemIds',
+        'The provided reorderedItemIds do not match the items currently in the '
+            'repo for travel document $travelDocumentId.',
+      );
+    }
+
+    final updatedOrders = await travelItemDataSource.reorderItems(
+      travelDocumentId: travelDocumentId,
+      reorderedItemIds: reorderedItemIds,
+      folderId: folderId,
+    );
+
+    if (updatedOrders.isEmpty) {
+      logger.i('No items were reordered.');
+      return updatedOrders;
+    }
+
+    logger.v('Items reordered. Updating the cache and maps.');
+
+    updateItemOrders(travelDocumentId, updatedOrders);
+    emit(
+      TravelItemRepositoryItemOrdersUpdated(
+        travelDocumentId: travelDocumentId,
+        updatedOrders: updatedOrders,
+      ),
+    );
+
+    logger.i(
+      'Items of $travelDocumentId and folderId=$folderId reordered '
+      'successfully.',
+    );
+    return updatedOrders;
   }
 
   /// Wraps a travel item in a [TravelItemEntityWrapper].

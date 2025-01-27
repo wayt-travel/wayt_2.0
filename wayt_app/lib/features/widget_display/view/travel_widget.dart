@@ -30,7 +30,10 @@ class _TravelWidgetState extends State<TravelWidget> {
   bool _isHovering = false;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      // onLongPress: () {
+      //   SnackBarHelper.I.showNotImplemented(context);
+      // },
       onTapUp: (details) {
         setState(() => _isHovering = true);
         TravelItemWidgetContextMenu.showForItem(

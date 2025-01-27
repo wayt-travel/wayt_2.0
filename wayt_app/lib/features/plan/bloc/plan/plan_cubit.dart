@@ -18,8 +18,13 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
   /// The ID of the plan.
   final String planId;
 
+  /// The travel item repository.
   final TravelItemRepository travelItemRepository;
+
+  /// The plan repository.
   final PlanRepository planRepository;
+
+  /// The orchestrator for fetching the plan.
   final FetchPlanOrchestrator fetchPlanOrchestrator;
 
   /// The subscription to the [planRepository].
@@ -47,16 +52,20 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
           repoState.item.id == planId) {
         emit(
           PlanFetchSuccess(
-            plan: repoState.item,
-            travelItems: travelItemRepository.getAllOfPlan(planId),
+            TravelDocumentWrapper(
+              travelDocument: repoState.item,
+              travelItems: travelItemRepository.getAllOfPlan(planId),
+            ),
           ),
         );
       } else if (repoState is PlanRepositoryPlanUpdated &&
           repoState.updatedItem.id == planId) {
         emit(
           PlanSummaryUpdateSuccess(
-            plan: repoState.updatedItem,
-            travelItems: travelItemRepository.getAllOfPlan(planId),
+            TravelDocumentWrapper(
+              travelDocument: repoState.updatedItem,
+              travelItems: travelItemRepository.getAllOfPlan(planId),
+            ),
           ),
         );
       }
@@ -81,8 +90,10 @@ class PlanCubit extends Cubit<PlanState> with LoggerMixin {
       if (hasAddedWidget || hasDeletedWidget || hasFetchedCollection) {
         emit(
           PlanItemListUpdateSuccess(
-            plan: planRepository.getOrThrow(planId),
-            travelItems: travelItemRepository.getAllOfPlan(planId),
+            TravelDocumentWrapper(
+              travelDocument: planRepository.getOrThrow(planId),
+              travelItems: travelItemRepository.getAllOfPlan(planId),
+            ),
           ),
         );
       }

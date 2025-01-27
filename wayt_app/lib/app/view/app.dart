@@ -7,7 +7,9 @@ import '../../router/router.dart';
 import '../../theme/theme.dart';
 import '../app.dart';
 
+/// The main application widget.
 class WaytApp extends StatelessWidget {
+  /// Creates a new instance of [WaytApp].
   const WaytApp({super.key});
 
   @override
@@ -21,7 +23,9 @@ class WaytApp extends StatelessWidget {
   }
 }
 
+/// The main application view for the [WaytApp].
 class WaytView extends StatelessWidget {
+  /// Creates a new instance of [WaytView].
   const WaytView({super.key});
 
   @override

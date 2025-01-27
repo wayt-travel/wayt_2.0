@@ -16,6 +16,7 @@ import '../bloc/upsert_folder/upsert_folder_cubit.dart';
 
 /// A modal for adding or editing a folder.
 class FolderModal extends StatelessWidget {
+  /// Creates a new instance of [FolderModal].
   const FolderModal({super.key});
 
   /// Pushes the modal to the navigator.

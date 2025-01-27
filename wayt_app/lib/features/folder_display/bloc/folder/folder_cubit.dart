@@ -8,13 +8,18 @@ import '../../../../repositories/repositories.dart';
 
 part 'folder_state.dart';
 
+/// The cubit for the folder display.
 class FolderCubit extends Cubit<FolderState> {
+  /// The id of the folder.
   final String folderId;
 
+  /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The subscription to the travel item repository.
   StreamSubscription<TravelItemRepositoryState>? _travelItemRepoSub;
 
+  /// Creates a new instance of [FolderCubit].
   FolderCubit({
     required this.folderId,
     required this.travelItemRepository,

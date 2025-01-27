@@ -32,6 +32,7 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
     required this.travelItemRepository,
   }) : super(UpsertFolderState.initial());
 
+  /// Updates the name of the folder.
   void updateName(String? name) {
     emit(
       state.copyWith(
@@ -41,6 +42,7 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
     );
   }
 
+  /// Updates the icon of the folder.
   void updateIcon(WidgetFolderIcon icon) {
     emit(
       state.copyWith(
@@ -50,6 +52,7 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
     );
   }
 
+  /// Updates the color of the folder.
   void updateColor(FeatureColor color) {
     emit(
       state.copyWith(
@@ -59,11 +62,13 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
     );
   }
 
+  /// Validates the current state of the cubit.
   SingleValidationResult<dynamic> validate(BuildContext? context) {
     return WidgetFolderEntity.getNameValidator(context)
         .validateValue(state.name);
   }
 
+  /// Submits the creation/update of the folder based on the current state.
   Future<void> submit() async {
     logger.v(
       'Submitting new folder in $travelDocumentId...',

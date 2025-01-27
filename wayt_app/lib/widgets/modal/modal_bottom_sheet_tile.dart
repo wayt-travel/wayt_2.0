@@ -39,13 +39,15 @@ class ModalBottomSheetTile extends StatelessWidget {
       subtitle: action.subtitle != null ? Text(action.subtitle!) : null,
       title: Text(action.title),
       tileColor: Colors.transparent,
-      titleTextStyle: context.tt.bodyLarge?.copyWith(
-        color: action.isDangerous ? context.col.error : null,
-        fontWeight: FontWeight.w500,
-      ),
-      subtitleTextStyle: context.tt.bodyMedium?.copyWith(
-        color: action.isDangerous ? context.col.error : null,
-      ),
+      titleTextStyle: action.titleStyle ??
+          context.tt.bodyLarge?.copyWith(
+            color: action.isDangerous ? context.col.error : null,
+            fontWeight: FontWeight.w500,
+          ),
+      subtitleTextStyle: action.subtitleStyle ??
+          context.tt.bodyMedium?.copyWith(
+            color: action.isDangerous ? context.col.error : null,
+          ),
     );
   }
 }

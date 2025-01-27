@@ -8,14 +8,19 @@ import '../repositories.dart';
 class TravelDocumentWrapper<T extends TravelDocumentEntity>
     with EquatableMixin, ModelToStringMixin
     implements IModel {
+  /// The travel document.
   final T travelDocument;
+
+  /// The travel items of the travel document.
   final List<TravelItemEntityWrapper> travelItems;
 
+  /// Creates a new instance of [TravelDocumentWrapper].
   TravelDocumentWrapper({
     required this.travelDocument,
     required this.travelItems,
   });
 
+  /// Returns the id of the travel document.
   TravelDocumentId get id => travelDocument.tid;
 
   @override

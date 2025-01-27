@@ -5,6 +5,7 @@ export 'w_error.dart';
 
 const _somethingWentWrongMessage = 'Oops, Something went wrong.';
 
+/// All app errors.
 final $errors = (
   generic: WError(
     code: 'GENERIC_ERROR',

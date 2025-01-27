@@ -11,22 +11,40 @@ import '../../../widgets/message/loading_indicator_message.dart';
 import '../../widget_upsert/view/add_widget_mbs.dart';
 import '../plan.dart';
 
+/// Page for displaying a plan.
 class PlanPage {
+  /// The name of the route.
   static const String routeName = 'plan';
+
+  /// The path of the route.
   static const String path = '/plans/:planId';
 
+  /// The route of this page.
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: BlocProvider(
-            create: (context) => PlanCubit(
-              planRepository: $.repo.plan(),
-              travelItemRepository: $.repo.travelItem(),
-              summaryHelperRepository: $.repo.summaryHelper(),
-              planId: state.pathParameters['planId']!,
-            )..fetch(force: false),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => PlanCubit(
+                  planRepository: $.repo.plan(),
+                  travelItemRepository: $.repo.travelItem(),
+                  summaryHelperRepository: $.repo.summaryHelper(),
+                  planId: state.pathParameters['planId']!,
+                )..fetch(force: false),
+              ),
+              BlocProvider(
+                create: (context) => ReorderItemsCubit(
+                  travelDocumentId: TravelDocumentId.plan(
+                    state.pathParameters['planId']!,
+                  ),
+                  travelItemRepository: $.repo.travelItem(),
+                  folderId: null,
+                ),
+              ),
+            ],
             child: PlanView(
               planId: state.pathParameters['planId']!,
               planSummary: state.extra as PlanEntity?,
@@ -35,6 +53,7 @@ class PlanPage {
         ),
       );
 
+  /// Navigates to the plan page.
   static void go(
     BuildContext context, {
     required String planId,
@@ -42,6 +61,7 @@ class PlanPage {
   }) =>
       context.router.go('/plans/$planId', extra: planSummary);
 
+  /// Pushes the plan page onto the navigation stack.
   static void push(
     BuildContext context, {
     required String planId,
@@ -50,10 +70,21 @@ class PlanPage {
       context.router.push('/plans/$planId', extra: planSummary);
 }
 
+/// The main view of the plan page.
 class PlanView extends StatelessWidget {
+  /// The id of the plan.
   final String planId;
+
+  /// The summary of the plan.
+  ///
+  /// This is used to display the name of the plan while the plan is being
+  /// fetched.
+  ///
+  /// If `null`, the name of the plan is not displayed while the full plan is
+  /// being fetched.
   final PlanEntity? planSummary;
 
+  /// Creates a new instance of [PlanView].
   const PlanView({
     required this.planId,
     required this.planSummary,
@@ -71,25 +102,20 @@ class PlanView extends StatelessWidget {
         PlanEntity? fetchedPlan;
         if (state is PlanFetchSuccess) {
           isSuccess = true;
-          fetchedPlan = state.plan;
+          fetchedPlan = state.plan.travelDocument;
           content = SliverMainAxisGroup(
             slivers: [
-              BlocBuilder<PlanCubit, PlanState>(
-                buildWhen: (previous, current) =>
-                    current is PlanItemListUpdateSuccess,
-                builder: (context, state) {
-                  if (state is PlanStateWithData) {
-                    return PlanItemList(
-                      travelItems: state.travelItems,
-                    );
-                  }
-
-                  throw ArgumentError.value(
-                    state,
-                    'state',
-                    'Invalid state: $state. Expected $PlanStateWithData',
-                  );
-                },
+              BlocSelector<PlanCubit, PlanState, List<TravelItemEntityWrapper>>(
+                selector: (state) =>
+                    state is PlanStateWithData ? state.plan.travelItems : [],
+                builder: (context, travelItems) => PlanItemList(
+                  // Use a key to force the widget to rebuild when the list
+                  // of travel items changes.
+                  key: ValueKey(travelItems),
+                  folderId: null,
+                  travelDocumentId: TravelDocumentId.plan(planId),
+                  travelItems: travelItems,
+                ),
               ),
               getScrollableBottomPadding(context).asVSpan.asSliver,
             ],
@@ -128,9 +154,10 @@ class PlanView extends StatelessWidget {
                 ),
                 actions: isSuccess
                     ? [
+                        const TravelDocumentReorderIconButton(),
                         IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {},
+                          icon: const Icon(Icons.more_vert),
+                          onPressed: () => PlanPageMoreMbs.show(context),
                         ),
                       ]
                     : null,

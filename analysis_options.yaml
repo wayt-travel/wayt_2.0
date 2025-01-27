@@ -1,4 +1,9 @@
 include: package:a2f_sdk/analysis_options.yaml
 analyzer:
+  exclude:
+    - '**/*.g.dart'
   errors:
     no_runtimetype_tostring: ignore
+linter:
+  rules:
+    public_member_api_docs: true

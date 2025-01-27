@@ -25,6 +25,7 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
   final UserRepository _userRepository;
   late final StreamSubscription<AuthRepositoryState> _authSubscription;
 
+  /// Creates a new instance of [AppBloc].
   AppBloc({
     required AuthRepository authRepo,
     required UserRepository userRepo,
@@ -41,6 +42,7 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
     );
   }
 
+  /// Initializes the app state.
   Future<void> init() async {
     // await _authRepository.init();
     await _authRepository.signIn(
