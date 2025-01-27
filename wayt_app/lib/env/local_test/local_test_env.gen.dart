@@ -4,6 +4,7 @@ import '../w_env.dart';
 
 part 'local_test_env.gen.g.dart';
 
+/// The local test env.
 @Envied(name: 'Env', path: '.env.local_test', useConstantCase: true)
 final class LocalTestEnv extends WEnv {
   @override

@@ -5,12 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../theme/theme.dart';
 
+/// The home page.
 class HomePage extends StatelessWidget {
   const HomePage._();
 
+  /// The path of the home page.
   static const String path = '/home';
+
+  /// The route name of the home page.
   static const String routeName = 'home';
 
+  /// The route of the home page.
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
@@ -19,6 +24,7 @@ class HomePage extends StatelessWidget {
         ),
       );
 
+  /// Navigates to the home page.
   static void go(BuildContext context) {
     context.router.goNamed(
       routeName,
@@ -31,7 +37,9 @@ class HomePage extends StatelessWidget {
   }
 }
 
+/// The view of the home page.
 class HomeView extends StatelessWidget {
+  /// Creates a new instance of [HomeView].
   const HomeView({super.key});
 
   @override

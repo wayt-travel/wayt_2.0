@@ -1,6 +1,8 @@
 part of 'fetch_plans_cubit.dart';
 
+/// State for the fetch plans cubit.
 final class FetchPlansState extends SuperBlocState<WError> {
+  /// The fetched plans.
   final List<PlanEntity> plans;
 
   const FetchPlansState._({
@@ -9,6 +11,7 @@ final class FetchPlansState extends SuperBlocState<WError> {
     super.error,
   });
 
+  /// Initial state of the cubit.
   const FetchPlansState.initial()
       : plans = const [],
         super.initial();

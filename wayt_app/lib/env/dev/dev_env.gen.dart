@@ -4,6 +4,7 @@ import '../w_env.dart';
 
 part 'dev_env.gen.g.dart';
 
+/// The dev env.
 @Envied(name: 'Env', path: '.env.dev', useConstantCase: true)
 final class DevEnv extends WEnv {
   @override

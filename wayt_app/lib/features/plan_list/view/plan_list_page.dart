@@ -10,12 +10,17 @@ import '../../../widgets/message/loading_indicator_message.dart';
 import '../bloc/fetch_plans/fetch_plans_cubit.dart';
 import 'plan_list_body.dart';
 
+/// The page showing the list of plans.
 class PlanListPage extends StatelessWidget {
   const PlanListPage._();
 
+  /// The route name of the plan list page.
   static const String routeName = 'plans';
+
+  /// The path of the plan list page.
   static const String path = '/$routeName';
 
+  /// The route of the plan list page.
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
@@ -24,7 +29,10 @@ class PlanListPage extends StatelessWidget {
         ),
       );
 
+  /// Navigates to the plan list page.
   static void go(BuildContext context) => context.router.goNamed(routeName);
+
+  /// Pushes the plan list page to the navigator.
   static void push(BuildContext context) => context.router.pushNamed(routeName);
 
   @override
@@ -33,7 +41,9 @@ class PlanListPage extends StatelessWidget {
   }
 }
 
+/// The view of the plan list page.
 class PlanListView extends StatelessWidget {
+  /// Creates a new instance of [PlanListView].
   const PlanListView({super.key});
 
   @override

@@ -21,10 +21,12 @@ abstract interface class TravelItemRepository
   /// Creates a new instance of [TravelItemRepository].
   factory TravelItemRepository({
     required SummaryHelperRepository summaryHelperRepository,
+    required TravelItemDataSource travelItemDataSource,
     required WidgetDataSource widgetDataSource,
     required WidgetFolderDataSource widgetFolderDataSource,
   }) =>
       TravelItemRepositoryImpl(
+        travelItemDataSource: travelItemDataSource,
         summaryHelperRepository: summaryHelperRepository,
         widgetDataSource: widgetDataSource,
         widgetFolderDataSource: widgetFolderDataSource,
@@ -52,6 +54,22 @@ abstract interface class TravelItemRepository
 
   /// Deletes a folder by its [id].
   Future<void> deleteFolder(String id);
+
+  /// Reorders the items in a travel document based on the provided
+  /// [reorderedItemIds].
+  ///
+  /// This method supports reordering the items in the root of the travel
+  /// document as well as the items contained in a folder. For the latter, the
+  /// [folderId] should be provided.
+  ///
+  /// If [reorderedItemIds] does not match the list of items currently contained
+  /// in the repo for the travel document with [travelDocumentId] the method
+  /// will throw an [ArgumentError].
+  Future<Map<String, int>> reorderItems({
+    required TravelDocumentId travelDocumentId,
+    required List<String> reorderedItemIds,
+    String? folderId,
+  });
 
   /// Gets the travel item wrapper of the travel item with the given [id] from
   /// the cache.

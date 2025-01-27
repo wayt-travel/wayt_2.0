@@ -43,8 +43,15 @@ abstract class WEnv implements _IWEnv {
     }
   }
 
+  /// Whether the env is local test.
   bool get isLocalTest => _flavor == WFlavor.localTest;
+
+  /// Whether the env is local.
   bool get isLocal => _flavor == WFlavor.local;
+
+  /// Whether the env is dev.
   bool get isDev => _flavor == WFlavor.dev;
+
+  /// Whether the env is prod.
   bool get isProd => _flavor == WFlavor.prod;
 }

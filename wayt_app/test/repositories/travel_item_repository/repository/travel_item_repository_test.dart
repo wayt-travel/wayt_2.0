@@ -10,6 +10,8 @@ class MockWidgetFolderDataSource extends Mock
 
 class MockWidgetDataSource extends Mock implements WidgetDataSource {}
 
+class MockTravelItemDataSource extends Mock implements TravelItemDataSource {}
+
 class MockSummaryHelperRepository extends Mock
     implements SummaryHelperRepository {}
 
@@ -49,6 +51,7 @@ void main() {
 
   setUp(() {
     repository = TravelItemRepositoryImpl(
+      travelItemDataSource: MockTravelItemDataSource(),
       widgetFolderDataSource: MockWidgetFolderDataSource(),
       widgetDataSource: MockWidgetDataSource(),
       summaryHelperRepository: MockSummaryHelperRepository(),
@@ -324,9 +327,14 @@ void main() {
           travelDocumentId: travelDocumentId,
           order: 0,
         );
-        final widget2 = _buildWidget(
+        final widget2 = _buildFolder(
           travelDocumentId: travelDocumentId,
           order: 1,
+        );
+        final widgetInsideFolder = _buildWidget(
+          travelDocumentId: travelDocumentId,
+          order: 0,
+          folderId: widget2.id,
         );
         final widget3 = _buildWidget(
           travelDocumentId: travelDocumentId,
@@ -335,6 +343,7 @@ void main() {
         repository
           ..upsertInCacheAndMaps(widget1)
           ..upsertInCacheAndMaps(widget2)
+          ..upsertInCacheAndMaps(widgetInsideFolder)
           ..upsertInCacheAndMaps(widget3);
         expect(
           const ListEquality<String>().equals(
@@ -363,8 +372,17 @@ void main() {
           ),
           isTrue,
         );
+        repository
+            .getWrappedOrThrow(widget2.id)
+            .asFolderWidgetWrapper
+            .children
+            .let((children) {
+          expect(children, hasLength(1));
+          expect(children[0].id, equals(widgetInsideFolder.id));
+        });
       },
     );
+
     test('should update the order of a widget in a folder', () {
       final folder = _buildFolder(
         travelDocumentId: travelDocumentId,

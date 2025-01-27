@@ -10,10 +10,13 @@ import '../../../../repositories/repositories.dart';
 
 part 'fetch_plans_state.dart';
 
+/// Cubit for fetching plans.
 class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
+  /// The plan repository.
   final PlanRepository planRepository;
   StreamSubscription<RepositoryState<PlanEntity>>? _plansSubscription;
 
+  /// Creates a new instance of [FetchPlansCubit].
   FetchPlansCubit({
     required this.planRepository,
   }) : super(const FetchPlansState.initial()) {
@@ -30,6 +33,7 @@ class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
     });
   }
 
+  /// Fetches the plans.
   Future<void> fetch() async {
     logger.v('Fetching plans');
     emit(state.copyWith(status: StateStatus.progress));
