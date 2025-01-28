@@ -81,15 +81,20 @@ android {
             applicationIdSuffix ""
             manifestPlaceholders = [appName: "Wayt App"]
         }
-        staging {
+        testing {
             dimension "default"
-            applicationIdSuffix ".stg"
-            manifestPlaceholders = [appName: "[STG] Wayt App"]
+            applicationIdSuffix ".tst"
+            manifestPlaceholders = [appName: "[TST] Wayt App"]
         }
         development {
             dimension "default"
             applicationIdSuffix ".dev"
             manifestPlaceholders = [appName: "[DEV] Wayt App"]
+        }
+        memory {
+            dimension "default"
+            applicationIdSuffix ".mem"
+            manifestPlaceholders = [appName: "[MEM] Wayt App"]
         }
     }
 

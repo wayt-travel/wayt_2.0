@@ -17,7 +17,7 @@ import '../repositories/repositories.dart';
 /// Used in in-memory data sources to simulate asynchronous API operations.
 Future<void> waitFakeTime() async {
   // Do not wait in local test.
-  if ($.env.isLocalTest) return;
+  if ($.env.isTest) return;
   await Future<void>.delayed(const Duration(milliseconds: 300));
 }
 

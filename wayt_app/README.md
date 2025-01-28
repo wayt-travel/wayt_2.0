@@ -12,23 +12,27 @@ A Very Good Project created by Very Good CLI.
 
 ## Getting Started 🚀
 
-This project contains 3 flavors:
+This project contains 4 flavors:
 
+- memory
 - development
-- staging
+- testing
 - production
 
 To run the desired flavor either use the launch configuration in VSCode/Android Studio or use the following commands:
 
 ```sh
-# Development
-$ flutter run --flavor development --target lib/main_development.dart
+# Memory
+$ flutter run --flavor memory --target lib/main.dart
 
-# Staging
-$ flutter run --flavor staging --target lib/main_staging.dart
+# Development
+$ flutter run --flavor development --target lib/main.dart
+
+# Testing
+$ flutter run --flavor testing --target lib/main.dart
 
 # Production
-$ flutter run --flavor production --target lib/main_production.dart
+$ flutter run --flavor production --target lib/main.dart
 ```
 
 _\*Wayt App works on iOS, Android, Web, and Windows._

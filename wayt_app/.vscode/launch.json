@@ -5,21 +5,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch local",
+      "name": "Launch testing",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
         "--flavor",
-        "development",
+        "testing",
         "--target",
         "lib/main.dart",
-        "--dart-define",
-        "WENV=local"
       ]
     },
     {
-      "name": "Launch local_test",
+      "name": "Launch memory",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--flavor",
+        "memory",
+        "--target",
+        "lib/main.dart",
+      ]
+    },
+    {
+      "name": "Launch dev",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
@@ -28,8 +38,6 @@
         "development",
         "--target",
         "lib/main.dart",
-        "--dart-define",
-        "WENV=local_test"
       ]
     },
     {
@@ -42,8 +50,6 @@
         "production",
         "--target",
         "lib/main.dart",
-        "--dart-define",
-        "WENV=prod"
       ]
     }
   ]

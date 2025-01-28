@@ -3,12 +3,12 @@ import 'package:flext/flext.dart';
 /// Represents the different flavors to launch the app.
 enum WFlavor {
   /// The flavor used for local testing (unit tests).
-  localTest,
+  tst,
 
   /// The flavor used for local development.
   ///
   /// It connects to the local environment.
-  local,
+  mem,
 
   /// The flavor used for development.
   ///
@@ -17,6 +17,14 @@ enum WFlavor {
 
   /// The flavor used for production.
   prod;
+
+  /// Returns the full name of the flavor.
+  String get fullName => switch (this) {
+        WFlavor.tst => 'testing',
+        WFlavor.mem => 'memory',
+        WFlavor.dev => 'development',
+        WFlavor.prod => 'production',
+      };
 
   /// Returns a flavor based on the given name. Throws if not found.
   ///
@@ -35,6 +43,7 @@ enum WFlavor {
         (match) => [
           match.name.toLowerCase(),
           match.name.toSnakeCase().toLowerCase(),
+          match.fullName,
         ].contains(input.toLowerCase()),
       );
 }
