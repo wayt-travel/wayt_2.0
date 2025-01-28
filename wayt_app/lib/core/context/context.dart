@@ -31,14 +31,14 @@ final class $ {
   /// Gets all app repositories.
   static ({
     AuthRepository Function() auth,
-    PlanRepository Function() plan,
+    TravelDocumentRepository Function() travelDocument,
     UserRepository Function() user,
     TravelItemRepository Function() travelItem,
     SummaryHelperRepository Function() summaryHelper,
   }) get repo => (
         auth: GetIt.I.get<AuthRepository>,
         user: GetIt.I.get<UserRepository>,
-        plan: GetIt.I.get<PlanRepository>,
+        travelDocument: GetIt.I.get<TravelDocumentRepository>,
         travelItem: GetIt.I.get<TravelItemRepository>,
         summaryHelper: GetIt.I.get<SummaryHelperRepository>,
       );

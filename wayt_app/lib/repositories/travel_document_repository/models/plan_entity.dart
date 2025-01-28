@@ -1,6 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../../repositories.dart';
+import 'travel_document_entity.dart';
 
 /// Travel plan entity.
 abstract interface class PlanEntity

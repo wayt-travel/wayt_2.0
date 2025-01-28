@@ -5,6 +5,7 @@ import '../core/context/context.dart';
 import '../repositories/repositories.dart';
 import 'init.dart';
 
+/// Registers the repositories of the application.
 void registerRepositories() {
   late final RepositoryPack repositories;
   if ($.env.useInMemoryRepositories) {
@@ -28,6 +29,8 @@ void registerRepositories() {
   GetIt.I.registerSingleton<SummaryHelperRepository>(
     repositories.summaryHelperRepo,
   );
-  GetIt.I.registerSingleton<PlanRepository>(repositories.planRepo);
+  GetIt.I.registerSingleton<TravelDocumentRepository>(
+    repositories.travelDocument,
+  );
   GetIt.I.registerSingleton<TravelItemRepository>(repositories.travelItemRepo);
 }

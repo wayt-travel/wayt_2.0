@@ -2,7 +2,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/reorder_items/reorder_items_cubit.dart';
+import '../../travel_document/bloc/reorder_items/reorder_items_cubit.dart';
 
 /// An icon button that toggles the reordering of items in a travel document
 /// or folder.

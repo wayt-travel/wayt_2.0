@@ -2,6 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 
 import '../../repositories.dart';
 
+/// Model implementation of the [PlanEntity].
 class PlanModel extends TravelDocumentModel implements PlanEntity {
   @override
   final DateTime? plannedAt;
@@ -15,6 +16,7 @@ class PlanModel extends TravelDocumentModel implements PlanEntity {
   @override
   final List<String> tags;
 
+  /// Creates a new instance of the [PlanModel].
   PlanModel({
     required super.createdAt,
     required super.id,
@@ -45,6 +47,7 @@ class PlanModel extends TravelDocumentModel implements PlanEntity {
         'tags': tags.join(', '),
       };
 
+  /// Creates a copy of this instance with the given properties changed.
   PlanModel copyWith({
     Optional<DateTime?> plannedAt = const Optional.absent(),
     bool? isDaySet,

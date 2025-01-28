@@ -353,4 +353,17 @@ class InMemoryDataHelper with LoggerMixin {
           .toList(),
     );
   }
+
+  /// Gets the travel document id from the raw ID of the travel document.
+  TravelDocumentId getTravelDocumentIdFromRawId(String id) =>
+      (_data.travelDocuments.get(TravelDocumentId.plan(id)) ??
+              _data.travelDocuments.getOrThrow(TravelDocumentId.journal(id)))
+          .tid;
+
+  /// Gets the travel document wrapper from the raw ID of the travel document.
+  TravelDocumentWrapper<T>
+      getTravelDocumentWrapperByRawId<T extends TravelDocumentEntity>(
+    String id,
+  ) =>
+          getTravelDocumentWrapper(getTravelDocumentIdFromRawId(id));
 }

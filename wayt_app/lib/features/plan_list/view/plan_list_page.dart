@@ -49,9 +49,9 @@ class PlanListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          FetchPlansCubit(planRepository: GetIt.I.get<PlanRepository>())
-            ..fetch(),
+      create: (context) => FetchPlansCubit(
+        travelDocumentRepository: GetIt.I.get<TravelDocumentRepository>(),
+      )..fetch(),
       child: Builder(
         builder: (_) => BlocBuilder<FetchPlansCubit, FetchPlansState>(
           builder: (context, state) {

@@ -8,7 +8,7 @@ import 'plan_tile/plan_tile.dart';
 class PlanListBody extends StatefulWidget {
   /// The list of plans to display.
   final List<PlanEntity> plans;
-  
+
   /// Creates a new instance of [PlanListBody].
   const PlanListBody(this.plans, {super.key});
 

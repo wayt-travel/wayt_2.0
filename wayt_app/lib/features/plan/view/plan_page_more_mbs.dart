@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../repositories/repositories.dart';
 import '../../../widgets/widgets.dart';
-import '../bloc/reorder_items/reorder_items_cubit.dart';
+import '../../travel_document/bloc/reorder_items/reorder_items_cubit.dart';
 
 /// Modal bottom sheet for the plan page shown when the user taps on the more
 /// button in the app bar.

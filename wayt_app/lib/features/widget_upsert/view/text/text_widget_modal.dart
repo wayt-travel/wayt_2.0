@@ -8,11 +8,13 @@ import 'package:luthor/luthor.dart';
 import '../../../../core/context/context.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/snack_bar/snack_bar_helper.dart';
+import '../../../../widgets/widgets.dart';
 import '../../bloc/upsert_text_widget/upsert_text_widget_cubit.dart';
 import 'text_widget_modal_bottom_bar.dart';
 
 /// Modal for adding or editing a text widget.
 class TextWidgetModal extends StatelessWidget {
+  /// Creates a new instance of [TextWidgetModal].
   const TextWidgetModal({super.key});
 
   /// Pushes the modal to the navigator.
@@ -50,26 +52,39 @@ class TextWidgetModal extends StatelessWidget {
           'Add text widget',
         ),
       ),
-      body: Padding(
-        padding: $insets.screenH.asPaddingH,
-        child: Form(
-          child: BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
-            builder: (context, state) {
-              return TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                textInputAction: TextInputAction.newline,
-                initialValue: state.text,
-                style: state.featureTextStyle.toFlutterTextStyle(context),
-                onChanged: (changed) {
-                  context.read<UpsertTextWidgetCubit>().updateText(changed);
+      body: Stack(
+        children: [
+          Padding(
+            padding: $insets.screenH.asPaddingH.copyWith(bottom: 140),
+            child: Form(
+              child: BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
+                builder: (context, state) {
+                  return TextFormField(
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    textInputAction: TextInputAction.newline,
+                    initialValue: state.text,
+                    style: state.featureTextStyle.toFlutterTextStyle(context),
+                    onChanged: (changed) {
+                      context.read<UpsertTextWidgetCubit>().updateText(changed);
+                    },
+                  );
                 },
-              );
-            },
+              ),
+            ),
           ),
-        ),
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: double.infinity,
+              // Cannot use the bottom bar as a scaffold.bottomBar because it
+              // gets hidden by the keyboard.
+              child: TextWidgetModalBottomBar(),
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: const TextWidgetModalBottomBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result =
@@ -103,7 +118,7 @@ class TextWidgetModal extends StatelessWidget {
         },
         child: const Icon(Icons.save),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

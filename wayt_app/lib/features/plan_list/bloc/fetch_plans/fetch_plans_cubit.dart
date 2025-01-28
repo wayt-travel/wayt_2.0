@@ -13,20 +13,20 @@ part 'fetch_plans_state.dart';
 /// Cubit for fetching plans.
 class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
   /// The plan repository.
-  final PlanRepository planRepository;
-  StreamSubscription<RepositoryState<PlanEntity>>? _plansSubscription;
+  final TravelDocumentRepository travelDocumentRepository;
+  StreamSubscription<TravelDocumentRepositoryState>? _plansSubscription;
 
   /// Creates a new instance of [FetchPlansCubit].
   FetchPlansCubit({
-    required this.planRepository,
+    required this.travelDocumentRepository,
   }) : super(const FetchPlansState.initial()) {
-    _plansSubscription = planRepository.listen((repoState) {
+    _plansSubscription = travelDocumentRepository.listen((repoState) {
       if (isClosed) return;
-      if (repoState is PlanRepositoryPlanCollectionFetched) {
+      if (repoState is TravelDocumentRepositoryCollectionFetched) {
         emit(
           state.copyWith(
             status: StateStatus.success,
-            plans: repoState.items,
+            plans: repoState.items.whereType<PlanEntity>().toList(),
           ),
         );
       }
@@ -44,7 +44,7 @@ class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
       return;
     }
     try {
-      await planRepository.fetchAllOfUser(user.id);
+      await travelDocumentRepository.fetchAllPlansOfUser(user.id);
     } catch (e, s) {
       logger.e('Failed to fetch plans of user $user', e, s);
       emit(state.copyWithError(e.errorOrGeneric));
