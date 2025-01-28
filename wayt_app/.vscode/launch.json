@@ -5,46 +5,32 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch local",
+      "name": "Launch TST",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--flavor",
-        "development",
-        "--target",
-        "lib/main.dart",
-        "--dart-define",
-        "WENV=local"
-      ]
+      "args": ["--flavor", "tst", "--target", "lib/main.dart"]
     },
     {
-      "name": "Launch local_test",
+      "name": "Launch MEM",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--flavor",
-        "development",
-        "--target",
-        "lib/main.dart",
-        "--dart-define",
-        "WENV=local_test"
-      ]
+      "args": ["--flavor", "mem", "--target", "lib/main.dart"]
     },
     {
-      "name": "Launch prod",
+      "name": "Launch DEV",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--flavor",
-        "production",
-        "--target",
-        "lib/main.dart",
-        "--dart-define",
-        "WENV=prod"
-      ]
+      "args": ["--flavor", "dev", "--target", "lib/main.dart"]
+    },
+    {
+      "name": "Launch PRD",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "prd", "--target", "lib/main.dart"]
     }
   ]
 }

@@ -166,6 +166,7 @@ class TravelItemRepositoryImpl
   /// the given [folderId].
   ///
   /// Throws an [ArgumentError] otherwise.
+  // ignore: unused_element
   void _checkThrowContainsItem({
     required TravelDocumentId travelDocumentId,
     required String? folderId,

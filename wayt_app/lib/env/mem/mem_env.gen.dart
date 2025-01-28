@@ -2,12 +2,12 @@ import 'package:envied/envied.dart';
 
 import '../w_env.dart';
 
-part 'local_env.gen.g.dart';
+part 'mem_env.gen.g.dart';
 
 /// Environment variables for the local environment.
-@Envied(name: 'Env', path: '.env.local', useConstantCase: true)
-final class LocalEnv extends WEnv {
+@Envied(name: 'Env', path: '.env.mem', useConstantCase: true)
+final class MemEnv extends WEnv {
   @override
-  @EnviedField(defaultValue: false)
+  @EnviedField(defaultValue: true)
   final bool useInMemoryRepositories = _Env.useInMemoryRepositories;
 }
