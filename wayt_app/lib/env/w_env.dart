@@ -1,9 +1,6 @@
 import 'package:flutter/services.dart';
 
-import 'dev/dev_env.gen.dart';
-import 'memory/memory_env.gen.dart';
-import 'test/test_env.gen.dart';
-import 'w_flavor.dart';
+import 'env.dart';
 
 /// Interface defining the environment variables to be overridden by
 /// environments.
@@ -20,9 +17,9 @@ abstract class WEnv implements _IWEnv {
   /// Gets the current environment configuration.
   static WEnv get I => _instance ??= switch (_flavor) {
         WFlavor.tst => TestEnv(),
-        WFlavor.mem => MemoryEnv(),
+        WFlavor.mem => MemEnv(),
         WFlavor.dev => DevEnv(),
-        WFlavor.prod => throw UnimplementedError(),
+        WFlavor.prd => throw UnimplementedError(),
       };
 
   static final WFlavor _flavor = _nativeFlavor;
@@ -32,15 +29,15 @@ abstract class WEnv implements _IWEnv {
       ? WFlavor.fromName(appFlavor!)
       : throw StateError('FLUTTER_APP_FLAVOR is not set');
 
-  /// Whether the env is local test.
-  bool get isTest => _flavor == WFlavor.tst;
+  /// Whether the env is TST.
+  bool get isTst => _flavor == WFlavor.tst;
 
-  /// Whether the env is local.
-  bool get isMemory => _flavor == WFlavor.mem;
+  /// Whether the env is MEM.
+  bool get isMem => _flavor == WFlavor.mem;
 
-  /// Whether the env is dev.
+  /// Whether the env is DEV.
   bool get isDev => _flavor == WFlavor.dev;
 
-  /// Whether the env is prod.
-  bool get isProd => _flavor == WFlavor.prod;
+  /// Whether the env is PRD.
+  bool get isPrd => _flavor == WFlavor.prd;
 }
