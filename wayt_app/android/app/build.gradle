@@ -76,22 +76,22 @@ android {
 
     flavorDimensions "default"
     productFlavors { 
-        production {
+        prd {
             dimension "default"
             applicationIdSuffix ""
             manifestPlaceholders = [appName: "Wayt App"]
         }
-        testing {
+        tst {
             dimension "default"
             applicationIdSuffix ".tst"
             manifestPlaceholders = [appName: "[TST] Wayt App"]
         }
-        development {
+        dev {
             dimension "default"
             applicationIdSuffix ".dev"
             manifestPlaceholders = [appName: "[DEV] Wayt App"]
         }
-        memory {
+        mem {
             dimension "default"
             applicationIdSuffix ".mem"
             manifestPlaceholders = [appName: "[MEM] Wayt App"]
