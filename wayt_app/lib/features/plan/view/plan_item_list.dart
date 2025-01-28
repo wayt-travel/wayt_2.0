@@ -9,8 +9,8 @@ import '../../../repositories/repositories.dart';
 import '../../../widgets/widgets.dart';
 import '../../folder_display/bloc/folder/folder_cubit.dart';
 import '../../folder_display/view/folder_widget.dart';
+import '../../travel_document/bloc/reorder_items/reorder_items_cubit.dart';
 import '../../widget_display/widget_display.dart';
-import '../bloc/reorder_items/reorder_items_cubit.dart';
 
 /// A widget displaying the list of travel items of a plan.
 ///

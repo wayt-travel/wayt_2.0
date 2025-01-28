@@ -1,6 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../plan_repository/models/plan_entity.dart';
+import 'plan_entity.dart';
 import 'travel_document_entity.dart';
 import 'travel_document_id.dart';
 

@@ -1,13 +1,16 @@
 import '../../../init/in_memory_data.dart';
 import '../../repositories.dart';
 
-final class InMemoryPlanDataSource implements PlanDataSource {
+/// In-memory data source for travel documents.
+final class InMemoryTravelDocumentDataSource
+    implements TravelDocumentDataSource {
   final InMemoryDataHelper _dataHelper;
 
-  InMemoryPlanDataSource(this._dataHelper);
+  /// Creates a new in-memory data source for travel documents.
+  InMemoryTravelDocumentDataSource(this._dataHelper);
 
   @override
-  Future<PlanModel> create(CreatePlanInput input) async {
+  Future<PlanModel> createPlan(CreatePlanInput input) async {
     await waitFakeTime();
     final plan = PlanModel(
       userId: input.userId,
@@ -33,7 +36,7 @@ final class InMemoryPlanDataSource implements PlanDataSource {
   }
 
   @override
-  Future<List<PlanModel>> readAllOfUser(String userId) async =>
+  Future<List<PlanModel>> readAllPlansOfUser(String userId) async =>
       waitFakeTime().then(
         (_) => _dataHelper.getSortedPlansWhere(
           (plan) => plan.userId == userId,
@@ -41,8 +44,8 @@ final class InMemoryPlanDataSource implements PlanDataSource {
       );
 
   @override
-  Future<TravelDocumentWrapper<PlanModel>> readById(String id) async {
+  Future<TravelDocumentWrapper<TravelDocumentModel>> readById(String id) async {
     await waitFakeTime();
-    return _dataHelper.getTravelDocumentWrapper(TravelDocumentId.plan(id));
+    return _dataHelper.getTravelDocumentWrapperByRawId(id);
   }
 }

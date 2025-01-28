@@ -1,6 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
-import '../repositories.dart';
+import '../../repositories.dart';
 
 /// Common entity interface for all travel documents, i.e., plans and journals.
 abstract interface class TravelDocumentEntity
@@ -23,7 +23,7 @@ abstract interface class TravelDocumentEntity
   ///
   /// Throws an error if this entity is not a journal.
   /// FIXME: This should be a JournalEntity.
-  Object get asJournal;
+  dynamic get asJournal;
 
   /// Whether this entity is a plan.
   bool get isPlan;

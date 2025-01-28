@@ -4,20 +4,21 @@ import 'package:mocktail/mocktail.dart';
 import 'package:wayt_app/init/in_memory_data.dart';
 import 'package:wayt_app/repositories/repositories.dart';
 
-class MockPlanDataSource extends Mock implements PlanDataSource {}
+class MockTravelDocumentDataSource extends Mock
+    implements TravelDocumentDataSource {}
 
 class MockPlan extends Mock implements PlanEntity {}
 
 void main() {
-  late MockPlanDataSource mockPlanDataSource;
-  late PlanRepository repo;
+  late MockTravelDocumentDataSource mockTravelDocumentDataSource;
+  late TravelDocumentRepository repo;
   late InMemoryDataHelper inMemoryData;
 
   setUp(() {
     inMemoryData = InMemoryDataHelper();
-    mockPlanDataSource = MockPlanDataSource();
-    repo = PlanRepository(
-      dataSource: mockPlanDataSource,
+    mockTravelDocumentDataSource = MockTravelDocumentDataSource();
+    repo = TravelDocumentRepository(
+      dataSource: mockTravelDocumentDataSource,
       summaryHelperRepository: SummaryHelperRepository(),
     );
 
@@ -36,10 +37,10 @@ void main() {
       );
       var emitted = false;
       repo.listen((state) {
-        expect(state, isA<PlanRepositoryPlanAdded>());
+        expect(state, isA<TravelDocumentRepositoryEntityAdded>());
         emitted = true;
       });
-      when(() => mockPlanDataSource.create(input))
+      when(() => mockTravelDocumentDataSource.createPlan(input))
           .thenAnswer((invocation) async {
         final input = invocation.positionalArguments[0] as CreatePlanInput;
         return PlanModel(
@@ -54,12 +55,12 @@ void main() {
           updatedAt: null,
         );
       });
-      final created = await repo.create(input);
+      final created = await repo.createPlan(input);
 
       // Wait for the state to be emitted.
       await Future<void>.delayed(const Duration(seconds: 1));
 
-      verify(() => mockPlanDataSource.create(input));
+      verify(() => mockTravelDocumentDataSource.createPlan(input));
       expect(emitted, isTrue);
       expect(repo.items, hasLength(1));
       expect(repo.items.single.id, created.id);
@@ -68,7 +69,7 @@ void main() {
 
   group('fetchOne', () {
     test('should fetch the entity and emit a new state', () async {
-      when(() => mockPlanDataSource.readById(any())).thenAnswer(
+      when(() => mockTravelDocumentDataSource.readById(any())).thenAnswer(
         (invocation) async => inMemoryData
             .getPlan(invocation.positionalArguments[0] as String)
             .let(
@@ -80,7 +81,7 @@ void main() {
       );
       var emitted = false;
       repo.listen((state) {
-        expect(state, isA<PlanRepositoryPlanFetched>());
+        expect(state, isA<TravelDocumentRepositoryItemFetched>());
         emitted = true;
       });
       final plan = inMemoryData.sortedPlans.first;
@@ -89,7 +90,7 @@ void main() {
       // Wait for the state to be emitted.
       await Future<void>.delayed(const Duration(seconds: 1));
 
-      verify(() => mockPlanDataSource.readById(plan.id));
+      verify(() => mockTravelDocumentDataSource.readById(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, hasLength(1));
       expect(repo.items.single.id, fetched.travelDocument.id);
@@ -98,7 +99,7 @@ void main() {
 
   group('delete', () {
     test('should delete the entity and emit a new state', () async {
-      when(() => mockPlanDataSource.delete(any())).thenAnswer(
+      when(() => mockTravelDocumentDataSource.delete(any())).thenAnswer(
         (invocation) async => inMemoryData
             .deletePlan(invocation.positionalArguments[0] as String),
       );
@@ -106,7 +107,7 @@ void main() {
       repo.add(plan, shouldEmit: false);
       var emitted = false;
       repo.listen((state) {
-        expect(state, isA<PlanRepositoryPlanDeleted>());
+        expect(state, isA<TravelDocumentRepositoryItemDeleted>());
         emitted = true;
       });
       await repo.delete(plan.id);
@@ -114,7 +115,7 @@ void main() {
       // Wait for the state to be emitted.
       await Future<void>.delayed(const Duration(seconds: 1));
 
-      verify(() => mockPlanDataSource.delete(plan.id));
+      verify(() => mockTravelDocumentDataSource.delete(plan.id));
       expect(emitted, isTrue);
       expect(repo.items, isEmpty);
       expect(inMemoryData.containsTravelDocument(plan.tid), isFalse);

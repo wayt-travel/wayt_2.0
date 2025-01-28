@@ -28,11 +28,13 @@ class PlanPage {
           child: MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) => PlanCubit(
-                  planRepository: $.repo.plan(),
+                create: (context) => TravelDocumentCubit(
+                  travelDocumentRepository: $.repo.travelDocument(),
                   travelItemRepository: $.repo.travelItem(),
                   summaryHelperRepository: $.repo.summaryHelper(),
-                  planId: state.pathParameters['planId']!,
+                  travelDocumentId: TravelDocumentId.plan(
+                    state.pathParameters['planId']!,
+                  ),
                 )..fetch(force: false),
               ),
               BlocProvider(
@@ -93,21 +95,23 @@ class PlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlanCubit, PlanState>(
-      buildWhen: (previous, current) => current is PlanFetchState,
+    return BlocBuilder<TravelDocumentCubit, TravelDocumentState>(
+      buildWhen: (previous, current) => current is TravelDocumentFetchState,
       builder: (context, state) {
-        assert(state is PlanFetchState, 'Invalid state: $state');
+        assert(state is TravelDocumentFetchState, 'Invalid state: $state');
         late final Widget content;
         var isSuccess = false;
         PlanEntity? fetchedPlan;
-        if (state is PlanFetchSuccess) {
+        if (state is TravelDocumentFetchSuccess) {
           isSuccess = true;
-          fetchedPlan = state.plan.travelDocument;
+          fetchedPlan = state.wrapper.travelDocument.asPlan;
           content = SliverMainAxisGroup(
             slivers: [
-              BlocSelector<PlanCubit, PlanState, List<TravelItemEntityWrapper>>(
-                selector: (state) =>
-                    state is PlanStateWithData ? state.plan.travelItems : [],
+              BlocSelector<TravelDocumentCubit, TravelDocumentState,
+                  List<TravelItemEntityWrapper>>(
+                selector: (state) => state is TravelDocumentStateWithData
+                    ? state.wrapper.travelItems
+                    : [],
                 builder: (context, travelItems) => PlanItemList(
                   // Use a key to force the widget to rebuild when the list
                   // of travel items changes.
@@ -120,7 +124,7 @@ class PlanView extends StatelessWidget {
               getScrollableBottomPadding(context).asVSpan.asSliver,
             ],
           );
-        } else if (state is PlanFetchFailure) {
+        } else if (state is TravelDocumentFetchFailure) {
           content = Center(
             child: Text(state.error.userIntlMessage(context)),
           ).asSliver;

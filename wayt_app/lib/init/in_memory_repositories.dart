@@ -6,7 +6,7 @@ typedef RepositoryPack = ({
   AuthRepository authRepo,
   UserRepository userRepo,
   SummaryHelperRepository summaryHelperRepo,
-  PlanRepository planRepo,
+  TravelDocumentRepository travelDocument,
   TravelItemRepository travelItemRepo,
 });
 
@@ -16,8 +16,8 @@ RepositoryPack inMemoryRepositories() {
   final authRepository = AuthRepository(InMemoryAuthDataSource(data));
   final userRepository = UserRepository(InMemoryUserDataSource(data));
   final summaryHelperRepository = SummaryHelperRepository();
-  final planRepository = PlanRepository(
-    dataSource: InMemoryPlanDataSource(data),
+  final travelDocumentRepository = TravelDocumentRepository(
+    dataSource: InMemoryTravelDocumentDataSource(data),
     summaryHelperRepository: summaryHelperRepository,
   );
   final travelItemRepository = TravelItemRepository(
@@ -31,7 +31,7 @@ RepositoryPack inMemoryRepositories() {
     authRepo: authRepository,
     userRepo: userRepository,
     summaryHelperRepo: summaryHelperRepository,
-    planRepo: planRepository,
+    travelDocument: travelDocumentRepository,
     travelItemRepo: travelItemRepository,
   );
 }
