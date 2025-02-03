@@ -49,4 +49,7 @@ abstract interface class TravelDocumentRepository extends Repository<String,
     Iterable<TravelDocumentEntity> travelDocuments, {
     bool shouldEmit = true,
   });
+
+  /// Gets all travel documents of a user.
+  List<TravelDocumentEntity> getAllOfUser(String userId);
 }

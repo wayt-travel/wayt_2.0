@@ -4,6 +4,7 @@ import 'package:pub_semver/pub_semver.dart';
 
 import '../../widget_repository.dart';
 
+/// Parent model for all features of a widget in a travel document.
 abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
   @override
   final String id;
@@ -17,6 +18,7 @@ abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
   @override
   final Version version;
 
+  /// Creates a new [WidgetFeatureModel] instance.
   WidgetFeatureModel({
     required this.id,
     required this.version,

@@ -13,6 +13,7 @@ final class SdkCandidate {
   /// be perfectly compatible with light and dark theme without tweaks.
   final bool isM3Friendly;
 
+  /// Creates a new annotation of [SdkCandidate].
   const SdkCandidate({
     this.requiresL10n = false,
     this.isM3Friendly = true,

@@ -31,9 +31,13 @@ const _xSteps = [.25, .75];
 
 /// A context menu for a [TravelWidget].
 class TravelItemWidgetContextMenu extends StatelessWidget {
+  /// The travel item for which the context menu is displayed.
   final TravelItemEntity travelItem;
+
+  /// The actions to display in the context menu.
   final List<ModalBottomSheetAction> actions;
 
+  /// Creates a travel item widget context menu.
   const TravelItemWidgetContextMenu({
     required this.travelItem,
     required this.actions,
@@ -118,6 +122,7 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
     );
   }
 
+  /// Shows the context menu for a travel item.
   static Future<void> showForItem({
     required int index,
     required BuildContext context,

@@ -11,10 +11,16 @@ import 'travel_item_widget_context_menu.dart';
 ///
 /// This widget is common to all [TravelItemEntity]s.
 class TravelWidget extends StatefulWidget {
+  /// The index of the travel item in the list of items.
   final int index;
+
+  /// The travel item to wrap.
   final TravelItemEntity travelItem;
+
+  /// The child widget to wrap.
   final Widget child;
 
+  /// Creates a travel widget.
   const TravelWidget({
     required this.index,
     required this.travelItem,

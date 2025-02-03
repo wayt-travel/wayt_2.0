@@ -32,6 +32,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// Creates an upsert text widget cubit.
   UpsertTextWidgetCubit({
     required TypographyFeatureScale textScale,
     required String? text,
@@ -46,11 +47,12 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
           ),
         );
 
+  /// Updates the text of the widget.
   void updateText(String text) {
     emit(
       state.copyWith(
         status: StateStatus.initial,
-        text: Optional(text),
+        text: Optional(text.trim()),
       ),
     );
   }
@@ -65,12 +67,14 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
     );
   }
 
+  /// Validates the current state of the cubit.
   SingleValidationResult<dynamic> validate(BuildContext? context) {
     return Validators.l10n(context)
         .textInfiniteRequired()
         .validateValue(state.text?.trim());
   }
 
+  /// Submits the text widget addition or modification based on the cubit state.
   Future<void> submit() async {
     logger.v(
       'Submitting text widget in $travelDocumentId and folderId=$folderId...',
@@ -101,7 +105,6 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
         // When creating a new widget the index is defined.
         index,
       );
-      logger.i('Text widget created successfully.');
       emit(state.copyWith(status: StateStatus.success));
     } catch (e, s) {
       logger.e('Error creating text widget: $e', e, s);

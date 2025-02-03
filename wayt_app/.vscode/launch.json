@@ -12,18 +12,18 @@
       "args": ["--flavor", "tst", "--target", "lib/main.dart"]
     },
     {
-      "name": "Launch MEM",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main.dart",
-      "args": ["--flavor", "mem", "--target", "lib/main.dart"]
-    },
-    {
       "name": "Launch DEV",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
       "args": ["--flavor", "dev", "--target", "lib/main.dart"]
+    },
+    {
+      "name": "Launch MEM",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "mem", "--target", "lib/main.dart"]
     },
     {
       "name": "Launch PRD",

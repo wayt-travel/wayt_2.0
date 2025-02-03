@@ -27,7 +27,7 @@ void main() {
 
   group('create', () {
     test('should create the entity and emit a new state', () async {
-      final CreatePlanInput input = (
+      final input = CreatePlanInput(
         userId: 'userId',
         isDaySet: true,
         isMonthSet: false,

@@ -27,6 +27,7 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
   @override
   final (double, double) coordinates;
 
+  /// Creates a new [GeoWidgetFeatureModel] instance.
   GeoWidgetFeatureModel({
     required super.id,
     required super.index,

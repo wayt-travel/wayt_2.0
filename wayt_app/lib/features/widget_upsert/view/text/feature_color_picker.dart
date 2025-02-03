@@ -46,14 +46,13 @@ class FeatureColorPicker extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final color = FeatureColor.values[index];
                     return InkWell(
-                      onTap: () {
-                        context.navRoot.pop(color);
-                      },
+                      onTap: () => context.navRoot.pop(color),
                       child: Card(
                         margin: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: $.style.corners.card.asBorderRadius,
                         ),
+                        clipBehavior: Clip.hardEdge,
                         color: color.toFlutterColor(context),
                       ),
                     );

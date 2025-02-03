@@ -8,25 +8,37 @@ import '../../../../core/context/context.dart';
 import '../../../../error/errors.dart';
 import '../../../../repositories/repositories.dart';
 
-part 'fetch_plans_state.dart';
+part 'plan_list_state.dart';
 
-/// Cubit for fetching plans.
-class FetchPlansCubit extends Cubit<FetchPlansState> with LoggerMixin {
+/// Cubit for managing the list of plans.
+class PlanListCubit extends Cubit<PlanListState> with LoggerMixin {
   /// The plan repository.
   final TravelDocumentRepository travelDocumentRepository;
+
+  /// The authentication repository.
+  final AuthRepository authRepository;
+
   StreamSubscription<TravelDocumentRepositoryState>? _plansSubscription;
 
-  /// Creates a new instance of [FetchPlansCubit].
-  FetchPlansCubit({
+  /// Creates a new instance of [PlanListCubit].
+  PlanListCubit({
     required this.travelDocumentRepository,
-  }) : super(const FetchPlansState.initial()) {
+    required this.authRepository,
+  }) : super(const PlanListState.initial()) {
     _plansSubscription = travelDocumentRepository.listen((repoState) {
       if (isClosed) return;
-      if (repoState is TravelDocumentRepositoryCollectionFetched) {
+      final isFetched = repoState is TravelDocumentRepositoryItemFetched;
+      final isUpdated = repoState is TravelDocumentRepositoryItemUpdated;
+      final isDeleted = repoState is TravelDocumentRepositoryItemDeleted;
+      final isAdded = repoState is TravelDocumentRepositoryEntityAdded;
+      if (isFetched || isUpdated || isDeleted || isAdded) {
         emit(
           state.copyWith(
             status: StateStatus.success,
-            plans: repoState.items.whereType<PlanEntity>().toList(),
+            plans: travelDocumentRepository
+                .getAllOfUser(authRepository.item!.user!.id)
+                .whereType<PlanEntity>()
+                .toList(),
           ),
         );
       }

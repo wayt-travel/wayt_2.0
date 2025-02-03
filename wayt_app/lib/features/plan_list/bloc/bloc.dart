@@ -1,1 +1,1 @@
-export 'fetch_plans/fetch_plans_cubit.dart';
+export 'plan_list/plan_list_cubit.dart';

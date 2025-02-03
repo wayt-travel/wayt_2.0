@@ -1,41 +1,41 @@
-part of 'fetch_plans_cubit.dart';
+part of 'plan_list_cubit.dart';
 
-/// State for the fetch plans cubit.
-final class FetchPlansState extends SuperBlocState<WError> {
-  /// The fetched plans.
+/// State for the [PlanListCubit].
+final class PlanListState extends SuperBlocState<WError> {
+  /// The plans to display.
   final List<PlanEntity> plans;
 
-  const FetchPlansState._({
+  const PlanListState._({
     required this.plans,
     required super.status,
     super.error,
   });
 
   /// Initial state of the cubit.
-  const FetchPlansState.initial()
+  const PlanListState.initial()
       : plans = const [],
         super.initial();
 
   @override
-  FetchPlansState copyWith({
+  PlanListState copyWith({
     required StateStatus status,
     List<PlanEntity>? plans,
   }) =>
-      FetchPlansState._(
+      PlanListState._(
         plans: plans ?? this.plans,
         error: error,
         status: status,
       );
 
   @override
-  FetchPlansState copyWithError(WError error) => FetchPlansState._(
+  PlanListState copyWithError(WError error) => PlanListState._(
         plans: plans,
         error: error,
         status: StateStatus.failure,
       );
 
   @override
-  String toString() => '$FetchPlansState { status: $status }';
+  String toString() => '$PlanListState { status: $status }';
 
   @override
   List<Object?> get props => [plans, ...super.props];

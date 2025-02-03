@@ -5,14 +5,18 @@ import '../../util/sdk_candidate.dart';
 import 'modal_bottom_sheet_actions.dart';
 import 'modal_bottom_sheet_tile.dart';
 
-@SdkCandidate(
-  requiresL10n: false,
-  isM3Friendly: false,
-)
+/// Helper class to show modal bottom sheets.
+@SdkCandidate(isM3Friendly: false)
 class ModalBottomSheet {
+  /// Creates a modal bottom sheet from a [BuildContext].
   ModalBottomSheet.of(this.context);
+
+  /// The context of the modal bottom sheet.
   final BuildContext context;
 
+  /// Shows the modal bottom sheet that can be expanded to full height.
+  ///
+  /// If [startExpanded] is true, the modal will start expanded.
   Future<T?> showExpanded<T>({
     required ScrollableWidgetBuilder builder,
     bool startExpanded = false,
@@ -38,6 +42,7 @@ class ModalBottomSheet {
     );
   }
 
+  /// Shows the modal bottom sheet shrunk to to the size of its content.
   Future<T?> showShrunk<T>({
     required List<Widget> Function(BuildContext context) childrenBuilder,
     EdgeInsets? padding,
@@ -85,7 +90,7 @@ class ModalBottomSheet {
   ///
   /// If [title] is not null, it will be placed at the top of the modal bottom
   /// sheet.
-  Future<void> showActions({
+  Future<T?> showActions<T>({
     required List<ModalBottomSheetAction> actions,
     Widget? title,
     void Function(BuildContext context)? onDismiss,
@@ -93,7 +98,7 @@ class ModalBottomSheet {
   }) {
     final actionWidgets =
         actions.map((action) => ModalBottomSheetTile(action: action)).toList();
-    return showShrunk<void>(
+    return showShrunk<T>(
       padding: EdgeInsets.zero,
       childrenBuilder: (context) => [
         if (title != null) ...[
@@ -103,7 +108,9 @@ class ModalBottomSheet {
         ...actionWidgets,
       ],
       // ignore: use_build_context_synchronously
-    ).then((_) =>
-        onDismiss != null && context.mounted ? onDismiss(context) : null);
+    ).then((value) {
+      if (onDismiss != null && context.mounted) onDismiss(context);
+      return value;
+    });
   }
 }

@@ -6,6 +6,7 @@ import '../auth_repository.dart';
 part '_auth_repository_impl.dart';
 part 'auth_repository_state.dart';
 
+/// The repository for authentication.
 abstract interface class AuthRepository
     extends SingletonRepository<AuthEntity, AuthRepositoryState> {
   /// Creates a new instance of [AuthRepository] that uses the provided data
