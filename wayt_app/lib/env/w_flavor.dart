@@ -3,7 +3,7 @@ import 'package:flext/flext.dart';
 /// Represents the different flavors to launch the app.
 enum WFlavor {
   /// The TST flavor.
-  /// 
+  ///
   /// It connects to the tst environment.
   tst,
 

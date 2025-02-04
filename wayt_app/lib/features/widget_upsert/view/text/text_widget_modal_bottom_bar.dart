@@ -11,10 +11,9 @@ import '../../bloc/upsert_text_widget/upsert_text_widget_cubit.dart';
 import 'text.dart';
 
 /// Bottom bar for the text widget modal.
-/// 
+///
 /// It contains buttons to change the text style.
 class TextWidgetModalBottomBar extends StatelessWidget {
-
   /// Creates a new instance of [TextWidgetModalBottomBar].
   const TextWidgetModalBottomBar({super.key});
 
@@ -25,7 +24,7 @@ class TextWidgetModalBottomBar extends StatelessWidget {
             width: double.infinity,
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
-              children: FeatureTextStyleScale.values
+              children: TypographyFeatureScale.values
                   .map(
                     (scale) => TextWidgetScaleButton(
                       scale: scale,
@@ -55,7 +54,7 @@ class TextWidgetModalBottomBar extends StatelessWidget {
     // TODO: use bloc selector instead
     return BlocBuilder<UpsertTextWidgetCubit, UpsertTextWidgetState>(
       builder: (context, state) {
-        return BottomAppBar(    
+        return BottomAppBar(
           child: ToggleButtons(
             borderColor: Colors.transparent,
             isSelected: List.filled(5, false),

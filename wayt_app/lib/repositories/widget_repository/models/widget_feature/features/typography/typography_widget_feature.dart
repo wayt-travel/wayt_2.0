@@ -2,32 +2,35 @@ import 'package:pub_semver/pub_semver.dart';
 
 import '../../widget_feature.dart';
 
-abstract interface class TextWidgetFeatureEntity
+/// The entity of a typography feature.
+abstract interface class TypographyWidgetFeatureEntity
     implements WidgetFeatureEntity {
   /// The text of the feature.
   String get data;
 
   /// The format of the text.
-  TextFormat get format;
+  TypographyFormat get format;
 
   /// The style of the text.
   ///
-  /// Not null when [format] is [TextFormat.material].
-  FeatureTextStyle? get textStyle;
+  /// Not null when [format] is [TypographyFormat.material].
+  TypographyFeatureStyle? get textStyle;
 }
 
-final class TextWidgetFeatureModel extends WidgetFeatureModel
-    implements TextWidgetFeatureEntity {
+/// The model of a typography feature.
+final class TypographyWidgetFeatureModel extends WidgetFeatureModel
+    implements TypographyWidgetFeatureEntity {
   @override
   final String data;
 
   @override
-  final TextFormat format;
+  final TypographyFormat format;
 
   @override
-  final FeatureTextStyle? textStyle;
+  final TypographyFeatureStyle? textStyle;
 
-  TextWidgetFeatureModel({
+  /// Creates a new [TypographyWidgetFeatureModel] instance.
+  TypographyWidgetFeatureModel({
     required super.id,
     required this.data,
     required this.format,

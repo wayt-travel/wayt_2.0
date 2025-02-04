@@ -9,7 +9,7 @@ import '../../../../../repositories/repositories.dart';
 import '../../../../../theme/theme.dart';
 
 class TextWidgetScaleIcon extends StatelessWidget {
-  final FeatureTextStyleScale scale;
+  final TypographyFeatureScale scale;
   final double? size;
   final BorderRadius? borderRadius;
 
@@ -35,10 +35,10 @@ class TextWidgetScaleIcon extends StatelessWidget {
           return Center(
             child: SizedBox.square(
               dimension: switch (scale) {
-                FeatureTextStyleScale.h1 => max(h * 0.9, 40),
-                FeatureTextStyleScale.h2 => max(h * 0.7, 32),
-                FeatureTextStyleScale.h3 => max(h * 0.6, 26),
-                FeatureTextStyleScale.body => max(h * 0.4, 18),
+                TypographyFeatureScale.h1 => max(h * 0.9, 40),
+                TypographyFeatureScale.h2 => max(h * 0.7, 32),
+                TypographyFeatureScale.h3 => max(h * 0.6, 26),
+                TypographyFeatureScale.body => max(h * 0.4, 18),
               }
                   .let((dimension) => min(dimension.toDouble(), h)),
               child: FittedBox(

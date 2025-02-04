@@ -3,14 +3,14 @@ part of '../widget_model.dart';
 /// A Widget that displays a customizable text.
 final class TextWidgetModel extends WidgetModel {
   /// The text feature of the widget.
-  TextWidgetFeatureModel get textFeature =>
-      features.first as TextWidgetFeatureModel;
+  TypographyWidgetFeatureModel get textFeature =>
+      features.first as TypographyWidgetFeatureModel;
 
   factory TextWidgetModel({
     required String id,
     required String text,
     required int order,
-    required FeatureTextStyle textStyle,
+    required TypographyFeatureStyle textStyle,
     required TravelDocumentId travelDocumentId,
     String? folderId,
     DateTime? createdAt,
@@ -20,10 +20,10 @@ final class TextWidgetModel extends WidgetModel {
         id: id,
         order: order,
         features: [
-          TextWidgetFeatureModel(
+          TypographyWidgetFeatureModel(
             id: const Uuid().v4(),
             data: text,
-            format: TextFormat.material,
+            format: TypographyFormat.material,
             textStyle: textStyle,
           ),
         ],
@@ -42,9 +42,10 @@ final class TextWidgetModel extends WidgetModel {
     required super.travelDocumentId,
     required super.updatedAt,
   })  : assert(
-          features.length == 1 && features.first is TextWidgetFeatureEntity,
+          features.length == 1 &&
+              features.first is TypographyWidgetFeatureEntity,
           'The $TextWidgetModel must have exactly one '
-          '$TextWidgetFeatureEntity.',
+          '$TypographyWidgetFeatureEntity.',
         ),
         super(
           type: WidgetType.text,
@@ -54,21 +55,21 @@ final class TextWidgetModel extends WidgetModel {
   @override
   TextWidgetModel copyWith({
     String? text,
-    FeatureTextStyle? textStyle,
+    TypographyFeatureStyle? textStyle,
     Option<String?> folderId = const Option.none(),
     int? order,
     WidgetType? type,
     DateTime? updatedAt,
   }) {
-    final feature = features.first as TextWidgetFeatureEntity;
+    final feature = features.first as TypographyWidgetFeatureEntity;
     return TextWidgetModel._(
       id: id,
       order: order ?? this.order,
       features: [
-        TextWidgetFeatureModel(
+        TypographyWidgetFeatureModel(
           id: features.first.id,
           data: text ?? feature.data,
-          format: TextFormat.material,
+          format: TypographyFormat.material,
           textStyle: textStyle ?? feature.textStyle,
         ),
       ],

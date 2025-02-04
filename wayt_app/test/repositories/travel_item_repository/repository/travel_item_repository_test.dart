@@ -23,7 +23,7 @@ TextWidgetModel _buildWidget({
     TextWidgetModel(
       id: const Uuid().v4(),
       text: 'text',
-      textStyle: const FeatureTextStyle.body(),
+      textStyle: const TypographyFeatureStyle.body(),
       travelDocumentId: travelDocumentId,
       folderId: folderId,
       order: order,

@@ -5,7 +5,7 @@ import '../../new_item_button.dart';
 import 'text_widget_scale_icon.dart';
 
 class TextWidgetScaleButton extends StatelessWidget {
-  final FeatureTextStyleScale scale;
+  final TypographyFeatureScale scale;
   final double? size;
   final BorderRadius? borderRadius;
   final void Function(BuildContext context)? onTap;

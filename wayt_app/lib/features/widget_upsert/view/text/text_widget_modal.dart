@@ -23,7 +23,7 @@ class TextWidgetModal extends StatelessWidget {
     required TravelDocumentId travelDocumentId,
     required int? index,
     required String? folderId,
-    required FeatureTextStyleScale textScale,
+    required TypographyFeatureScale textScale,
   }) {
     context.navRoot.push(
       MaterialPageRoute<void>(

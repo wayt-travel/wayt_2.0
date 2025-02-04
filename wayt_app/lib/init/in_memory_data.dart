@@ -80,7 +80,7 @@ class InMemoryDataHelper with LoggerMixin {
     required int order,
     required String text,
     required TravelDocumentId tid,
-    FeatureTextStyle textStyle = const FeatureTextStyle.body(),
+    TypographyFeatureStyle textStyle = const TypographyFeatureStyle.body(),
     String? folderId,
   }) =>
       TextWidgetModel(
@@ -123,7 +123,7 @@ class InMemoryDataHelper with LoggerMixin {
         _buildTextWidget(
           order: order++,
           text: title,
-          textStyle: const FeatureTextStyle.h1(),
+          textStyle: const TypographyFeatureStyle.h1(),
           tid: tid,
         ),
         ..._buildWidgetFolder(

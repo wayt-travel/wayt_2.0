@@ -1,7 +1,10 @@
 part of 'upsert_text_widget_cubit.dart';
 
 final class UpsertTextWidgetState extends SuperBlocState<WError> {
-  final FeatureTextStyle featureTextStyle;
+  /// The text style of the widget.
+  final TypographyFeatureStyle featureTextStyle;
+
+  /// The text of the widget.
   final String? text;
 
   const UpsertTextWidgetState._({
@@ -20,7 +23,7 @@ final class UpsertTextWidgetState extends SuperBlocState<WError> {
   UpsertTextWidgetState copyWith({
     required StateStatus status,
     Optional<String?> text = const Optional.absent(),
-    FeatureTextStyle? featureTextStyle,
+    TypographyFeatureStyle? featureTextStyle,
   }) =>
       UpsertTextWidgetState._(
         text: text.orElseIfAbsent(this.text),

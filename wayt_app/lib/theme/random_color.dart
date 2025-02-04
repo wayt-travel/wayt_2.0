@@ -59,6 +59,11 @@ class RandomColor {
   static Color randomColor({int? seed, int intensity = 500}) =>
       RandomColor.random(seed: seed, intensity: intensity).nextColor();
 
+  /// Picks a color from the material palette at the given [value] index and
+  /// with the given [intensity].
+  ///
+  /// If the [value] is greater than the number of material colors, the value
+  /// will be wrapped around the material colors list.
   static Color colorFromInt(int value, {int intensity = 500}) =>
       materialColors[value % materialColors.length][intensity]!;
 

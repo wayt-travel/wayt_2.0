@@ -20,7 +20,7 @@ void main() {
           TravelDocumentId.plan(dataHelper.sortedPlans.first.id),
       order: order,
       text: 'text',
-      textStyle: const FeatureTextStyle.body(),
+      textStyle: const TypographyFeatureStyle.body(),
     );
   }
 

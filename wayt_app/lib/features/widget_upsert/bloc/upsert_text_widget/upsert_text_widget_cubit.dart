@@ -33,7 +33,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
   final TravelItemRepository travelItemRepository;
 
   UpsertTextWidgetCubit({
-    required FeatureTextStyleScale textScale,
+    required TypographyFeatureScale textScale,
     required String? text,
     required this.index,
     required this.travelDocumentId,
@@ -41,7 +41,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
     required this.travelItemRepository,
   }) : super(
           UpsertTextWidgetState.initial(
-            featureTextStyle: FeatureTextStyle(scale: textScale),
+            featureTextStyle: TypographyFeatureStyle(scale: textScale),
             text: text,
           ),
         );
@@ -55,7 +55,8 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
     );
   }
 
-  void updateTextStyle(FeatureTextStyle textStyle) {
+  /// Updates the text style of the widget.
+  void updateTextStyle(TypographyFeatureStyle textStyle) {
     emit(
       state.copyWith(
         status: StateStatus.initial,

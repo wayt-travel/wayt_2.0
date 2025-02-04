@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/context/context.dart';
 
+/// A button for adding a new item in a travel document.
+///
+/// The button displays the [child] widget and a [label] below it.
 class NewItemButton extends StatelessWidget {
   final Widget child;
   final String label;

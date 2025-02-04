@@ -131,7 +131,7 @@ class AddWidgetMbs extends StatelessWidget {
                 children: [
                   Wrap(
                     alignment: WrapAlignment.spaceBetween,
-                    children: FeatureTextStyleScale.values
+                    children: TypographyFeatureScale.values
                         .map(
                           (scale) => TextWidgetScaleButton(
                             scale: scale,

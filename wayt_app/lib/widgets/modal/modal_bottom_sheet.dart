@@ -103,6 +103,7 @@ class ModalBottomSheet {
         ...actionWidgets,
       ],
       // ignore: use_build_context_synchronously
-    ).then((_) => onDismiss != null ? onDismiss(context) : null);
+    ).then((_) =>
+        onDismiss != null && context.mounted ? onDismiss(context) : null);
   }
 }
