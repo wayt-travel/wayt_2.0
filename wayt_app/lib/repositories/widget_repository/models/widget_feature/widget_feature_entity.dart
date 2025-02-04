@@ -4,6 +4,7 @@ import 'package:pub_semver/pub_semver.dart';
 
 import 'widget_feature_type.dart';
 
+/// Parent entity for all features of a widget in a travel document.
 abstract interface class WidgetFeatureEntity
     implements Equatable, UniquelyIdentifiableEntity, Entity {
   /// The index of the feature.

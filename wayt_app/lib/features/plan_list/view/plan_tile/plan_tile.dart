@@ -1,10 +1,10 @@
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/modal/modal.dart';
 import '../../../plan/view/plan_page.dart';
+import 'plan_date_text.dart';
 
 /// A tile of a Travel Plan displayed in the list of plans of the user.
 class PlanTile extends StatelessWidget {
@@ -17,6 +17,7 @@ class PlanTile extends StatelessWidget {
   /// The accent color of the plan to colorize a bit the tile.
   final Color accentColor;
 
+  /// Creates a plan tile.
   const PlanTile({
     required this.plan,
     required this.index,
@@ -32,7 +33,7 @@ class PlanTile extends StatelessWidget {
         planId: plan.id,
         planSummary: plan,
       ),
-      onLongPress: () => ModalBottomSheet.of(context).showActions(
+      onLongPress: () => ModalBottomSheet.of(context).showActions<void>(
         actions: [
           ModalBottomSheetActions.edit(context),
           ModalBottomSheetActions.divider,
@@ -52,27 +53,7 @@ class PlanTile extends StatelessWidget {
       titleTextStyle: context.tt.bodyLarge?.copyWith(
         color: accentColor,
       ),
-      subtitle: _PlanTileDate(plan),
+      subtitle: PlanDateText.ofPlan(plan: plan),
     );
-  }
-}
-
-class _PlanTileDate extends StatelessWidget {
-  final PlanEntity plan;
-  const _PlanTileDate(this.plan);
-
-  @override
-  Widget build(BuildContext context) {
-    late String text;
-    if (plan.plannedAt == null) {
-      text = 'No date set';
-    } else if (!plan.isMonthSet) {
-      text = DateFormat.y().format(plan.plannedAt!);
-    } else if (!plan.isDaySet) {
-      text = DateFormat.yMMMM().format(plan.plannedAt!);
-    } else {
-      text = DateFormat.yMMMMd().format(plan.plannedAt!);
-    }
-    return Text(text);
   }
 }

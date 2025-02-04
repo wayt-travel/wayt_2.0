@@ -23,6 +23,7 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
   @override
   final Version version;
 
+  /// Creates a new [WidgetModel] instance.
   const WidgetModel({
     required super.id,
     required this.features,

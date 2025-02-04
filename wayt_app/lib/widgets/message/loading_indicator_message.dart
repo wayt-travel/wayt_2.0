@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/context/context.dart';
 
+/// A widget to display a loading message alongside with a loading indicator.
 class LoadingIndicatorMessage extends StatelessWidget {
+  /// Creates a loading indicator message.
   const LoadingIndicatorMessage({super.key});
 
   @override

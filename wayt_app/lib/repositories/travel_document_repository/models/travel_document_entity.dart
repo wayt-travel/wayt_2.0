@@ -1,5 +1,8 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:flutter/material.dart';
+import 'package:luthor/luthor.dart';
 
+import '../../../util/util.dart';
 import '../../repositories.dart';
 
 /// Common entity interface for all travel documents, i.e., plans and journals.
@@ -30,4 +33,8 @@ abstract interface class TravelDocumentEntity
 
   /// Whether this entity is a journal.
   bool get isJournal;
+
+  /// Returns a validator for the name of the travel document.
+  static Validator getNameValidator(BuildContext? context) =>
+      Validators.l10n(context).textShortRequired();
 }

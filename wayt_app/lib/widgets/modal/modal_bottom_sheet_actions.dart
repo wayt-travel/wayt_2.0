@@ -9,6 +9,7 @@ import 'modal_bottom_sheet.dart';
 /// Action to be placed into a [ModalBottomSheet].
 @SdkCandidate(requiresL10n: true)
 class ModalBottomSheetAction {
+  /// Creates a modal bottom sheet action.
   ModalBottomSheetAction({
     required this.title,
     this.subtitle,
@@ -48,6 +49,7 @@ class ModalBottomSheetAction {
   /// The style of the text.
   final TextStyle? titleStyle;
 
+  /// The style of the subtitle text.
   final TextStyle? subtitleStyle;
 
   /// Indicates if the actions is dangerous (e.g. delete item).
@@ -55,6 +57,8 @@ class ModalBottomSheetAction {
   /// Dangerous action have red text color.
   final bool isDangerous;
 
+  /// Creates a copy of this action with the given fields replaced with the
+  /// new values.
   ModalBottomSheetAction copyWith({
     String? title,
     String? subtitle,
@@ -76,10 +80,15 @@ class ModalBottomSheetAction {
   }
 }
 
+/// Class containing common actions for a [ModalBottomSheet].
+///
+/// Usually you want to copy the chosen action using the
+/// [ModalBottomSheetAction.copyWith] method to define a new `onTap` callback.
 abstract class ModalBottomSheetActions {
   /// Action used to specify to insert a divider between actions.
   static final divider = ModalBottomSheetAction(title: '');
 
+  /// Action to delete an item.
   static ModalBottomSheetAction delete(BuildContext context) {
     return ModalBottomSheetAction(
       // FIXME: l10n
@@ -94,6 +103,7 @@ abstract class ModalBottomSheetActions {
     );
   }
 
+  /// Action to edit an item.
   static ModalBottomSheetAction edit(BuildContext context) {
     return ModalBottomSheetAction(
       // FIXME: l10n

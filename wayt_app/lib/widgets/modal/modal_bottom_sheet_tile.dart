@@ -5,9 +5,13 @@ import 'modal.dart';
 
 /// Tile for a [ModalBottomSheet].
 class ModalBottomSheetTile extends StatelessWidget {
+  /// The action of the tile.
   final ModalBottomSheetAction action;
+
+  /// Whether the tile is dense.
   final bool dense;
 
+  /// Creates a modal bottom sheet tile.
   const ModalBottomSheetTile({
     required this.action,
     this.dense = false,

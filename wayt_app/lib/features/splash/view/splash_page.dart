@@ -8,12 +8,17 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app.dart';
 import '../../../router/router.dart';
 
+/// Splash screen page.
 class SplashPage extends StatelessWidget {
   const SplashPage._();
 
+  /// Path to the splash screen page.
   static const String path = '/';
+
+  /// Route name of the splash screen page.
   static const String routeName = 'splashPage';
 
+  /// Route of the splash screen page.
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,

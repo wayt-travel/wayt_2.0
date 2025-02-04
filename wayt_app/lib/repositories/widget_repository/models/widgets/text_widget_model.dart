@@ -6,6 +6,7 @@ final class TextWidgetModel extends WidgetModel {
   TypographyWidgetFeatureModel get textFeature =>
       features.first as TypographyWidgetFeatureModel;
 
+  /// Creates a new instance of [TextWidgetModel].
   factory TextWidgetModel({
     required String id,
     required String text,

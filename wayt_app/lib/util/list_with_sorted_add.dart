@@ -5,6 +5,7 @@ import 'package:flext/flext.dart';
 class ListWithSortedAdd<T> extends DelegatingList<T> {
   late final int Function(T a, T b) _compareFunction;
 
+  /// Creates a new instance of [ListWithSortedAdd].
   ListWithSortedAdd(this._compareFunction) : super([]);
 
   /// Creates a new instance of [ListWithSortedAdd] that sorts its elements

@@ -7,11 +7,19 @@ import '../../../core/context/context.dart';
 ///
 /// The button displays the [child] widget and a [label] below it.
 class NewItemButton extends StatelessWidget {
+  /// The child widget to display.
   final Widget child;
+
+  /// The label to display below the child widget.
   final String label;
+
+  /// The size of the button.
   final double? size;
+
+  /// The action to perform when the button is tapped.
   final void Function(BuildContext context)? onTap;
 
+  /// Creates a new item button.
   const NewItemButton({
     required this.child,
     required this.label,

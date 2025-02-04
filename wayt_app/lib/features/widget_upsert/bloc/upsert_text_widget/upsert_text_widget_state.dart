@@ -1,5 +1,6 @@
 part of 'upsert_text_widget_cubit.dart';
 
+/// State for adding or editing a text widget.
 final class UpsertTextWidgetState extends SuperBlocState<WError> {
   /// The text style of the widget.
   final TypographyFeatureStyle featureTextStyle;
@@ -14,6 +15,7 @@ final class UpsertTextWidgetState extends SuperBlocState<WError> {
     super.error,
   });
 
+  /// Creates an initial state.
   const UpsertTextWidgetState.initial({
     required this.featureTextStyle,
     this.text,

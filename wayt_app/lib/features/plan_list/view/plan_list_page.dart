@@ -2,16 +2,15 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../repositories/repositories.dart';
-import '../../../widgets/message/loading_indicator_message.dart';
-import '../bloc/fetch_plans/fetch_plans_cubit.dart';
+import '../../../core/core.dart';
+import '../../../widgets/widgets.dart';
+import '../../features.dart';
 import 'plan_list_body.dart';
 
 /// The page showing the list of plans.
-class PlanListPage extends StatelessWidget {
+class PlanListPage {
   const PlanListPage._();
 
   /// The route name of the plan list page.
@@ -24,8 +23,14 @@ class PlanListPage extends StatelessWidget {
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: PlanListPage._(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: BlocProvider(
+            create: (context) => PlanListCubit(
+              travelDocumentRepository: $.repo.travelDocument(),
+              authRepository: $.repo.auth(),
+            )..fetch(),
+            child: const PlanListView(),
+          ),
         ),
       );
 
@@ -34,11 +39,6 @@ class PlanListPage extends StatelessWidget {
 
   /// Pushes the plan list page to the navigator.
   static void push(BuildContext context) => context.router.pushNamed(routeName);
-
-  @override
-  Widget build(BuildContext context) {
-    return const PlanListView();
-  }
 }
 
 /// The view of the plan list page.
@@ -48,51 +48,57 @@ class PlanListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => FetchPlansCubit(
-        travelDocumentRepository: GetIt.I.get<TravelDocumentRepository>(),
-      )..fetch(),
-      child: Builder(
-        builder: (_) => BlocBuilder<FetchPlansCubit, FetchPlansState>(
-          builder: (context, state) {
-            late final Widget content;
+    return BlocConsumer<PlanListCubit, PlanListState>(
+      listener: (context, state) => state.status.isFailure
+          ? SnackBarHelper.I.showError(
+              context: context,
+              message: state.error!.userIntlMessage(context),
+            )
+          : null,
+      builder: (context, state) {
+        late final Widget content;
+        Widget? fab = FloatingActionButton(
+          onPressed: () => UpsertPlanModal.showForCreating(context),
+          child: const Icon(Icons.add),
+        );
 
-            if (state.plans.isNotEmpty) {
-              content = PlanListBody(
-                key: ValueKey(state.plans),
-                state.plans,
-              );
-            } else if (state.status.isSuccess) {
-              content = const Center(
-                child: Text('Start crating a new travel plan!'),
-              ).asSliver;
-            } else if (state.status.isFailure) {
-              content = Center(
-                child: Text(state.error!.userIntlMessage(context)),
-              ).asSliver;
-            } else {
-              content = const SliverFillRemaining(
-                child: Center(
-                  child: LoadingIndicatorMessage(),
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: () => context.read<FetchPlansCubit>().fetch(),
-              // 152 is the height of the SliverAppBar.large
-              edgeOffset: 152,
-              backgroundColor: context.col.surfaceContainer,
-              child: CustomScrollView(
-                slivers: [
-                  const SliverAppBar.large(title: Text('Plans')),
-                  content,
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+        if (state.plans.isNotEmpty) {
+          content = PlanListBody(
+            key: ValueKey(state.plans),
+            state.plans,
+          );
+        } else if (state.status.isSuccess) {
+          content = const Center(
+            child: Text('Start crating a new travel plan!'),
+          ).asSliver;
+        } else if (state.status.isFailure) {
+          content = Center(
+            child: Text(state.error!.userIntlMessage(context)),
+          ).asSliver;
+        } else {
+          content = const SliverFillRemaining(
+            child: Center(
+              child: LoadingIndicatorMessage(),
+            ),
+          );
+          fab = null;
+        }
+        return Scaffold(
+          body: RefreshIndicator(
+            onRefresh: () => context.read<PlanListCubit>().fetch(),
+            // 152 is the height of the SliverAppBar.large
+            edgeOffset: 152,
+            backgroundColor: context.col.surfaceContainer,
+            child: CustomScrollView(
+              slivers: [
+                const SliverAppBar.large(title: Text('Plans')),
+                content,
+              ],
+            ),
+          ),
+          floatingActionButton: fab,
+        );
+      },
     );
   }
 }

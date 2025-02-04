@@ -128,4 +128,16 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
       emit(TravelDocumentRepositoryCollectionFetched(travelDocuments.toList()));
     }
   }
+
+  @override
+  List<TravelDocumentEntity> getAllOfUser(String userId) =>
+      _userPlansMap[userId]
+          ?.let(
+            (data) => [
+              ...data.plans.map(cache.getOrThrow),
+              ...data.journals.map(cache.getOrThrow),
+            ],
+          )
+          .toList() ??
+      [];
 }

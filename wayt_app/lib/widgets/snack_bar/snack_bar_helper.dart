@@ -21,6 +21,7 @@ class SnackBarHelper {
   final List<String> _messagesQueue;
   static SnackBarHelper? _instance;
 
+  /// Gets the singleton instance of [SnackBarHelper].
   // ignore: prefer_constructors_over_static_methods
   static SnackBarHelper get I => _instance ??= SnackBarHelper._();
 
@@ -33,6 +34,7 @@ class SnackBarHelper {
         .ignore();
   }
 
+  /// Shows an info message.
   void showInfo({
     required BuildContext context,
     required String message,
@@ -45,6 +47,7 @@ class SnackBarHelper {
         action: action,
       );
 
+  /// Shows a warning message.
   void showWarning({
     required BuildContext context,
     required String message,
@@ -57,6 +60,7 @@ class SnackBarHelper {
         action: action,
       );
 
+  /// Shows an error message.
   void showError({
     required BuildContext context,
     required String message,
@@ -69,6 +73,7 @@ class SnackBarHelper {
         action: action,
       );
 
+  /// Shows a message that the feature is not implemented yet.
   void showNotImplemented(BuildContext context) {
     showWarning(
       context: context,
@@ -108,6 +113,7 @@ class SnackBarHelper {
       ..showSnackBar(snackBar);
   }
 
+  /// Hides the current snack bar.
   void hideSnackBar(BuildContext context) {
     if (_messagesQueue.isNotEmpty) {
       _messagesQueue.removeLast();

@@ -12,7 +12,7 @@ sealed class PlanPageMoreMbs {
   /// Shows the modal bottom sheet.
   static void show(BuildContext context) {
     final isReordering = context.read<ReorderItemsCubit>().isReordering;
-    ModalBottomSheet.of(context).showActions(
+    ModalBottomSheet.of(context).showActions<void>(
       actions: [
         ModalBottomSheetAction(
           iconData: Icons.swap_vert,

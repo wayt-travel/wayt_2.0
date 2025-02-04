@@ -3,12 +3,17 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+/// Page displaying the user profile.
 class ProfilePage extends StatelessWidget {
   const ProfilePage._();
 
+  /// Path to the profile page.
   static const String path = '/profile';
+
+  /// Route name of the profile page.
   static const String routeName = 'profile';
 
+  /// Route of the profile page.
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
@@ -17,6 +22,7 @@ class ProfilePage extends StatelessWidget {
         ),
       );
 
+  /// Navigates to the profile page.
   static void go(BuildContext context) {
     context.router.goNamed(
       routeName,
@@ -29,7 +35,9 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+/// View displaying the user profile.
 class ProfileView extends StatelessWidget {
+  /// Creates a profile view.
   const ProfileView({super.key});
 
   @override

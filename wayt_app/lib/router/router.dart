@@ -6,6 +6,7 @@ import '../widgets/widgets.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Goes to the default route of the application.
 void goToDefaultRoute(BuildContext context) {
   PlanListPage.go(context);
 }
@@ -72,6 +73,8 @@ final _routerStatefulShellRoute = _buildStatefulShellRoute(
 
 // Because child of routes doesn't have a bottom navigation bar, they use
 // _rootNavigatorKey as a parentNavigationKey parameter.
+
+/// The main router of the application.
 final $router = GoRouter(
   initialLocation: SplashPage.path,
   navigatorKey: _rootNavigatorKey,
