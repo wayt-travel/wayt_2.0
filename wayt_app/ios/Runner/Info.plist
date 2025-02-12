@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Copied from GoogleService-Info.plist key CLIENT_ID -->
+	<key>GIDClientID</key>
+	<!-- <string>890516885498-pohdk3diob8bkgbh7ck17i8vlo3mu1f4.apps.googleusercontent.com</string> -->
+	<string>995719348890-r9jr4glgdu6s68olsh3jeua3qlnkajga.apps.googleusercontent.com</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -52,5 +56,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Google Sign-in Section -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO Replace this value: -->
+				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+				<string>com.googleusercontent.apps.995719348890-r9jr4glgdu6s68olsh3jeua3qlnkajga</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

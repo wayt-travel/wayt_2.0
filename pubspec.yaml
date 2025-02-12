@@ -13,3 +13,5 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   melos: ^6.1.0
   very_good_analysis: ^6.0.0
+dependencies:
+  amazon_cognito_identity_dart_2: ^3.8.1
