@@ -8,6 +8,10 @@
       "name": "/wayt_app",
       "path": "wayt_app"
     },
+    {
+      "cloud": "/cloud",
+      "path": "cloud"
+    }
   ],
   "settings": {
     "todo-tree.filtering.excludeGlobs": [
