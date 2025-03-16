@@ -7,12 +7,10 @@
     {
       "name": "/wayt_app",
       "path": "wayt_app"
-    },
+    }
   ],
   "settings": {
-    "todo-tree.filtering.excludeGlobs": [
-      "**/node_modules/*/**",
-    ],
+    "todo-tree.filtering.excludeGlobs": ["**/node_modules/*/**"],
     "dart.debugSdkLibraries": true,
     "dart.debugExternalPackageLibraries": true,
     "todo-tree.tree.scanMode": "workspace"
