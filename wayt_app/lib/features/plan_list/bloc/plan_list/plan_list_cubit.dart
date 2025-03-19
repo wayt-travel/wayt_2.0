@@ -27,7 +27,7 @@ class PlanListCubit extends Cubit<PlanListState> with LoggerMixin {
   }) : super(const PlanListState.initial()) {
     _plansSubscription = travelDocumentRepository.listen((repoState) {
       if (isClosed) return;
-      final isFetched = repoState is TravelDocumentRepositoryItemFetched;
+      final isFetched = repoState is TravelDocumentRepositoryCollectionFetched;
       final isUpdated = repoState is TravelDocumentRepositoryItemUpdated;
       final isDeleted = repoState is TravelDocumentRepositoryItemDeleted;
       final isAdded = repoState is TravelDocumentRepositoryEntityAdded;
