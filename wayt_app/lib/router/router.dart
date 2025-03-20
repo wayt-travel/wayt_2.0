@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../features/features.dart';
 import '../widgets/widgets.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+/// The root navigation key
+final $rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Goes to the default route of the application.
 void goToDefaultRoute(BuildContext context) {
@@ -38,7 +39,6 @@ StatefulShellRoute _buildStatefulShellRoute(
       branches: items
           .map(
             (item) => StatefulShellBranch(
-              navigatorKey: item.navigatorKey,
               routes: item.routes,
             ),
           )
@@ -77,7 +77,7 @@ final _routerStatefulShellRoute = _buildStatefulShellRoute(
 /// The main router of the application.
 final $router = GoRouter(
   initialLocation: SplashPage.path,
-  navigatorKey: _rootNavigatorKey,
+  navigatorKey: $rootNavigatorKey,
 
   debugLogDiagnostics: true,
   // refreshListenable: GoRouterRefreshStream(
