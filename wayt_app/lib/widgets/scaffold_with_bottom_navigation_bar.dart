@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../features/features.dart';
 import '../util/util.dart';
 
 /// A scaffold with a bottom navigation bar.
@@ -28,6 +29,7 @@ class ScaffoldWithBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pageIndexesWithNoFAB = [1];
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
@@ -35,6 +37,26 @@ class ScaffoldWithBottomNavigationBar extends StatelessWidget {
         onDestinationSelected: onDestinationSelected,
       ),
       body: body,
+      floatingActionButton: pageIndexesWithNoFAB.contains(currentIndex)
+          ? null
+          : _Fab(currentIndex),
     );
+  }
+}
+
+class _Fab extends StatelessWidget {
+  const _Fab(this.index);
+
+  /// The index of the page
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (index) {
+      case 0:
+        return const PlanListFab();
+      default:
+        throw UnimplementedError();
+    }
   }
 }

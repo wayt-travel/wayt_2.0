@@ -42,7 +42,8 @@ class AppBloc extends Bloc<AppEvent, AppState> with LoggerMixin {
     );
   }
 
-  /// Initializes the app state.
+  /// Initializes the app state. Call it only when the app initialization is
+  /// completed.
   Future<void> init() async {
     // await _authRepository.init();
     await _authRepository.signIn(
