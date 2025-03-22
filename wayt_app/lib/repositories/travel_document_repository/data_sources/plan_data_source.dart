@@ -5,6 +5,9 @@ abstract interface class TravelDocumentDataSource {
   /// Create a new plan.
   Future<PlanModel> createPlan(CreatePlanInput input);
 
+  /// Updates a plan with id [id].
+  Future<PlanModel> updatePlan(String id, {required UpdatePlanInput input});
+
   /// Read all plans of a user.
   ///
   /// The plans are returned in order of their planned date ASC.

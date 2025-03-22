@@ -20,6 +20,9 @@ abstract interface class TravelDocumentRepository extends Repository<String,
   /// Creates a new Plan.
   Future<PlanEntity> createPlan(CreatePlanInput input);
 
+  /// Updates an existing Plan with id [id].
+  Future<PlanEntity> updatePlan(String id, UpdatePlanInput input);
+
   /// Fetches all plan of a user.
   Future<List<PlanEntity>> fetchAllPlansOfUser(String userId);
 

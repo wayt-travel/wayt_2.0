@@ -24,11 +24,11 @@ final class UpsertPlanState extends SuperBlocState<WError> {
   });
 
   /// Creates an initial state of the [UpsertPlanCubit].
-  const UpsertPlanState.initial()
-      : name = null,
-        plannedAt = null,
-        isMonthSet = false,
-        isDaySet = false,
+  UpsertPlanState.initial(PlanEntity? planToUpdate)
+      : name = planToUpdate?.name,
+        plannedAt = planToUpdate?.plannedAt,
+        isMonthSet = planToUpdate?.isMonthSet ?? false,
+        isDaySet = planToUpdate?.isDaySet ?? false,
         super.initial();
 
   @override

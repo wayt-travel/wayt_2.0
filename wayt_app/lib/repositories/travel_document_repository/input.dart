@@ -30,4 +30,10 @@ final class CreatePlanInput {
 }
 
 /// Input to update an existing plan.
-typedef UpdatePlanInput = ();
+typedef UpdatePlanInput = ({
+  bool isDaySet,
+  bool isMonthSet,
+  List<String> tags,
+  String name,
+  DateTime? plannedAt,
+});

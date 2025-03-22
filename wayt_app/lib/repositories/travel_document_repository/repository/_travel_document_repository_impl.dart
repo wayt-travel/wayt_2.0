@@ -166,4 +166,16 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
           )
           .toList() ??
       [];
+
+  @override
+  Future<PlanEntity> updatePlan(String id, UpdatePlanInput input) async {
+    logger.v('Updating the plan with id $id and input: $input');
+    final previous = cache.getOrThrow(id);
+    final updated = await dataSource.updatePlan(id, input: input);
+    logger.v('${updated.toShortString()} updated. Updating to cache and map.');
+    _addToCacheAndMap(updated);
+    emit(TravelDocumentRepositoryItemUpdated(previous, updated));
+    logger.i('Plan updated to cache and map [$updated].');
+    return updated;
+  }
 }

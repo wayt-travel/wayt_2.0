@@ -62,7 +62,12 @@ class PlanTile extends StatelessWidget {
   Future<void> _onLongPress(BuildContext context) async {
     return ModalBottomSheet.of(context).showActions(
       actions: [
-        ModalBottomSheetActions.edit(context),
+        ModalBottomSheetActions.edit(context).copyWith(
+          onTap: (context) => UpsertPlanModal.showForEditing(
+            context,
+            plan: plan,
+          ),
+        ),
         ModalBottomSheetActions.divider,
         ModalBottomSheetActions.delete(context).copyWith(
           // onTap: _delete does not work because the method have to use the
