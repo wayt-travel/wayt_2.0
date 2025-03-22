@@ -15,6 +15,8 @@ void registerRepositories() {
       'Not in-memory repositories are not supported yet.',
     );
   }
+  
+  GetIt.I.registerSingleton<InitializationCubit>(InitializationCubit()) ;
 
   // Injects the app bloc inside this method.
   // App Bloc must be register because router uses it.
