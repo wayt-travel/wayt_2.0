@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/modal/modal.dart';
-import '../../../plan/view/plan_page.dart';
+import '../../../features.dart';
 import 'plan_date_text.dart';
 
 /// A tile of a Travel Plan displayed in the list of plans of the user.
@@ -35,7 +35,12 @@ class PlanTile extends StatelessWidget {
       ),
       onLongPress: () => ModalBottomSheet.of(context).showActions<void>(
         actions: [
-          ModalBottomSheetActions.edit(context),
+          ModalBottomSheetActions.edit(context).copyWith(
+            onTap: (context) => UpsertPlanModal.showForEditing(
+              context,
+              plan: plan,
+            ),
+          ),
           ModalBottomSheetActions.divider,
           ModalBottomSheetActions.delete(context),
         ],

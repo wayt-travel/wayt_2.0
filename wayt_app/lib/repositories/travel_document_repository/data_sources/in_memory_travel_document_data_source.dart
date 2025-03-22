@@ -48,4 +48,27 @@ final class InMemoryTravelDocumentDataSource
     await waitFakeTime();
     return _dataHelper.getTravelDocumentWrapperByRawId(id);
   }
+
+  @override
+  Future<PlanModel> updatePlan(
+    String id, {
+    required UpdatePlanInput input,
+  }) async {
+    await waitFakeTime();
+    final plan = PlanModel(
+      userId: input.userId,
+      createdAt: input.createdAt,
+      id: id,
+      isDaySet: input.isDaySet,
+      isMonthSet: input.isMonthSet,
+      plannedAt: input.plannedAt,
+      tags: input.tags,
+      name: input.name,
+      updatedAt: DateTime.now().toUtc(),
+    );
+
+    _dataHelper.saveTravelDocument(plan);
+
+    return plan;
+  }
 }
