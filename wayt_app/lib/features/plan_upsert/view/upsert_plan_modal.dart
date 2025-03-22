@@ -145,6 +145,8 @@ class UpsertPlanModal extends StatelessWidget {
                     await PlanDatePicker.show(
                       context,
                       onPick: context.read<UpsertPlanCubit>().updatePlannedAt,
+                      initialDate:
+                          context.read<UpsertPlanCubit>().state.plannedAt,
                     );
                   },
                 ),

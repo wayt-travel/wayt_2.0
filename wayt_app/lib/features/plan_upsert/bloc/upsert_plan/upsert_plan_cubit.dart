@@ -32,7 +32,7 @@ class UpsertPlanCubit extends Cubit<UpsertPlanState> with LoggerMixin {
     required this.planToUpdate,
     required this.authRepository,
     required this.travelDocumentRepository,
-  }) : super(const UpsertPlanState.initial());
+  }) : super(UpsertPlanState.initial(planToUpdate));
 
   /// Updates the name of the plan.
   void updateName(String name) {
@@ -98,16 +98,30 @@ class UpsertPlanCubit extends Cubit<UpsertPlanState> with LoggerMixin {
         );
       }
 
-      await travelDocumentRepository.createPlan(
-        CreatePlanInput(
-          isDaySet: isDaySet,
-          isMonthSet: isMonthSet,
-          plannedAt: plannedAt,
-          name: state.name!.trim(),
-          tags: List.empty(),
-          userId: authRepository.getOrThrow().user!.id,
-        ),
-      );
+      if (!isUpdate) {
+        await travelDocumentRepository.createPlan(
+          CreatePlanInput(
+            isDaySet: isDaySet,
+            isMonthSet: isMonthSet,
+            plannedAt: plannedAt,
+            name: state.name!.trim(),
+            tags: List.empty(),
+            userId: authRepository.getOrThrow().user!.id,
+          ),
+        );
+      } else {
+        await travelDocumentRepository.updatePlan(
+          planToUpdate!.id,
+          (
+            isDaySet: isDaySet,
+            isMonthSet: isMonthSet,
+            plannedAt: plannedAt,
+            name: state.name!.trim(),
+            tags: List.empty(),
+          ),
+        );
+      }
+
       emit(state.copyWith(status: StateStatus.success));
     } catch (e, s) {
       logger.e('Error submitting plan creation/modification: $e', e, s);
