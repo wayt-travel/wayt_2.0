@@ -7,6 +7,7 @@ import '../../repositories.dart';
 final class InMemoryWidgetDataSource implements WidgetDataSource {
   final InMemoryDataHelper _dataHelper;
 
+  /// Create a new instance of [InMemoryWidgetDataSource]
   InMemoryWidgetDataSource(this._dataHelper);
 
   @override

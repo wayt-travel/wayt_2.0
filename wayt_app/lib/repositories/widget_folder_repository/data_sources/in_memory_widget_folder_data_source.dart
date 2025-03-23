@@ -7,6 +7,7 @@ import '../../repositories.dart';
 final class InMemoryWidgetFolderDataSource implements WidgetFolderDataSource {
   final InMemoryDataHelper _dataHelper;
 
+  /// /// Create a new instance of [InMemoryWidgetFolderDataSource].
   InMemoryWidgetFolderDataSource(this._dataHelper);
 
   @override
@@ -85,5 +86,37 @@ final class InMemoryWidgetFolderDataSource implements WidgetFolderDataSource {
   Future<void> delete(String id) async {
     await waitFakeTime();
     _dataHelper.deleteItem(id);
+  }
+
+  @override
+  Future<UpsertWidgetFolderOutput> update(
+    String id, {
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  }) async {
+    await waitFakeTime();
+    if (!_dataHelper.containsTravelDocument(travelDocumentId)) {
+      throw ArgumentError.value(
+        travelDocumentId,
+        'travelDocumentId',
+        'The travel document does not exist.',
+      );
+    }
+    final old = _dataHelper.getWidgetFolder(id);
+    final updated = old.copyWith(
+      name: input.name,
+      icon: input.icon,
+      color: input.color,
+      updatedAt: DateTime.now().toUtc(),
+    );
+    _dataHelper.saveTravelItem(updated);
+
+    // Build the output.
+    return Future.value(
+      (
+        widgetFolder: _dataHelper.getWidgetFolder(id),
+        updatedOrders: <String, int>{},
+      ),
+    );
   }
 }

@@ -264,11 +264,11 @@ class TravelItemRepositoryImpl
       } else {
         helper = TravelItemRepoHelper.widget(item.id);
       }
-      // Remove then readd the item.
+      // Remove then re-add the item.
       _travelDocumentToItemsMap[item.travelDocumentId]!
         // Remove the item
         ..remove(helper.id)
-        // Readd the item
+        // Add the item
         ..putIfAbsent(helper.id, () => helper);
     }
   }
@@ -377,12 +377,6 @@ class TravelItemRepositoryImpl
     );
     updateItemOrders(created.travelDocumentId, updatedOrders);
     upsertInCacheAndMaps(created);
-    emit(
-      TravelItemRepositoryItemOrdersUpdated(
-        travelDocumentId: created.travelDocumentId,
-        updatedOrders: updatedOrders,
-      ),
-    );
     emit(
       TravelItemRepositoryItemOrdersUpdated(
         travelDocumentId: created.travelDocumentId,
@@ -633,4 +627,32 @@ class TravelItemRepositoryImpl
           'Item with id $id not found.',
         ),
       )!;
+
+  @override
+  Future<UpsertWidgetFolderOutput> updateFolder(
+    String id, {
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  }) async {
+    logger.v('Updating folder with input: $input');
+    final previousItemWrapper = getWrappedOrThrow(id).asFolderWidgetWrapper;
+    final response = await widgetFolderDataSource.update(
+      id,
+      travelDocumentId: travelDocumentId,
+      input: input,
+    );
+    final (widgetFolder: updated, updatedOrders: _) = response;
+    logger.v('${updated.toShortString()} updated');
+    upsertInCacheAndMaps(updated);
+    emit(
+      TravelItemRepositoryTravelItemUpdated(
+        previousItemWrapper,
+        TravelItemEntityWrapper.folder(updated, previousItemWrapper.children),
+      ),
+    );
+    logger.i(
+      'Folder updated, added to cache and maps [$updated]',
+    );
+    return response;
+  }
 }

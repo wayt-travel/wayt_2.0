@@ -283,6 +283,11 @@ class InMemoryDataHelper with LoggerMixin {
     });
   }
 
+  /// Saves the travel [item].
+  void saveTravelItem(TravelItemEntity item) {
+    _data.travelItems.save(item.id, item as TravelItemModel);
+  }
+
   /// Gets the travel item with the given [id].
   TravelItemModel getTravelItem(String id) => _data.travelItems.getOrThrow(id);
 

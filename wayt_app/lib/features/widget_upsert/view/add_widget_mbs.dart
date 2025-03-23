@@ -7,7 +7,6 @@ import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/modal/modal.dart';
 import '../../features.dart';
-import '../../folder_upsert/view/folder_modal.dart';
 
 /// Modal bottom sheet to add a new widget in a travel document.
 class AddWidgetMbs extends StatelessWidget {

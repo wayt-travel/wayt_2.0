@@ -20,10 +20,11 @@ final class UpsertFolderState extends SuperBlocState<WError> {
   });
 
   /// The initial state of the cubit.
-  UpsertFolderState.initial()
-      : name = null,
-        icon = WidgetFolderIcon.fromIconData(Icons.folder),
-        color = FeatureColor.blue,
+  UpsertFolderState.initial(WidgetFolderEntity? folderToUpdate)
+      : name = folderToUpdate?.name,
+        icon =
+            folderToUpdate?.icon ?? WidgetFolderIcon.fromIconData(Icons.folder),
+        color = folderToUpdate?.color ?? FeatureColor.blue,
         super.initial();
 
   @override
@@ -57,4 +58,24 @@ final class UpsertFolderState extends SuperBlocState<WError> {
         color,
         ...super.props,
       ];
+
+  /// Returns a [CreateWidgetFolderInput] from the [UpsertFolderState].
+  CreateWidgetFolderInput toCreateInput(
+    TravelDocumentId travelDocumentId,
+    int? index,
+  ) =>
+      (
+        name: name!,
+        icon: icon,
+        color: color,
+        travelDocumentId: travelDocumentId,
+        index: index,
+      );
+
+  /// Returns a [UpdateWidgetFolderInput] from the [UpsertFolderState].
+  UpdateWidgetFolderInput toUpdateInput() => (
+        name: name!,
+        icon: icon,
+        color: color,
+      );
 }
