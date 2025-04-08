@@ -17,13 +17,21 @@ import '../bloc/upsert_folder/upsert_folder_cubit.dart';
 /// A modal for adding or editing a folder.
 class FolderModal extends StatelessWidget {
   /// Creates a new instance of [FolderModal].
-  const FolderModal({super.key});
+  const FolderModal._({required this.folder});
+
+  /// The folder to update.
+  ///
+  /// If null it means we're in create mode. i.e., a new folder will be created.
+  final WidgetFolderEntity? folder;
+
+  bool get _isEditing => folder != null;
 
   /// Pushes the modal to the navigator.
   static void show({
     required BuildContext context,
     required TravelDocumentId travelDocumentId,
     required int? index,
+    WidgetFolderEntity? folder,
   }) {
     context.navRoot.push(
       MaterialPageRoute<void>(
@@ -33,8 +41,9 @@ class FolderModal extends StatelessWidget {
             travelDocumentId: travelDocumentId,
             index: index,
             travelItemRepository: $.repo.travelItem(),
+            folderToUpdate: folder,
           ),
-          child: const FolderModal(),
+          child: FolderModal._(folder: folder),
         ),
       ),
     );
@@ -81,9 +90,9 @@ class FolderModal extends StatelessWidget {
       child: Builder(
         builder: (context) => Scaffold(
           appBar: AppBar(
-            title: const Text(
+            title: Text(
               // FIXME: l10n
-              'New folder',
+              '${!_isEditing ? 'New' : 'Edit'} folder',
             ),
           ),
           body: CustomScrollView(

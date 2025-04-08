@@ -25,12 +25,22 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The folder entity to update.
+  ///
+  /// If `null` it means we're in create mode, i.e., a new folder will be
+  /// created.
+  final WidgetFolderEntity? folderToUpdate;
+
+  /// Whether the cubit is in update mode.
+  bool get isUpdate => folderToUpdate != null;
+
   /// Creates a new instance of [UpsertFolderCubit].
   UpsertFolderCubit({
     required this.index,
     required this.travelDocumentId,
     required this.travelItemRepository,
-  }) : super(UpsertFolderState.initial());
+    this.folderToUpdate,
+  }) : super(UpsertFolderState.initial(folderToUpdate));
 
   /// Updates the name of the folder.
   void updateName(String? name) {
@@ -71,7 +81,8 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
   /// Submits the creation/update of the folder based on the current state.
   Future<void> submit() async {
     logger.v(
-      'Submitting new folder in $travelDocumentId...',
+      '${!isUpdate ? 'Submitting new folder' : 'Updating folder '
+          '$folderToUpdate'} ',
     );
     emit(
       state.copyWith(status: StateStatus.progress),
@@ -86,19 +97,22 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
     }
 
     try {
-      await travelItemRepository.createFolder(
-        (
-          color: state.color,
-          icon: state.icon,
-          name: state.name!,
+      if (!isUpdate) {
+        await travelItemRepository.createFolder(
+          state.toCreateInput(travelDocumentId, index),
+        );
+      } else {
+        await travelItemRepository.updateFolder(
+          folderToUpdate!.id,
           travelDocumentId: travelDocumentId,
-          index: index,
-        ),
-      );
-      logger.i('Folder created successfully.');
+          input: state.toUpdateInput(),
+        );
+      }
+
+      logger.i('Folder ${!isUpdate ? 'created' : 'updated'} successfully.');
       emit(state.copyWith(status: StateStatus.success));
     } catch (e, s) {
-      logger.e('Error creating folder: $e', e, s);
+      logger.e('Error ${!isUpdate ? 'creating' : 'updating'} folder: $e', e, s);
       emit(state.copyWithError(e.errorOrGeneric));
       return;
     }

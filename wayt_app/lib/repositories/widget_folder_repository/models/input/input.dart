@@ -10,4 +10,8 @@ typedef CreateWidgetFolderInput = ({
 });
 
 /// Input to update an existing widget folder.
-typedef UpdateWidgetFolderInput = ();
+typedef UpdateWidgetFolderInput = ({
+  String name,
+  WidgetFolderIcon icon,
+  FeatureColor color,
+});
