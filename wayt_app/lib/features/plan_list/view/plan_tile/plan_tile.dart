@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../repositories/repositories.dart';
-import '../../../../widgets/modal/modal.dart';
-import '../../../plan/view/plan_page.dart';
+import '../../../../widgets/widgets.dart';
+import '../../../features.dart';
 import 'plan_date_text.dart';
 
 /// A tile of a Travel Plan displayed in the list of plans of the user.
@@ -25,6 +28,51 @@ class PlanTile extends StatelessWidget {
     super.key,
   });
 
+  Future<bool> _delete(BuildContext context) async {
+    return WConfirmDialog.show(
+      context: context,
+      // FIXME: l10n
+      title: 'Are you sure?',
+      onConfirm: () async {
+        final cubit = DeletePlanCubit(
+          travelDocumentRepository: GetIt.I.get(),
+        );
+        await context.navRoot
+            .pushBlocListenerBarrier<DeletePlanCubit, DeletePlanState>(
+          bloc: cubit,
+          trigger: () => cubit.onDelete(plan.id),
+          listenWhen: (previous, current) =>
+              current.status.isSuccess || current.status.isFailure,
+          listener: (context, state) {
+            context.navRoot.pop();
+            if (state.status.isFailure) {
+              SnackBarHelper.I.showError(
+                context: context,
+                message: state.error!.userIntlMessage(context),
+              );
+            }
+          },
+        );
+
+        cubit.close().ignore();
+      },
+    );
+  }
+
+  Future<void> _onLongPress(BuildContext context) async {
+    return ModalBottomSheet.of(context).showActions(
+      actions: [
+        ModalBottomSheetActions.edit(context),
+        ModalBottomSheetActions.divider,
+        ModalBottomSheetActions.delete(context).copyWith(
+          // onTap: _delete does not work because the method have to use the
+          // outer context
+          onTap: (_) => _delete(context),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -33,13 +81,7 @@ class PlanTile extends StatelessWidget {
         planId: plan.id,
         planSummary: plan,
       ),
-      onLongPress: () => ModalBottomSheet.of(context).showActions<void>(
-        actions: [
-          ModalBottomSheetActions.edit(context),
-          ModalBottomSheetActions.divider,
-          ModalBottomSheetActions.delete(context),
-        ],
-      ),
+      onLongPress: () => _onLongPress(context),
       leading: CircleAvatar(
         backgroundColor: accentColor,
         child: Text(
