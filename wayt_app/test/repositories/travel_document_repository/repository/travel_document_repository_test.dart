@@ -67,6 +67,84 @@ void main() {
     });
   });
 
+  group('update', () {
+    test('should update the entity and emit a new state', () async {
+      final input = CreatePlanInput(
+        userId: 'userId',
+        isDaySet: true,
+        isMonthSet: false,
+        plannedAt: DateTime.now(),
+        tags: ['tag'],
+        name: 'name',
+      );
+      when(() => mockTravelDocumentDataSource.createPlan(input))
+          .thenAnswer((invocation) async {
+        final input = invocation.positionalArguments[0] as CreatePlanInput;
+        return PlanModel(
+          id: 'id',
+          userId: input.userId,
+          isDaySet: input.isDaySet,
+          isMonthSet: input.isMonthSet,
+          plannedAt: input.plannedAt,
+          tags: input.tags,
+          name: input.name,
+          createdAt: DateTime.now(),
+          updatedAt: null,
+        );
+      });
+      final created = await repo.createPlan(input);
+      var emitted = false;
+      repo.listen((state) {
+        expect(state, isA<TravelDocumentRepositoryItemUpdated>());
+        emitted = true;
+      });
+
+      final UpdatePlanInput updateInput = (
+        isDaySet: true,
+        isMonthSet: true,
+        plannedAt: DateTime.now(),
+        tags: ['tag', 'tag2'],
+        name: 'name updated',
+      );
+      when(
+        () => mockTravelDocumentDataSource.updatePlan(
+          created.id,
+          input: updateInput,
+        ),
+      ).thenAnswer((invocation) async {
+        final input =
+            invocation.namedArguments[const Symbol('input')] as UpdatePlanInput;
+        return PlanModel(
+          id: created.id,
+          userId: created.userId,
+          isDaySet: input.isDaySet,
+          isMonthSet: input.isMonthSet,
+          plannedAt: input.plannedAt,
+          tags: input.tags,
+          name: input.name,
+          createdAt: created.createdAt,
+          updatedAt: DateTime.now(),
+        );
+      });
+      final updated = await repo.updatePlan(created.id, updateInput);
+
+      // Wait for the state to be emitted.
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      verify(
+        () => mockTravelDocumentDataSource.updatePlan(
+          created.id,
+          input: updateInput,
+        ),
+      );
+      expect(emitted, isTrue);
+      expect(repo.items, hasLength(1));
+      expect(repo.items.single.id, created.id);
+      expect(repo.items.single.id, updated.id);
+      expect(repo.items.single.name, updateInput.name);
+    });
+  });
+
   group('fetchOne', () {
     test('should fetch the entity and emit a new state', () async {
       when(() => mockTravelDocumentDataSource.readById(any())).thenAnswer(

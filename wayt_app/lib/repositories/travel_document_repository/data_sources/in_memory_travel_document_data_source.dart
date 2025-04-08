@@ -1,3 +1,5 @@
+import 'package:a2f_sdk/a2f_sdk.dart';
+
 import '../../../init/in_memory_data.dart';
 import '../../repositories.dart';
 
@@ -47,5 +49,26 @@ final class InMemoryTravelDocumentDataSource
   Future<TravelDocumentWrapper<TravelDocumentModel>> readById(String id) async {
     await waitFakeTime();
     return _dataHelper.getTravelDocumentWrapperByRawId(id);
+  }
+
+  @override
+  Future<PlanModel> updatePlan(
+    String id, {
+    required UpdatePlanInput input,
+  }) async {
+    await waitFakeTime();
+    final old = _dataHelper.getPlan(id);
+    final updated = old.copyWith(
+      isDaySet: input.isDaySet,
+      isMonthSet: input.isMonthSet,
+      plannedAt: Optional(input.plannedAt),
+      tags: input.tags,
+      name: input.name,
+      updatedAt: DateTime.now().toUtc(),
+    );
+
+    _dataHelper.saveTravelDocument(updated);
+
+    return updated;
   }
 }
