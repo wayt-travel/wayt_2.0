@@ -32,9 +32,12 @@ class TravelItemRepoHelper extends Equatable {
 ///
 /// Visible for testing.
 @visibleForTesting
-class TravelItemRepositoryImpl
-    extends Repository<String, TravelItemEntity, TravelItemRepositoryState>
-    implements TravelItemRepository {
+class TravelItemRepositoryImpl extends RepositoryV2<
+    String,
+    TravelItemEntity,
+    TravelItemRepositoryEvent,
+    TravelItemRepositoryState,
+    WError> implements TravelItemRepository {
   /// The travel item data source.
   final TravelItemDataSource travelItemDataSource;
 
@@ -73,9 +76,15 @@ class TravelItemRepositoryImpl
     required this.summaryHelperRepository,
     required this.widgetDataSource,
     required this.widgetFolderDataSource,
-  });
+  }) : super(errorTransformer: (e) => e.errorOrGeneric) {
+    on<TravelItemRepoWidgetCreatedEvent, UpsertWidgetOutput>(_createWidget);
+    on<TravelItemRepoFolderCreatedEvent, UpsertWidgetFolderOutput>(
+      _createFolder,
+    );
+  }
 
   /// Gets the map of travel document ids to the items they contain IN THE ROOT.
+  @visibleForTesting
   Map<TravelDocumentId, SplayTreeMap<String, TravelItemRepoHelper>>
       get travelDocumentToItemsMap =>
           Map.unmodifiable(_travelDocumentToItemsMap);
@@ -100,7 +109,7 @@ class TravelItemRepositoryImpl
     required String itemId,
   }) {
     _checkThrowContainsTravelDocument(travelDocumentId);
-    if (cache.get(itemId) == null) {
+    if (cache[itemId] == null) {
       throw ArgumentError(
         'Root item $itemId not found in the repository cache.',
       );
@@ -139,7 +148,7 @@ class TravelItemRepositoryImpl
       travelDocumentId: travelDocumentId,
       folderId: folderId,
     );
-    final item = cache.get(itemId);
+    final item = cache[itemId];
     if (item == null) {
       throw ArgumentError(
         'Widget $itemId not found in the repository cache.',
@@ -223,7 +232,7 @@ class TravelItemRepositoryImpl
   @protected
   void upsertInCacheAndMaps(TravelItemEntity item) {
     // Save the item to the cache.
-    cache.save(item.id, item);
+    cache[item.id] = item;
 
     // Add the travel document id to the map if it does not exist.
     _maybeAddTravelDocumentToMap(item.travelDocumentId);
@@ -361,13 +370,14 @@ class TravelItemRepositoryImpl
     // Remove the item from the cache at the end, because before it may be
     // needed from the SplitTreeMap compare function (for internal logic while
     // removing the item from the map).
-    cache.delete(item.id);
+    cache.remove(item.id);
   }
 
-  @override
-  Future<UpsertWidgetFolderOutput> createFolder(
-    CreateWidgetFolderInput input,
+  Future<UpsertWidgetFolderOutput> _createFolder(
+    TravelItemRepoFolderCreatedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
+    final input = event.input;
     logger.v('Creating folder with input: $input');
     final response = await widgetFolderDataSource.create(input);
     final (widgetFolder: created, :updatedOrders) = response;
@@ -378,13 +388,13 @@ class TravelItemRepositoryImpl
     updateItemOrders(created.travelDocumentId, updatedOrders);
     upsertInCacheAndMaps(created);
     emit(
-      TravelItemRepositoryItemOrdersUpdated(
+      TravelItemRepoItemOrdersUpdateSuccess(
         travelDocumentId: created.travelDocumentId,
         updatedOrders: updatedOrders,
       ),
     );
     emit(
-      TravelItemRepositoryTravelItemAdded(
+      TravelItemRepoItemCreateSuccess(
         TravelItemEntityWrapper.folder(created, []),
       ),
     );
@@ -394,11 +404,13 @@ class TravelItemRepositoryImpl
     return response;
   }
 
-  @override
-  Future<UpsertWidgetOutput> createWidget(
-    WidgetModel widget,
-    int? index,
+  Future<UpsertWidgetOutput> _createWidget(
+    TravelItemRepoWidgetCreatedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
+    final widget = event.input.widget;
+    final index = event.input.index;
+    emit(TravelItemRepoWidgetCreateInProgress(event.input));
     logger.v('Creating widget with input: ${widget.toStringVerbose()}');
     final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
@@ -409,13 +421,13 @@ class TravelItemRepositoryImpl
     updateItemOrders(created.travelDocumentId, updatedOrders);
     upsertInCacheAndMaps(created);
     emit(
-      TravelItemRepositoryItemOrdersUpdated(
+      TravelItemRepoItemsReorderSuccess(
         travelDocumentId: created.travelDocumentId,
-        updatedOrders: updatedOrders,
+        updatedItemsOrder: updatedOrders,
       ),
     );
     emit(
-      TravelItemRepositoryTravelItemAdded(
+      TravelItemRepoItemCreateSuccess(
         TravelItemEntityWrapper.widget(created),
       ),
     );
@@ -425,8 +437,12 @@ class TravelItemRepositoryImpl
     return response;
   }
 
-  @override
-  Future<void> deleteFolder(String id) async {
+  Future<void> _deleteFolder(
+    TravelItemRepoItemDeletedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
+  ) async {
+    final id = event.id;
+    emit(TravelItemRepoItemDeleteInProgress(id));
     logger.v('Deleting folder with id: $id');
     final deletedItemWrapper = getWrappedOrThrow(id);
     final deletedItem = deletedItemWrapper.value;
@@ -435,9 +451,7 @@ class TravelItemRepositoryImpl
       'Folder ${deletedItem.id} deleted. Removing it from cache and maps.',
     );
     removeFromCacheAndMaps(deletedItem);
-    emit(
-      TravelItemRepositoryTravelItemDeleted(deletedItemWrapper),
-    );
+    emit(TravelItemRepoItemDeleteSuccess(deletedItemWrapper));
     logger.i('Folder deleted and removed from cache and maps [$deletedItem].');
   }
 
