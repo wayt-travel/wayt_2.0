@@ -49,6 +49,13 @@ abstract interface class TravelItemRepository
   /// Creates a new widget folder.
   Future<UpsertWidgetFolderOutput> createFolder(CreateWidgetFolderInput input);
 
+  /// Updates a widget folder with id [id].
+  Future<UpsertWidgetFolderOutput> updateFolder(
+    String id, {
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  });
+
   /// Deletes a widget by its [id].
   Future<void> deleteWidget(String id);
 

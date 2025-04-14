@@ -131,7 +131,12 @@ class FolderView extends StatelessWidget {
               const TravelDocumentReorderIconButton(),
               IconButton(
                 icon: const Icon(Icons.edit),
-                onPressed: () {},
+                onPressed: () => FolderModal.show(
+                  context: context,
+                  travelDocumentId: travelDocumentId,
+                  index: null,
+                  folder: context.read<FolderCubit>().state.folderWrapper.value,
+                ),
               ),
             ],
           ),

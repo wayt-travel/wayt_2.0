@@ -32,15 +32,17 @@ TextWidgetModel _buildWidget({
 WidgetFolderModel _buildFolder({
   required TravelDocumentId travelDocumentId,
   required int order,
+  String? name,
+  String? id,
 }) =>
     WidgetFolderModel(
-      id: const Uuid().v4(),
+      id: id ?? const Uuid().v4(),
       travelDocumentId: travelDocumentId,
       order: order,
       color: FeatureColor.amber,
       createdAt: DateTime.now(),
       icon: WidgetFolderIcon.fromIconData(Icons.folder),
-      name: 'name',
+      name: name ?? 'name',
       updatedAt: null,
     );
 
@@ -511,5 +513,123 @@ void main() {
         );
       },
     );
+  });
+
+  group('Create', () {
+    test('Create a folder', () async {
+      final input = (
+        color: FeatureColor.blue,
+        icon: WidgetFolderIcon.fromIconData(Icons.folder),
+        name: 'Name',
+        travelDocumentId: travelDocumentId2,
+        index: 0,
+      );
+
+      when(() => repository.widgetFolderDataSource.create(input))
+          .thenAnswer((invocation) async {
+        final input =
+            invocation.positionalArguments[0] as CreateWidgetFolderInput;
+        final folder = WidgetFolderModel(
+          id: '1',
+          travelDocumentId: input.travelDocumentId,
+          createdAt: DateTime.now().toUtc(),
+          updatedAt: null,
+          order: -1,
+          name: input.name,
+          icon: input.icon,
+          color: input.color,
+        );
+        return (
+          widgetFolder: folder,
+          updatedOrders: <String, int>{},
+        );
+      });
+
+      final created = await repository.createFolder(input);
+      verify(() => repository.widgetFolderDataSource.create(input));
+      expect(repository.travelDocumentToItemsMap, hasLength(1));
+      expect(
+        repository.travelDocumentToItemsMap[travelDocumentId2]?.keys.first,
+        created.widgetFolder.id,
+      );
+      expect(
+        repository.travelDocumentToItemsMap[travelDocumentId2]?.keys.first,
+        created.widgetFolder.id,
+      );
+      expect(
+        repository
+            .travelDocumentToItemsMap[travelDocumentId2]?.values.first.isFolder,
+        isTrue,
+      );
+    });
+  });
+  group('Update', () {
+    test('Update folder information', () async {
+      final created = _buildFolder(
+        travelDocumentId: travelDocumentId2,
+        order: 0,
+        id: '1',
+      );
+      repository.upsertInCacheAndMaps(created);
+
+      final updateInput = (
+        color: FeatureColor.red,
+        name: 'New Name',
+        icon: WidgetFolderIcon.fromIconData(Icons.folder),
+      );
+
+      when(
+        () => repository.widgetFolderDataSource.update(
+          any(),
+          travelDocumentId: travelDocumentId2,
+          input: updateInput,
+        ),
+      ).thenAnswer((invocation) async {
+        final input = invocation.namedArguments[const Symbol('input')]
+            as UpdateWidgetFolderInput;
+        final travelDocumentId =
+            invocation.namedArguments[const Symbol('travelDocumentId')]
+                as TravelDocumentId;
+        final folder = WidgetFolderModel(
+          id: '1',
+          travelDocumentId: travelDocumentId,
+          createdAt: created.createdAt,
+          updatedAt: DateTime.now().toUtc(),
+          order: -1,
+          name: input.name,
+          icon: input.icon,
+          color: input.color,
+        );
+        return (
+          widgetFolder: folder,
+          updatedOrders: <String, int>{},
+        );
+      });
+
+      final updated = await repository.updateFolder(
+        created.id,
+        travelDocumentId: travelDocumentId2,
+        input: updateInput,
+      );
+      verify(
+        () => repository.widgetFolderDataSource.update(
+          created.id,
+          travelDocumentId: travelDocumentId2,
+          input: updateInput,
+        ),
+      );
+      expect(repository.travelDocumentToItemsMap, hasLength(1));
+      expect(
+        repository.travelDocumentToItemsMap[travelDocumentId2]?.keys.first,
+        updated.widgetFolder.id,
+      );
+      final td2 = repository.travelDocumentToItemsMap[travelDocumentId2];
+      expect(td2, hasLength(2));
+      final items = repository.getAllOfPlan(travelDocumentId2.id);
+      final item = items.firstWhere((e) => e.value.id == '1');
+      expect(item.isFolderWidget, isTrue);
+      expect(item.value.asFolderWidget.name, updated.widgetFolder.name);
+      expect(item.value.asFolderWidget.color, updated.widgetFolder.color);
+    });
   });
 }

@@ -8,6 +8,7 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../widgets/widgets.dart';
 import '../../folder_display/view/folder_page.dart';
+import '../../folder_upsert/view/folder_modal.dart';
 import '../../item_delete/bloc/delete_item/delete_item_cubit.dart';
 import '../../widget_upsert/view/add_widget_mbs.dart';
 import 'travel_widget.dart';
@@ -122,6 +123,22 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
     );
   }
 
+  static void _onEdit(
+    BuildContext context, {
+    required TravelItemEntity travelItem,
+  }) {
+    if (travelItem.isFolderWidget) {
+      FolderModal.show(
+        context: context,
+        travelDocumentId: travelItem.travelDocumentId,
+        index: null,
+        folder: travelItem.asFolderWidget,
+      );
+    } else {
+      SnackBarHelper.I.showNotImplemented(context);
+    }
+  }
+
   /// Shows the context menu for a travel item.
   static Future<void> showForItem({
     required int index,
@@ -174,7 +191,12 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
               index: index + 1,
             ),
           ),
-          ModalBottomSheetActions.edit(context),
+          ModalBottomSheetActions.edit(context).copyWith(
+            onTap: (_) => _onEdit(
+              context,
+              travelItem: travelItem,
+            ),
+          ),
           ModalBottomSheetActions.divider,
           ModalBottomSheetActions.delete(context).copyWith(
             onTap: (innerContext) {
