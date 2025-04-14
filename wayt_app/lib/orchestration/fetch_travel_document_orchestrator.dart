@@ -71,10 +71,11 @@ final class FetchTravelDocumentOrchestrator with LoggerMixin {
 
     // No need to emit the state here as the travel document has just been
     // fetched.
-    travelItemRepository.addAll(
-      travelDocumentId: travelDocumentId,
-      travelItems: wrapper.travelItems,
-      shouldEmit: false,
+    await travelItemRepository.addSequentialAndWait<void>(
+      TravelItemRepoItemsAddedEvent(
+        shouldEmit: false,
+        travelItems: travelItems,
+      ),
     );
 
     // The travel document has been fully fetched and its items have been

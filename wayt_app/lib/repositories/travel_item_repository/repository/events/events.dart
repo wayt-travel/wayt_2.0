@@ -1,3 +1,5 @@
+import 'package:a2f_sdk/a2f_sdk.dart';
+
 import '../../../../util/util.dart';
 import '../../../repositories.dart';
 
@@ -20,4 +22,36 @@ abstract class TravelItemRepositoryState<E extends TravelItemEntity>
 
   @override
   bool get stringify => false;
+}
+
+/// Event for when items are added to the repository.
+final class TravelItemRepoItemsAddedEvent
+    with ModelToStringMixin
+    implements TravelItemRepositoryEvent<TravelItemEntity> {
+  /// Creates a new instance.
+  const TravelItemRepoItemsAddedEvent({
+    required this.travelItems,
+    this.shouldEmit = true,
+  });
+
+  /// The travel items that were added.
+  final Iterable<TravelItemEntityWrapper> travelItems;
+
+  /// Whether the items should be emitted.
+  final bool shouldEmit;
+
+  @override
+  List<Object?> get props => [
+        travelItems,
+        shouldEmit,
+      ];
+
+  @override
+  bool? get stringify => false;
+
+  @override
+  Map<String, dynamic> $toMap() => {
+        'travelItems.length': travelItems.length,
+        'shouldEmit': shouldEmit,
+      };
 }

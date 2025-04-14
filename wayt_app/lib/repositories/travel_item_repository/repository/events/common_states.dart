@@ -49,3 +49,4 @@ final class TravelItemRepoItemCollectionFetchSuccess
         'itemWrappers.length': itemWrappers.length,
       };
 }
+

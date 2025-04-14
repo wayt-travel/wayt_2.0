@@ -69,9 +69,4 @@ abstract interface class TravelItemRepository extends RepositoryV2<
   ///
   /// If [shouldEmit] is `false`, the repository will not emit a state change
   /// upon adding the travel items.
-  void addAll({
-    required TravelDocumentId travelDocumentId,
-    required Iterable<TravelItemEntityWrapper> travelItems,
-    bool shouldEmit = true,
-  });
 }

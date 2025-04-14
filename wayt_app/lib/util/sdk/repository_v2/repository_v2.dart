@@ -28,7 +28,26 @@ typedef RepoV2ConditionalEventHandler<R, Event, State>
 /// {@template repository_v2}
 /// Base class for repositories.
 ///
-/// todo
+/// It provides a way to centralize the logic handling a specific domain entity.
+///
+/// Entities of type [Entity] are stored in a [cache] and can be accessed by
+/// their [Key] using the [get], [keys], [values], [items] and [getOrThrow]
+/// methods.
+///
+/// The repository is event-driven, meaning it accepts events of type [Event]
+/// added via [add] (and similar) methods, processes them and responds emitting
+/// states of type [State].
+///
+/// Upon instantiation, you need to register the event handlers using the [on]
+/// method, just like you would do with a [Bloc].
+///
+/// Internally it uses a [Bloc] to handle events and states. The events are
+/// processed sequentially or concurrently depending on the method used to add
+/// them to the repository. Usually it is recommended to use [addSequential]
+/// method to ensure that the events are processed in the order they are added
+/// and one at a time, making the repository thread-safe.
+///
+/// Any actor can subscribe to the repository events using the [listen] method.
 /// {@endtemplate}
 abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
   /// Internal cache storing the items of the repository.
@@ -89,10 +108,6 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
           result: null,
         );
       });
-
-  @protected
-  // ignore: invalid_use_of_visible_for_testing_member
-  void emit(State state) => _bloc.emit(state);
 
   /// Alias for [addSequential].
   ///

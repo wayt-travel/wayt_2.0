@@ -51,20 +51,23 @@ void main() {
   final travelDocumentId = TravelDocumentId.plan(const Uuid().v4());
   final travelDocumentId2 = TravelDocumentId.plan(const Uuid().v4());
 
-  setUp(() {
+  setUp(() async {
     repository = TravelItemRepositoryImpl(
       travelItemDataSource: MockTravelItemDataSource(),
       widgetFolderDataSource: MockWidgetFolderDataSource(),
       widgetDataSource: MockWidgetDataSource(),
       summaryHelperRepository: MockSummaryHelperRepository(),
-    )..addAll(
-        travelDocumentId: travelDocumentId2,
+    );
+
+    await repository.addConcurrentAndWait<void>(
+      TravelItemRepoItemsAddedEvent(
         travelItems: [
           TravelItemEntityWrapper.widget(
             _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
           ),
         ],
-      );
+      ),
+    );
   });
 
   group('TravelItemRepository.upsertInCacheAndMaps', () {

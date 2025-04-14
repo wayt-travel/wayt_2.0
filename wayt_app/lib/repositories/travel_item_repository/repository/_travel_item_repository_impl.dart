@@ -83,6 +83,7 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     );
     on<TravelItemRepoItemDeletedEvent, void>(_deleteItem);
     on<TravelItemRepoItemsReorderedEvent, Map<String, int>>(_reorderItems);
+    on<TravelItemRepoItemsAddedEvent, void>(_addAll);
   }
 
   /// Gets the map of travel document ids to the items they contain IN THE ROOT.
@@ -562,12 +563,12 @@ class TravelItemRepositoryImpl extends RepositoryV2<
   List<TravelItemEntityWrapper> getAllOfPlan(String planId) =>
       _getAllOfAny(planId);
 
-  @override
-  void addAll({
-    required TravelDocumentId travelDocumentId,
-    required Iterable<TravelItemEntityWrapper> travelItems,
-    bool shouldEmit = true,
-  }) {
+  void _addAll(
+    TravelItemRepoItemsAddedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
+  ) {
+    final travelItems = event.travelItems;
+    final shouldEmit = event.shouldEmit;
     logger.v('Adding ${travelItems.length} items to cache and maps');
     // We need to insert folders before widgets because when inserting a widget
     // that is contained in a folder it is required that the folder is already
