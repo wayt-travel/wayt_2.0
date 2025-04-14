@@ -8,11 +8,21 @@ import '../../../../../core/context/context.dart';
 import '../../../../../repositories/repositories.dart';
 import '../../../../../theme/theme.dart';
 
+/// {@template text_widget_scale_icon}
+/// An icon that represents a [TypographyFeatureScale], i.e., H1, H2, etc.,
+/// used to distinguish between different text scales.
+/// {@endtemplate}
 class TextWidgetScaleIcon extends StatelessWidget {
+  /// The [TypographyFeatureScale] to display.
   final TypographyFeatureScale scale;
+
+  /// The size of the icon.
   final double? size;
+
+  /// The border radius of the icon.
   final BorderRadius? borderRadius;
 
+  /// {@macro text_widget_scale_icon}
   const TextWidgetScaleIcon({
     required this.scale,
     this.size,

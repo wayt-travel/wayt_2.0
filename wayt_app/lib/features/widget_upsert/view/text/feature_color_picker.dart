@@ -6,11 +6,17 @@ import '../../../../core/context/context.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/modal/modal.dart';
 
+/// {@template feature_color_picker}
 /// Picker for selecting a color of [FeatureColor] type.
+/// {@endtemplate}
 class FeatureColorPicker extends StatelessWidget {
+  /// The scroll controller for the [CustomScrollView].
   final ScrollController scrollController;
+
+  /// {@macro feature_color_picker}
   const FeatureColorPicker({required this.scrollController, super.key});
 
+  /// Shows the [FeatureColorPicker] as a modal bottom sheet.
   static Future<FeatureColor?> show(BuildContext context) =>
       ModalBottomSheet.of(context).showExpanded<FeatureColor>(
         startExpanded: true,
