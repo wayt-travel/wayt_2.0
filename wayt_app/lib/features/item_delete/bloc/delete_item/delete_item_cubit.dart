@@ -27,18 +27,20 @@ class DeleteItemCubit extends Cubit<DeleteItemState> with LoggerMixin {
   Future<void> delete() async {
     logger.v('Deleting item $item');
     emit(state.copyWith(status: StateStatus.progress));
-    try {
-      if (item.isFolderWidget) {
-        await repository.deleteFolder(item.id);
-      } else {
-        await repository.deleteWidget(item.id);
-      }
-      logger.i('Item $item deleted successfully');
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error deleting item $item', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
-    }
+
+    final either = await repository.addSequentialAndWait<void>(
+      TravelItemRepoItemDeletedEvent(item.id),
+    );
+
+    either.match(
+      (error) {
+        logger.e('Error deleting item $item: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Item $item deleted successfully');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

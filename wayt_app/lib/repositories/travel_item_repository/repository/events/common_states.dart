@@ -1,7 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 
 import '../../../repositories.dart';
-import 'events.dart';
 
 /// State for when the order of items is updated successfully.
 final class TravelItemRepoItemOrdersUpdateSuccess
@@ -29,5 +28,24 @@ final class TravelItemRepoItemOrdersUpdateSuccess
   Map<String, dynamic> $toMap() => {
         'travelDocumentId': travelDocumentId,
         'updatedOrders.length': updatedOrders.length,
+      };
+}
+
+/// State for when the items in a travel document are successfully fetched.
+final class TravelItemRepoItemCollectionFetchSuccess
+    extends TravelItemRepositoryState<TravelItemEntity>
+    with ModelToStringMixin {
+  /// Creates a new instance.
+  const TravelItemRepoItemCollectionFetchSuccess(this.itemWrappers);
+
+  /// List of item wrappers.
+  final List<TravelItemEntityWrapper> itemWrappers;
+
+  @override
+  List<Object?> get props => [itemWrappers];
+
+  @override
+  Map<String, dynamic> $toMap() => {
+        'itemWrappers.length': itemWrappers.length,
       };
 }

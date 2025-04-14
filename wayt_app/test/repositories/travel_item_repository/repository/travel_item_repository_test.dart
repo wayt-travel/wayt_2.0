@@ -69,7 +69,7 @@ void main() {
 
   group('TravelItemRepository.upsertInCacheAndMaps', () {
     test('should insert the item in the cache', () {
-      expect(repository.cache.entries.length, equals(1));
+      expect(repository.items.length, equals(1));
       expect(repository.travelDocumentToItemsMap.entries.length, equals(1));
       final td = repository.travelDocumentToItemsMap.entries.single;
       expect(td.key, travelDocumentId2);
@@ -78,7 +78,7 @@ void main() {
         order: 0,
       );
       repository.upsertInCacheAndMaps(widget);
-      expect(repository.cache.get(widget.id), equals(widget));
+      expect(repository.get(widget.id), equals(widget));
       expect(repository.travelDocumentToItemsMap.entries.length, equals(2));
       final td2 = repository.travelDocumentToItemsMap.entries.last;
       expect(td2.key, travelDocumentId);
@@ -100,7 +100,7 @@ void main() {
         order: 2,
       );
       repository.upsertInCacheAndMaps(widget3);
-      expect(repository.cache.get(widget3.id), equals(widget3));
+      expect(repository.get(widget3.id), equals(widget3));
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys.single,
         equals(widget3.id),
@@ -111,7 +111,7 @@ void main() {
       );
 
       repository.upsertInCacheAndMaps(widget1);
-      expect(repository.cache.get(widget1.id), equals(widget1));
+      expect(repository.get(widget1.id), equals(widget1));
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys.first,
         equals(widget1.id),
@@ -122,7 +122,7 @@ void main() {
       );
 
       repository.upsertInCacheAndMaps(widget2);
-      expect(repository.cache.get(widget2.id), equals(widget2));
+      expect(repository.get(widget2.id), equals(widget2));
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys.toList()[1],
         equals(widget2.id),
@@ -159,8 +159,8 @@ void main() {
       repository
         ..upsertInCacheAndMaps(widget1)
         ..upsertInCacheAndMaps(widget2);
-      expect(repository.cache.get(widget1.id), equals(widget1));
-      expect(repository.cache.get(widget2.id), equals(widget2));
+      expect(repository.get(widget1.id), equals(widget1));
+      expect(repository.get(widget2.id), equals(widget2));
       expect(
         const ListEquality<String>().equals(
           repository.travelDocumentToItemsMap[travelDocumentId]!.keys.toList(),
@@ -171,7 +171,7 @@ void main() {
 
       final updated2 = widget2.copyWith(order: 0);
       repository.upsertInCacheAndMaps(updated2);
-      expect(repository.cache.get(updated2.id), equals(updated2));
+      expect(repository.get(updated2.id), equals(updated2));
       expect(
         const ListEquality<String>().equals(
           repository.travelDocumentToItemsMap[travelDocumentId]!.keys.toList(),
@@ -249,7 +249,7 @@ void main() {
         order: 0,
       );
       repository.upsertInCacheAndMaps(folder);
-      expect(repository.cache.get(folder.id), equals(folder));
+      expect(repository.get(folder.id), equals(folder));
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys.single,
         equals(folder.id),
@@ -262,7 +262,7 @@ void main() {
       );
       repository.upsertInCacheAndMaps(widget);
       // The widget is in the cache
-      expect(repository.cache.get(widget.id), equals(widget));
+      expect(repository.get(widget.id), equals(widget));
 
       // The widget should not be in the root of the travel document
       expect(
@@ -456,13 +456,13 @@ void main() {
         order: 0,
       );
       repository.upsertInCacheAndMaps(widget);
-      expect(repository.cache.get(widget.id), equals(widget));
+      expect(repository.get(widget.id), equals(widget));
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys.single,
         equals(widget.id),
       );
       repository.removeFromCacheAndMaps(widget);
-      expect(repository.cache.get(widget.id), isNull);
+      expect(repository.get(widget.id), isNull);
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]!.keys
             .contains(widget.id),
@@ -475,7 +475,7 @@ void main() {
         order: 0,
       );
       repository.removeFromCacheAndMaps(widget);
-      expect(repository.cache.get(widget.id), isNull);
+      expect(repository.get(widget.id), isNull);
       expect(
         repository.travelDocumentToItemsMap[travelDocumentId]?.keys
                 .contains(widget.id) ??

@@ -1,21 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../error/errors.dart';
-import '../../../../util/util.dart';
 import '../../../repositories.dart';
-import 'events.dart';
 
 //*                          ╔═════════════════╗
 //*╠═════════════════════════╣ ITEMS REORDERED ╠══════════════════════════════╣
 //*                          ╚═════════════════╝
 
 /// Input for reordering items in a travel document via
-/// [TravelItemReorderedEvent].
+/// [TravelItemRepoItemsReorderedEvent].
 ///
-/// /// Reorders the items in a travel document based on the provided
+/// Reorders the items in a travel document based on the provided
 /// [reorderedItemIds].
-///
-
 final class TravelItemReorderedInput extends Equatable {
   /// Creates a new instance of [TravelItemReorderedInput].
   const TravelItemReorderedInput({
@@ -55,19 +50,19 @@ final class TravelItemReorderedInput extends Equatable {
 /// If reorderedItemIds does not match the list of items currently contained
 /// in the repo for the travel document with travelDocumentId the repository
 /// will throw an [ArgumentError].
-final class TravelItemReorderedEvent extends RepoV2ItemUpdated<String,
-        TravelItemEntity, TravelItemReorderedInput>
+final class TravelItemRepoItemsReorderedEvent
     implements TravelItemRepositoryEvent<TravelItemEntity> {
-  /// Creates a new instance of [TravelItemReorderedEvent].
-  const TravelItemReorderedEvent(super.id, super.input);
-}
+  /// Creates a new instance of [TravelItemRepoItemsReorderedEvent].
+  const TravelItemRepoItemsReorderedEvent(this.input);
 
-/// State for when the items in a travel document are being reordered.
-final class TravelItemReorderInProgress
-    extends RepoV2InProgressState<TravelItemReorderedInput, TravelItemEntity>
-    implements TravelItemRepositoryState<TravelItemEntity> {
-  /// Creates a new instance of [TravelItemReorderInProgress].
-  const TravelItemReorderInProgress(super.input);
+  /// The input for reordering items.
+  final TravelItemReorderedInput input;
+
+  @override
+  List<Object?> get props => [input];
+
+  @override
+  bool? get stringify => false;
 }
 
 /// State for when the items in a travel document are successfully reordered.
@@ -90,16 +85,4 @@ final class TravelItemRepoItemsReorderSuccess
         travelDocumentId,
         updatedItemsOrder,
       ];
-}
-
-/// State for when an error occurs while reordering items in a travel document.
-final class TravelItemReorderFailure extends RepoV2FailureState<
-    TravelItemReorderedInput,
-    TravelItemEntity,
-    WError> implements TravelItemRepositoryState<TravelItemEntity> {
-  /// Creates a new instance of [TravelItemReorderFailure].
-  const TravelItemReorderFailure({
-    required super.input,
-    required super.error,
-  });
 }

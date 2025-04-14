@@ -91,25 +91,32 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       return;
     }
 
-    try {
-      await travelItemRepository.createWidget(
-        TextWidgetModel(
-          id: const Uuid().v4(),
-          text: state.text!.trim(),
-          textStyle: state.featureTextStyle,
-          travelDocumentId: travelDocumentId,
-          folderId: folderId,
-          // The order is neglected at creation time.
-          order: -1,
+    final either = await travelItemRepository.addSequentialAndWait<void>(
+      TravelItemRepoWidgetCreatedEvent(
+        (
+          widget: TextWidgetModel(
+            id: const Uuid().v4(),
+            text: state.text!.trim(),
+            textStyle: state.featureTextStyle,
+            travelDocumentId: travelDocumentId,
+            folderId: folderId,
+            // The order is neglected at creation time.
+            order: -1,
+          ),
+          index: index,
         ),
-        // When creating a new widget the index is defined.
-        index,
-      );
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error creating text widget: $e', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
-    }
+      ),
+    );
+
+    either.fold(
+      (error) {
+        logger.e('Error creating text widget: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.d('Text widget created successfully');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

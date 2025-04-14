@@ -29,17 +29,16 @@ class RepoV2ItemFetched<Id, Entity> extends RepositoryV2Event<Entity> {
 }
 
 /// Event for when a new item is created in the repository.
-class RepoV2ItemCreated<Id, Entity, Input> extends RepositoryV2Event<Entity> {
-  const RepoV2ItemCreated(this.id, this.input);
+class RepoV2ItemCreated<Entity, Input> extends RepositoryV2Event<Entity> {
+  const RepoV2ItemCreated(this.input);
 
-  final Id id;
   final Input input;
 
   @override
-  String toString() => '$RepoV2ItemCreated { id: $id, input: $input }';
+  String toString() => '$RepoV2ItemCreated { input: $input }';
 
   @override
-  List<Object?> get props => [id, input];
+  List<Object?> get props => [input];
 }
 
 /// Event for when an existing item is added in the repository.

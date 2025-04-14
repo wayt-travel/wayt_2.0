@@ -1,7 +1,5 @@
-import '../../../../error/errors.dart';
 import '../../../../util/util.dart';
 import '../../../repositories.dart';
-import 'events.dart';
 
 //*                          ╔═════════════════╗
 //*╠═════════════════════════╣ WIDGET CREATION ╠═══════════════════════════════╣
@@ -20,34 +18,12 @@ import 'events.dart';
 ///
 /// See [UpsertWidgetOutput].
 /// {@endtemplate}
-final class TravelItemRepoWidgetCreatedEvent extends RepoV2ItemCreated<String,
-        WidgetEntity, ({WidgetModel widget, int? index})>
+final class TravelItemRepoWidgetCreatedEvent
+    extends RepoV2ItemCreated<WidgetEntity, ({WidgetModel widget, int? index})>
     implements TravelItemRepositoryEvent<WidgetEntity> {
   /// Creates a new instance of [TravelItemRepoWidgetCreatedEvent].
   /// {@macro travelItemWidgetCreatedEvent}
-  const TravelItemRepoWidgetCreatedEvent(super.id, super.input);
-}
-
-/// State for when an item is being created in the repository.
-final class TravelItemRepoWidgetCreateInProgress
-    extends RepoV2ItemCreateInProgress<({WidgetModel widget, int? index}),
-        WidgetEntity> implements TravelItemRepositoryState<WidgetEntity> {
-  /// Creates a new instance of [TravelItemRepoWidgetCreateInProgress].
-  const TravelItemRepoWidgetCreateInProgress(super.input);
-}
-
-/// State for when creating an item in the repository fails.
-final class TravelItemRepoWidgetCreateFailure extends RepoV2FailureState<
-    ({WidgetModel widget, int? index}),
-    WidgetEntity,
-    WError> implements TravelItemRepositoryState<WidgetEntity> {
-  /// Creates a new instance of [TravelItemRepoWidgetCreateFailure].
-  /// The [input] contains the input of the creation event.
-  /// The [error] contains the error that occurred during the creation.
-  const TravelItemRepoWidgetCreateFailure({
-    required super.input,
-    required super.error,
-  });
+  const TravelItemRepoWidgetCreatedEvent(super.input);
 }
 
 //*                          ╔═════════════════╗
@@ -55,32 +31,11 @@ final class TravelItemRepoWidgetCreateFailure extends RepoV2FailureState<
 //*                          ╚═════════════════╝
 
 /// Event to create a new folder in the repository.
-final class TravelItemRepoFolderCreatedEvent extends RepoV2ItemCreated<String,
-        WidgetFolderEntity, CreateWidgetFolderInput>
+final class TravelItemRepoFolderCreatedEvent
+    extends RepoV2ItemCreated<WidgetFolderEntity, CreateWidgetFolderInput>
     implements TravelItemRepositoryEvent<WidgetFolderEntity> {
   /// Creates a new instance of [TravelItemRepoFolderCreatedEvent].
-  const TravelItemRepoFolderCreatedEvent(super.id, super.input);
-}
-
-/// State for when a folder is being created in the repository.
-final class TravelItemRepoFolderCreateInProgress
-    extends RepoV2ItemCreateInProgress<CreateWidgetFolderInput,
-        WidgetFolderEntity>
-    implements TravelItemRepositoryState<WidgetFolderEntity> {
-  /// Creates a new instance of [TravelItemRepoFolderCreateInProgress].
-  const TravelItemRepoFolderCreateInProgress(super.input);
-}
-
-/// State for when creating a folder in the repository fails.
-final class TravelItemRepoFolderCreateFailure extends RepoV2FailureState<
-    CreateWidgetFolderInput,
-    WidgetFolderEntity,
-    WError> implements TravelItemRepositoryState<WidgetFolderEntity> {
-  /// Creates a new instance of [TravelItemRepoFolderCreateFailure].
-  const TravelItemRepoFolderCreateFailure({
-    required super.input,
-    required super.error,
-  });
+  const TravelItemRepoFolderCreatedEvent(super.input);
 }
 
 //*                          ╔═════════════════╗
@@ -89,10 +44,18 @@ final class TravelItemRepoFolderCreateFailure extends RepoV2FailureState<
 
 /// State for when an item is successfully created in the repository.
 final class TravelItemRepoItemCreateSuccess
-    extends RepoV2SuccessState<TravelItemEntityWrapper, TravelItemEntity>
     implements TravelItemRepositoryState<TravelItemEntity> {
   /// Creates a new instance of [TravelItemRepoItemCreateSuccess].
   ///
-  /// The [output] contains the created widget wrapper.
-  const TravelItemRepoItemCreateSuccess(super.output);
+  /// The [itemWrapper] contains the created widget wrapper.
+  const TravelItemRepoItemCreateSuccess(this.itemWrapper);
+
+  /// The item wrapper that contains the created widget.
+  final TravelItemEntityWrapper itemWrapper;
+
+  @override
+  List<Object?> get props => [itemWrapper];
+
+  @override
+  bool get stringify => true;
 }

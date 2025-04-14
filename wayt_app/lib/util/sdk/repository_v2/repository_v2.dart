@@ -90,6 +90,10 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
         );
       });
 
+  @protected
+  // ignore: invalid_use_of_visible_for_testing_member
+  void emit(State state) => _bloc.emit(state);
+
   /// Alias for [addSequential].
   ///
   /// {@macro repository_v2_add_sequential}

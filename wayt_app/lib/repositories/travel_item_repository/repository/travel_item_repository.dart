@@ -10,7 +10,6 @@ import 'package:fpdart/fpdart.dart';
 import '../../../error/errors.dart';
 import '../../../util/util.dart';
 import '../../repositories.dart';
-import 'events/events.dart';
 
 part '_travel_item_repository_impl.dart';
 

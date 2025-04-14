@@ -96,8 +96,7 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
       return;
     }
 
-    try {
-      if (!isUpdate) {
+    if (!isUpdate) {
         await travelItemRepository.createFolder(
           state.toCreateInput(travelDocumentId, index),
         );
@@ -109,12 +108,27 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
         );
       }
 
-      logger.i('Folder ${!isUpdate ? 'created' : 'updated'} successfully.');
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error ${!isUpdate ? 'creating' : 'updating'} folder: $e', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
-    }
+    final either =
+        await travelItemRepository.addSequentialAndWait<void>(
+      TravelItemRepoFolderCreatedEvent(
+        (
+          color: state.color,
+          icon: state.icon,
+          name: state.name!,
+          travelDocumentId: travelDocumentId,
+          index: index,
+        ),
+      ),
+    );
+    either.match(
+      (error) {
+        logger.e('Error creating folder: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Folder created successfully.');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

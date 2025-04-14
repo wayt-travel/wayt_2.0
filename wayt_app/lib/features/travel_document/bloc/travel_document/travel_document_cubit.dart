@@ -77,16 +77,16 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
     // Listen to the travel items repository and update the state accordingly
     _travelItemRepoSub = travelItemRepository.listen((repoState) {
       // Whether a new item has been added to the travel document.
-      final hasAddedWidget = repoState is TravelItemRepositoryTravelItemAdded &&
-          repoState.item.value.travelDocumentId == travelDocumentId;
+      final hasAddedWidget = repoState is TravelItemRepoItemCreateSuccess &&
+          repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
       // Whether an item has been deleted from the travel document.
       final hasDeletedWidget =
-          repoState is TravelItemRepositoryTravelItemDeleted &&
-              repoState.item.value.travelDocumentId == travelDocumentId;
+          repoState is TravelItemRepoItemDeleteSuccess &&
+              repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
       // Whether the collection of travel items has been fetched.
       final hasFetchedCollection =
-          repoState is TravelItemRepositoryTravelItemCollectionFetched &&
-              repoState.items.any(
+          repoState is TravelItemRepoItemCollectionFetchSuccess &&
+              repoState.itemWrappers.any(
                 (widget) => widget.value.travelDocumentId == travelDocumentId,
               );
       // If any of the above conditions is true, emit a new state to update

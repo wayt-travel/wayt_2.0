@@ -81,6 +81,8 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     on<TravelItemRepoFolderCreatedEvent, UpsertWidgetFolderOutput>(
       _createFolder,
     );
+    on<TravelItemRepoItemDeletedEvent, void>(_deleteItem);
+    on<TravelItemRepoItemsReorderedEvent, Map<String, int>>(_reorderItems);
   }
 
   /// Gets the map of travel document ids to the items they contain IN THE ROOT.
@@ -410,7 +412,6 @@ class TravelItemRepositoryImpl extends RepositoryV2<
   ) async {
     final widget = event.input.widget;
     final index = event.input.index;
-    emit(TravelItemRepoWidgetCreateInProgress(event.input));
     logger.v('Creating widget with input: ${widget.toStringVerbose()}');
     final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
@@ -437,44 +438,34 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     return response;
   }
 
-  Future<void> _deleteFolder(
+  Future<void> _deleteItem(
     TravelItemRepoItemDeletedEvent event,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
     final id = event.id;
-    emit(TravelItemRepoItemDeleteInProgress(id));
-    logger.v('Deleting folder with id: $id');
+    logger.v('Deleting travel item with id: $id');
     final deletedItemWrapper = getWrappedOrThrow(id);
     final deletedItem = deletedItemWrapper.value;
-    await widgetFolderDataSource.delete(id);
+    if (deletedItem.isFolderWidget) {
+      await widgetFolderDataSource.delete(id);
+    } else {
+      await widgetDataSource.delete(id);
+    }
     logger.v(
-      'Folder ${deletedItem.id} deleted. Removing it from cache and maps.',
+      'Item ${deletedItem.id} deleted. Removing it from cache and maps.',
     );
     removeFromCacheAndMaps(deletedItem);
     emit(TravelItemRepoItemDeleteSuccess(deletedItemWrapper));
-    logger.i('Folder deleted and removed from cache and maps [$deletedItem].');
+    logger.i('Item deleted and removed from cache and maps [$deletedItem].');
   }
 
-  @override
-  Future<void> deleteWidget(String id) async {
-    logger.v('Deleting widget with id: $id');
-    final deletedItemWrapper = getWrappedOrThrow(id);
-    final deletedItem = deletedItemWrapper.value;
-    await widgetDataSource.delete(id);
-    logger.v(
-      'Widget ${deletedItem.id} deleted. Removing it from cache and maps.',
-    );
-    removeFromCacheAndMaps(deletedItem);
-    emit(TravelItemRepositoryTravelItemDeleted(deletedItemWrapper));
-    logger.i('Widget deleted and removed from cache and maps [$deletedItem].');
-  }
-
-  @override
-  Future<Map<String, int>> reorderItems({
-    required TravelDocumentId travelDocumentId,
-    required List<String> reorderedItemIds,
-    String? folderId,
-  }) async {
+  Future<Map<String, int>> _reorderItems(
+    TravelItemRepoItemsReorderedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
+  ) async {
+    final travelDocumentId = event.input.travelDocumentId;
+    final reorderedItemIds = event.input.reorderedItemIds;
+    final folderId = event.input.folderId;
     logger.v(
       'Reordering ${reorderedItemIds.length} items in travel document '
       '$travelDocumentId (folderId=$folderId)',
@@ -521,7 +512,7 @@ class TravelItemRepositoryImpl extends RepositoryV2<
 
     updateItemOrders(travelDocumentId, updatedOrders);
     emit(
-      TravelItemRepositoryItemOrdersUpdated(
+      TravelItemRepoItemOrdersUpdateSuccess(
         travelDocumentId: travelDocumentId,
         updatedOrders: updatedOrders,
       ),
@@ -600,11 +591,7 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     }
     logger.i('${travelItems.length} items added to cache and maps');
     if (shouldEmit) {
-      emit(
-        TravelItemRepositoryTravelItemCollectionFetched(
-          travelItems.toList(),
-        ),
-      );
+      emit(TravelItemRepoItemCollectionFetchSuccess(travelItems.toList()));
     }
   }
 
@@ -613,7 +600,7 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     String id, {
     TravelItemEntityWrapper Function()? orElse,
   }) {
-    final item = cache.get(id);
+    final item = cache[id];
     if (item == null) return orElse?.call();
     if (item.isFolderWidget) {
       final itemHelper =

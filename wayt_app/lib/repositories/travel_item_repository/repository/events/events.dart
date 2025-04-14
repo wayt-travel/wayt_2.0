@@ -19,5 +19,5 @@ abstract class TravelItemRepositoryState<E extends TravelItemEntity>
   List<Object?> get props => [];
 
   @override
-  String toString() => '$runtimeType { }';
+  bool get stringify => false;
 }

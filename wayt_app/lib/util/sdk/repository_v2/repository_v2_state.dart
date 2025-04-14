@@ -8,48 +8,6 @@ abstract class RepositoryV2State<Entity> extends Equatable {
   List<Object?> get props => [];
 }
 
-class RepoV2InProgressState<Input, Entity> extends RepositoryV2State<Entity> {
-  const RepoV2InProgressState(this.input);
-
-  final Input input;
-
-  @override
-  List<Object?> get props => [input];
-
-  @override
-  String toString() => '$runtimeType { input: $input }';
-}
-
-class RepoV2SuccessState<Output, Entity> extends RepositoryV2State<Entity> {
-  const RepoV2SuccessState(this.output);
-
-  final Output output;
-
-  @override
-  List<Object?> get props => [output];
-
-  @override
-  String toString() => '$runtimeType { output: $output }';
-}
-
-/// State for when an error occurs.
-class RepoV2FailureState<Input, Entity, Err>
-    extends RepositoryV2State<Entity> {
-  const RepoV2FailureState({
-    required this.input,
-    required this.error,
-  });
-
-  final Input input;
-  final Err error;
-
-  @override
-  List<Object?> get props => [error, input];
-
-  @override
-  String toString() => '$runtimeType { input: $input, error: $error }';
-}
-
 /// State for when a collection of items is being fetched.
 class RepoV2CollectionFetchInProgress<Entity>
     extends RepositoryV2State<Entity> {
