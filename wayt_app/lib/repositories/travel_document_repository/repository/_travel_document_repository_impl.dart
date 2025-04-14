@@ -1,5 +1,13 @@
 part of 'travel_document_repository.dart';
 
+enum _TravelDocumentType {
+  plans,
+  journals;
+
+  bool get isPlans => this == plans;
+  bool get isJournals => this == journals;
+}
+
 class _TravelDocumentRepositoryImpl extends Repository<String,
         TravelDocumentEntity, TravelDocumentRepositoryState>
     implements
@@ -12,18 +20,35 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
   final SummaryHelperRepository summaryHelperRepository;
 
   /// Map of user ids to the plans and journals owned by the user.
-  final _userPlansMap =
-      <String, ({List<String> plans, List<String> journals})>{};
+  final _userPlansMap = <String, ({Set<String> plans, Set<String> journals})>{};
 
   _TravelDocumentRepositoryImpl(this.dataSource, this.summaryHelperRepository);
 
   /// Adds a [travelDocument] to the cache and map.
   void _addToCacheAndMap(TravelDocumentEntity travelDocument) {
     _userPlansMap
-        .putIfAbsent(travelDocument.userId, () => (journals: [], plans: []))
+        .putIfAbsent(travelDocument.userId, () => (journals: {}, plans: {}))
         .let((data) => travelDocument.isJournal ? data.journals : data.plans)
         .add(travelDocument.id);
     cache.save(travelDocument.id, travelDocument);
+  }
+
+  /// Clears the cache and map.
+  void _clearCacheAndMap(_TravelDocumentType type) {
+    for (final userId in _userPlansMap.keys) {
+      if (type.isPlans) {
+        _userPlansMap[userId]?.plans.clear();
+        cache.deleteAll(
+          cache.items.values.where((e) => e.isPlan).map((e) => e.id),
+        );
+      }
+      if (type.isJournals) {
+        _userPlansMap[userId]?.journals.clear();
+        cache.deleteAll(
+          cache.items.values.where((e) => e.isJournal).map((e) => e.id),
+        );
+      }
+    }
   }
 
   /// Adds a collection of [travelDocuments] to the cache and map.
@@ -96,6 +121,7 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
     logger.v('Fetching all plans of user with id: $userId');
     final plans = await dataSource.readAllPlansOfUser(userId);
     logger.v('${plans.length} plans fetched. Adding them to cache and map.');
+    _clearCacheAndMap(_TravelDocumentType.plans);
     _addAllToCacheAndMap(plans);
     // Unsets all plans of the user from the summary helper repository.
     for (final plan in plans) {
