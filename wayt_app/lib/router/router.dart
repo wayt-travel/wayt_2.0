@@ -76,7 +76,7 @@ final _routerStatefulShellRoute = _buildStatefulShellRoute(
 
 /// The main router of the application.
 final $router = GoRouter(
-  initialLocation: SplashPage.path,
+  initialLocation: PlanListPage.path,
   navigatorKey: $rootNavigatorKey,
 
   debugLogDiagnostics: true,
@@ -84,7 +84,6 @@ final $router = GoRouter(
   //   GetIt.I.get<AppBloc>().stream,
   // ),
   routes: [
-    SplashPage.route,
     ...FolderPage.routes,
     PlanPage.route,
     _routerStatefulShellRoute,

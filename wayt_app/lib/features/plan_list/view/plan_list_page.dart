@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/core.dart';
 import '../../../widgets/widgets.dart';
 import '../../features.dart';
 import 'plan_list_body.dart';
@@ -24,11 +23,8 @@ class PlanListPage {
         path: path,
         name: routeName,
         pageBuilder: (context, state) => NoTransitionPage(
-          child: BlocProvider(
-            create: (context) => PlanListCubit(
-              travelDocumentRepository: $.repo.travelDocument(),
-              authRepository: $.repo.auth(),
-            )..fetch(),
+          child: BlocProvider.value(
+            value: context.read<PlanListCubit>()..fetch(),
             child: const PlanListView(),
           ),
         ),
@@ -57,10 +53,6 @@ class PlanListView extends StatelessWidget {
           : null,
       builder: (context, state) {
         late final Widget content;
-        Widget? fab = FloatingActionButton(
-          onPressed: () => UpsertPlanModal.showForCreating(context),
-          child: const Icon(Icons.add),
-        );
 
         if (state.plans.isNotEmpty) {
           content = PlanListBody(
@@ -81,22 +73,18 @@ class PlanListView extends StatelessWidget {
               child: LoadingIndicatorMessage(),
             ),
           );
-          fab = null;
         }
-        return Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () => context.read<PlanListCubit>().fetch(),
-            // 152 is the height of the SliverAppBar.large
-            edgeOffset: 152,
-            backgroundColor: context.col.surfaceContainer,
-            child: CustomScrollView(
-              slivers: [
-                const SliverAppBar.large(title: Text('Plans')),
-                content,
-              ],
-            ),
+        return RefreshIndicator(
+          onRefresh: () => context.read<PlanListCubit>().fetch(),
+          // 152 is the height of the SliverAppBar.large
+          edgeOffset: 152,
+          backgroundColor: context.col.surfaceContainer,
+          child: CustomScrollView(
+            slivers: [
+              const SliverAppBar.large(title: Text('Plans')),
+              content,
+            ],
           ),
-          floatingActionButton: fab,
         );
       },
     );
