@@ -15,6 +15,7 @@ abstract class PlanDatePicker {
   static Future<DateTime?> show(
     BuildContext context, {
     required PlanDatePickerOnPick onPick,
+    DateTime? initialDate,
   }) =>
       ModalBottomSheet.of(context).showActions<DateTime>(
         actions: [
@@ -24,12 +25,9 @@ abstract class PlanDatePicker {
             title: 'I have already decided everything',
             // FIXME: l10n
             subtitle: 'Specify an exact departure date (DD/MM/YYYY)',
-            onTap: (context) => showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.utc(0),
-              lastDate: DateTime.utc(2300),
-              initialDatePickerMode: DatePickerMode.day,
+            onTap: (context) => DatePickerPage.push(
+              context,
+              initialDate: initialDate ?? DateTime.now(),
             ).then((date) {
               if (date != null) {
                 onPick(plannedAt: date, isDaySet: true, isMonthSet: true);
@@ -42,11 +40,9 @@ abstract class PlanDatePicker {
             title: 'I have not decided the day yet',
             // FIXME: l10n
             subtitle: 'Specify the year and month (MM/YYYY)',
-            onTap: (context) => showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.utc(0),
-              lastDate: DateTime.utc(2300),
+            onTap: (context) => DatePickerPage.push(
+              context,
+              initialDate: initialDate ?? DateTime.now(),
               initialDatePickerMode: DatePickerMode.year,
             ).then((date) {
               if (date != null) {
@@ -60,11 +56,9 @@ abstract class PlanDatePicker {
             title: 'I am not sure exactly',
             // FIXME: l10n
             subtitle: 'Specify only the year (YYYY)',
-            onTap: (context) => showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.utc(0),
-              lastDate: DateTime.utc(2300),
+            onTap: (context) => DatePickerPage.push(
+              context,
+              initialDate: initialDate ?? DateTime.now(),
               initialDatePickerMode: DatePickerMode.year,
             ).then((date) {
               if (date != null) {
