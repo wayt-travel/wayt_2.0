@@ -234,11 +234,12 @@ class RepoV2ItemUpdateInProgress<Id, Entity> extends RepositoryV2State<Entity> {
 }
 
 /// State for when an item is updated in the repository.
-class RepoV2ItemUpdateSuccess<Entity> extends RepositoryV2State<Entity> {
+class RepoV2ItemUpdateSuccess<Output, Entity>
+    extends RepositoryV2State<Entity> {
   const RepoV2ItemUpdateSuccess(this.previous, this.updated);
 
-  final Entity previous;
-  final Entity updated;
+  final Output previous;
+  final Output updated;
 
   @override
   List<Object?> get props => [previous, updated];

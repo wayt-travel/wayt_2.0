@@ -6,6 +6,7 @@ import '../../../repositories.dart';
 export 'common_states.dart';
 export 'item_creation_event.dart';
 export 'item_deletion_event.dart';
+export 'item_update_event.dart';
 export 'items_reordered_event.dart';
 
 /// Base event for the [TravelItemRepository].
@@ -21,7 +22,7 @@ abstract class TravelItemRepositoryState<E extends TravelItemEntity>
   List<Object?> get props => [];
 
   @override
-  bool get stringify => false;
+  bool? get stringify => false;
 }
 
 /// Event for when items are added to the repository.

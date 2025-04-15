@@ -137,9 +137,16 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
     RepositoryV2EventCallback<Err, Value>? callback,
   }) =>
       _bloc.add(
-        _SequentialBlocEvent<Value, Err, Event, State>(
+        _SequentialBlocEvent<dynamic, Err, Event, State>(
           event,
-          callback: callback,
+          callback: (either) {
+            callback?.call(
+              either.match(
+                Either<Err, Value>.left,
+                (value) => Either<Err, Value>.right(value as Value),
+              ),
+            );
+          },
         ),
       );
 
@@ -154,9 +161,16 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
     RepositoryV2EventCallback<Err, Value>? callback,
   }) =>
       _bloc.add(
-        _ConcurrentBlocEvent<Value, Err, Event, State>(
+        _ConcurrentBlocEvent<dynamic, Err, Event, State>(
           event,
-          callback: callback,
+          callback: (either) {
+            callback?.call(
+              either.match(
+                Either<Err, Value>.left,
+                (value) => Either<Err, Value>.right(value as Value),
+              ),
+            );
+          },
         ),
       );
 
@@ -174,7 +188,17 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
     final completer = Completer<Either<Err, Value>>();
     addSequential(
       event,
-      callback: completer.complete,
+      callback: (either) {
+        // This is a workaround needed because the either that we get from the
+        // event execution is of type Either<Err, dynamic> and we need to cast
+        // it to Either<Err, Value> to avoid type errors.
+        completer.complete(
+          either.match(
+            Either<Err, Value>.left,
+            (value) => Either<Err, Value>.right(value as Value),
+          ),
+        );
+      },
     );
     return completer.future;
   }
@@ -193,7 +217,17 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
     final completer = Completer<Either<Err, Value>>();
     addConcurrent(
       event,
-      callback: completer.complete,
+      callback: (either) {
+        // This is a workaround needed because the either that we get from the
+        // event execution is of type Either<Err, dynamic> and we need to cast
+        // it to Either<Err, Value> to avoid type errors.
+        completer.complete(
+          either.match(
+            Either<Err, Value>.left,
+            (value) => Either<Err, Value>.right(value as Value),
+          ),
+        );
+      },
     );
     return completer.future;
   }
@@ -258,22 +292,24 @@ abstract class RepositoryV2<Key, Entity, Event, State, Err> with LoggerMixin {
     E event,
     Emitter<State?> emit,
   ) async {
-    dynamic result;
     try {
       // Loop over all registered handlers
       for (final handler in _handlers) {
         // Call the handler
         final r = (await handler(event.repoEvent, emit));
         if (r.executed) {
-          // If the handler executed, set the result and break
-          // the loop as we expect only one handler to execute
+          // If the handler executed, set the result and return
+          // s we expect only one handler to execute
           // for each event.
-          result = r.result;
-          break;
+          // Call the onSuccess callback with the result
+          event.callback?.call(Either.right(r.result));
+          return;
         }
       }
-      // Call the onSuccess callback with the result
-      event.callback?.call(Either.right(result));
+      throw StateError(
+        'No handler executed for event of type '
+        '${event.repoEvent.runtimeType}. Event is ${event.repoEvent}',
+      );
     } catch (e, s) {
       final error = errorTransformer(e);
       logger.e('Unhandled error in repository event handler: $error', e, s);

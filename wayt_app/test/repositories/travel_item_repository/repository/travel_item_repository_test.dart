@@ -1,6 +1,7 @@
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wayt_app/repositories/repositories.dart';
@@ -548,7 +549,11 @@ void main() {
         );
       });
 
-      final created = await repository.createFolder(input);
+      final output =
+          await repository.addSequentialAndWait<UpsertWidgetFolderOutput>(
+        TravelItemRepoFolderCreatedEvent(input),
+      );
+      final created = output.getRight().getOrElse(() => throw Exception());
       verify(() => repository.widgetFolderDataSource.create(input));
       expect(repository.travelDocumentToItemsMap, hasLength(1));
       expect(
@@ -609,11 +614,15 @@ void main() {
         );
       });
 
-      final updated = await repository.updateFolder(
-        created.id,
-        travelDocumentId: travelDocumentId2,
-        input: updateInput,
-      );
+      final updated = await repository
+          .addSequentialAndWait<UpsertWidgetFolderOutput>(
+            TravelItemRepoFolderUpdatedEvent(
+              id: created.id,
+              travelDocumentId: travelDocumentId2,
+              input: updateInput,
+            ),
+          )
+          .then((e) => e.getRight().getOrElse(() => throw Exception()));
       verify(
         () => repository.widgetFolderDataSource.update(
           created.id,

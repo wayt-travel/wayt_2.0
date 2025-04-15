@@ -57,5 +57,5 @@ final class TravelItemRepoItemCreateSuccess
   List<Object?> get props => [itemWrapper];
 
   @override
-  bool get stringify => true;
+  bool? get stringify => true;
 }

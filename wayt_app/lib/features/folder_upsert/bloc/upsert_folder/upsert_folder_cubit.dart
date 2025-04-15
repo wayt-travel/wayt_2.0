@@ -96,37 +96,27 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
       return;
     }
 
+    late final TravelItemRepositoryEvent event;
     if (!isUpdate) {
-        await travelItemRepository.createFolder(
-          state.toCreateInput(travelDocumentId, index),
-        );
-      } else {
-        await travelItemRepository.updateFolder(
-          folderToUpdate!.id,
-          travelDocumentId: travelDocumentId,
-          input: state.toUpdateInput(),
-        );
-      }
+      event = TravelItemRepoFolderCreatedEvent(
+        state.toCreateInput(travelDocumentId, index),
+      );
+    } else {
+      event = TravelItemRepoFolderUpdatedEvent(
+        id: folderToUpdate!.id,
+        travelDocumentId: travelDocumentId,
+        input: state.toUpdateInput(),
+      );
+    }
 
-    final either =
-        await travelItemRepository.addSequentialAndWait<void>(
-      TravelItemRepoFolderCreatedEvent(
-        (
-          color: state.color,
-          icon: state.icon,
-          name: state.name!,
-          travelDocumentId: travelDocumentId,
-          index: index,
-        ),
-      ),
-    );
+    final either = await travelItemRepository.addSequentialAndWait<void>(event);
     either.match(
       (error) {
-        logger.e('Error creating folder: $error');
+        logger.e('Error upserting folder: $error');
         emit(state.copyWithError(error));
       },
       (_) {
-        logger.i('Folder created successfully.');
+        logger.i('Folder upserted successfully.');
         emit(state.copyWith(status: StateStatus.success));
       },
     );

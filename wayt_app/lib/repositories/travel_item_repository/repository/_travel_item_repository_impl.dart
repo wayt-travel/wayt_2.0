@@ -84,6 +84,9 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     on<TravelItemRepoItemDeletedEvent, void>(_deleteItem);
     on<TravelItemRepoItemsReorderedEvent, Map<String, int>>(_reorderItems);
     on<TravelItemRepoItemsAddedEvent, void>(_addAll);
+    on<TravelItemRepoFolderUpdatedEvent, UpsertWidgetFolderOutput>(
+      _updateFolder,
+    );
   }
 
   /// Gets the map of travel document ids to the items they contain IN THE ROOT.
@@ -630,12 +633,13 @@ class TravelItemRepositoryImpl extends RepositoryV2<
         ),
       )!;
 
-  @override
-  Future<UpsertWidgetFolderOutput> updateFolder(
-    String id, {
-    required TravelDocumentId travelDocumentId,
-    required UpdateWidgetFolderInput input,
-  }) async {
+  Future<UpsertWidgetFolderOutput> _updateFolder(
+    TravelItemRepoFolderUpdatedEvent event,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
+  ) async {
+    final id = event.id;
+    final input = event.input;
+    final travelDocumentId = event.travelDocumentId;
     logger.v('Updating folder with input: $input');
     final previousItemWrapper = getWrappedOrThrow(id).asFolderWidgetWrapper;
     final response = await widgetFolderDataSource.update(
@@ -647,7 +651,7 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     logger.v('${updated.toShortString()} updated');
     upsertInCacheAndMaps(updated);
     emit(
-      TravelItemRepositoryTravelItemUpdated(
+      TravelItemRepoItemUpdateSuccess(
         previousItemWrapper,
         TravelItemEntityWrapper.folder(updated, previousItemWrapper.children),
       ),
