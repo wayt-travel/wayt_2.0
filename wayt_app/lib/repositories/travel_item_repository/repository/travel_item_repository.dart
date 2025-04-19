@@ -62,11 +62,40 @@ abstract interface class TravelItemRepository extends RepositoryV2<
   /// [journalId] from the
   List<TravelItemEntityWrapper> getAllOfJournal(String journalId);
 
-  /// Adds all [travelItems] of [travelDocumentId] into the repository without
-  /// fetching them from the data source.
-  ///
-  /// This operation supports overriding existing items (with the same id).
-  ///
-  /// If [shouldEmit] is `false`, the repository will not emit a state change
-  /// upon adding the travel items.
+  /// Creates a new widget by calling [addSequentialAndWait] adding a
+  /// [TravelItemRepoWidgetCreatedEvent].
+  WTaskEither<UpsertWidgetOutput> createWidget(WidgetModel widget, int? index);
+
+  /// Creates a new widget folder by calling [addSequentialAndWait] adding a
+  /// [TravelItemRepoFolderCreatedEvent].
+  WTaskEither<UpsertWidgetFolderOutput> createFolder(
+    CreateWidgetFolderInput input,
+  );
+
+  /// Updates an existing widget folder by calling [addSequentialAndWait] adding
+  /// a [TravelItemRepoFolderCreatedEvent].
+  WTaskEither<UpsertWidgetFolderOutput> updateFolder(
+    String id, {
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  });
+
+  /// Deletes a widget or folder by its [id] by calling [addSequentialAndWait]
+  /// adding a [TravelItemRepoItemDeletedEvent].
+  WTaskEither<void> deleteItem(String id);
+
+  /// Reorders the items in a travel document by calling [addSequentialAndWait]
+  /// adding a [TravelItemRepoItemsReorderedEvent].
+  WTaskEither<Map<String, int>> reorderItems({
+    required TravelDocumentId travelDocumentId,
+    required List<String> reorderedItemIds,
+    String? folderId,
+  });
+
+  /// Adds [travelItems] by calling [addSequentialAndWait] adding a
+  /// [TravelItemRepoItemsAddedEvent].
+  WTaskEither<void> addAll({
+    required Iterable<TravelItemEntityWrapper> travelItems,
+    bool shouldEmit = true,
+  });
 }

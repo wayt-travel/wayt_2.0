@@ -34,12 +34,27 @@ final class TypographyWidgetFeatureModel extends WidgetFeatureModel
     required super.id,
     required this.data,
     required this.format,
+    required super.index,
     this.textStyle,
-    super.index,
   }) : super(
           type: WidgetFeatureType.text,
           version: Version(1, 0, 0),
         );
+
+  /// Creates a new [TypographyWidgetFeatureModel] instance from the given
+  /// parameters.
+  TypographyWidgetFeatureModel copyWith({
+    String? data,
+    TypographyFormat? format,
+    TypographyFeatureStyle? textStyle,
+  }) =>
+      TypographyWidgetFeatureModel(
+        id: id,
+        index: index,
+        data: data ?? this.data,
+        format: format ?? this.format,
+        textStyle: textStyle ?? this.textStyle,
+      );
 
   @override
   List<Object?> get props => [

@@ -1,6 +1,5 @@
 import '../../../../util/util.dart';
 import '../../../repositories.dart';
-import 'events.dart';
 
 //*                          ╔═════════════════╗
 //*╠═════════════════════════╣  ITEM DELETION  ╠═══════════════════════════════╣

@@ -6,6 +6,9 @@ enum WidgetFeatureType {
   /// A geo(graphic) feature.
   geo,
 
+  /// A media feature.
+  media,
+
   /// A price feature.
   price;
 }

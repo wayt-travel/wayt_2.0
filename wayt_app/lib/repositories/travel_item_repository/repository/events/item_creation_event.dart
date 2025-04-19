@@ -19,11 +19,26 @@ import '../../../repositories.dart';
 /// See [UpsertWidgetOutput].
 /// {@endtemplate}
 final class TravelItemRepoWidgetCreatedEvent
-    extends RepoV2ItemCreated<WidgetEntity, ({WidgetModel widget, int? index})>
-    implements TravelItemRepositoryEvent<WidgetEntity> {
+    extends TravelItemRepositoryEvent<WidgetEntity> {
   /// Creates a new instance of [TravelItemRepoWidgetCreatedEvent].
   /// {@macro travelItemWidgetCreatedEvent}
-  const TravelItemRepoWidgetCreatedEvent(super.input);
+  TravelItemRepoWidgetCreatedEvent({
+    required this.widget,
+    this.index,
+  });
+
+  /// The widget to be created.
+  ///
+  /// The `order` property in the model is disregarded as it will be recomputed
+  /// using the provided index based on the existing widgets in the travel
+  /// document.
+  final WidgetModel widget;
+
+  /// The index where the widget will be added.
+  final int? index;
+
+  @override
+  List<Object?> get props => [widget, index];
 }
 
 //*                          ╔═════════════════╗

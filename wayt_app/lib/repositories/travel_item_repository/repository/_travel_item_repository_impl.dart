@@ -414,8 +414,8 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     TravelItemRepoWidgetCreatedEvent event,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
-    final widget = event.input.widget;
-    final index = event.input.index;
+    final widget = event.widget;
+    final index = event.index;
     logger.v('Creating widget with input: ${widget.toStringVerbose()}');
     final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
@@ -661,4 +661,79 @@ class TravelItemRepositoryImpl extends RepositoryV2<
     );
     return response;
   }
+
+  @override
+  WTaskEither<void> addAll({
+    required Iterable<TravelItemEntityWrapper> travelItems,
+    bool shouldEmit = true,
+  }) =>
+      TaskEither(
+        () => addSequentialAndWait(
+          TravelItemRepoItemsAddedEvent(
+            travelItems: travelItems,
+            shouldEmit: shouldEmit,
+          ),
+        ),
+      );
+
+  @override
+  WTaskEither<UpsertWidgetFolderOutput> createFolder(
+    CreateWidgetFolderInput input,
+  ) =>
+      TaskEither(
+        () => addSequentialAndWait(TravelItemRepoFolderCreatedEvent(input)),
+      );
+
+  @override
+  WTaskEither<UpsertWidgetOutput> createWidget(
+    WidgetModel widget,
+    int? index,
+  ) =>
+      TaskEither(
+        () => addSequentialAndWait(
+          TravelItemRepoWidgetCreatedEvent(
+            widget: widget,
+            index: index,
+          ),
+        ),
+      );
+
+  @override
+  WTaskEither<void> deleteItem(String id) => TaskEither(
+        () => addSequentialAndWait(TravelItemRepoItemDeletedEvent(id)),
+      );
+
+  @override
+  WTaskEither<Map<String, int>> reorderItems({
+    required TravelDocumentId travelDocumentId,
+    required List<String> reorderedItemIds,
+    String? folderId,
+  }) =>
+      TaskEither(
+        () => addSequentialAndWait(
+          TravelItemRepoItemsReorderedEvent(
+            TravelItemReorderedInput(
+              travelDocumentId: travelDocumentId,
+              reorderedItemIds: reorderedItemIds,
+              folderId: folderId,
+            ),
+          ),
+        ),
+      );
+
+  @override
+  WTaskEither<UpsertWidgetFolderOutput> updateFolder(
+    String id, {
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  }) =>
+      TaskEither(
+        () => addSequentialAndWait(
+          TravelItemRepoFolderUpdatedEvent(
+            id: id,
+            travelDocumentId: travelDocumentId,
+            input: input,
+          ),
+        ),
+      );
 }

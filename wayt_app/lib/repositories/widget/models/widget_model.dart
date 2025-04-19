@@ -3,8 +3,10 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../repositories.dart';
+import 'widget_feature/features/media/media.dart';
 
 part 'widgets/text_widget_model.dart';
+part 'widgets/photo_widget_model.dart';
 
 /// A model representing a widget in a travel Plan or Journal.
 abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
@@ -60,6 +62,15 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
             travelDocumentId: travelDocumentId,
             updatedAt: updatedAt,
           ),
+        WidgetType.photo => PhotoWidgetModel._(
+            id: id,
+            order: order,
+            features: features,
+            folderId: folderId,
+            createdAt: createdAt,
+            travelDocumentId: travelDocumentId,
+            updatedAt: updatedAt,
+          ),
         // TODO: Handle this case.
         WidgetType.audio => throw UnimplementedError(),
         // TODO: Handle this case.
@@ -76,7 +87,6 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
   WidgetModel copyWith({
     Option<String?> folderId = const Option.none(),
     int? order,
-    WidgetType? type,
     DateTime? updatedAt,
   });
 

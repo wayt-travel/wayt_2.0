@@ -1,4 +1,4 @@
-import '../widget_repository.dart';
+import '../widget.dart';
 
 /// Data source for Widget entities.
 abstract interface class WidgetDataSource {

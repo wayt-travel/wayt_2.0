@@ -10,7 +10,7 @@ export 'item_update_event.dart';
 export 'items_reordered_event.dart';
 
 /// Base event for the [TravelItemRepository].
-interface class TravelItemRepositoryEvent<E extends TravelItemEntity>
+abstract class TravelItemRepositoryEvent<E extends TravelItemEntity>
     extends RepositoryV2Event<E> {}
 
 /// Base state for the [TravelItemRepository].

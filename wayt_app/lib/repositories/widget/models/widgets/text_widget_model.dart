@@ -2,10 +2,6 @@ part of '../widget_model.dart';
 
 /// A Widget that displays a customizable text.
 final class TextWidgetModel extends WidgetModel {
-  /// The text feature of the widget.
-  TypographyWidgetFeatureModel get textFeature =>
-      features.first as TypographyWidgetFeatureModel;
-
   /// Creates a new instance of [TextWidgetModel].
   factory TextWidgetModel({
     required String id,
@@ -26,6 +22,7 @@ final class TextWidgetModel extends WidgetModel {
             data: text,
             format: TypographyFormat.material,
             textStyle: textStyle,
+            index: 0,
           ),
         ],
         folderId: folderId,
@@ -53,22 +50,33 @@ final class TextWidgetModel extends WidgetModel {
           version: Version(1, 0, 0),
         );
 
+  /// The text feature of the widget.
+  TypographyWidgetFeatureModel get _textFeature =>
+      features.first as TypographyWidgetFeatureModel;
+
+  /// The text of the widget.
+  String get text => _textFeature.data;
+
+  /// The format of the text.
+  TypographyFormat get format => _textFeature.format;
+
+  /// The style of the text.
+  TypographyFeatureStyle? get textStyle => _textFeature.textStyle;
+
   @override
   TextWidgetModel copyWith({
     String? text,
     TypographyFeatureStyle? textStyle,
     Option<String?> folderId = const Option.none(),
     int? order,
-    WidgetType? type,
     DateTime? updatedAt,
   }) {
-    final feature = features.first as TypographyWidgetFeatureEntity;
+    final feature = _textFeature;
     return TextWidgetModel._(
       id: id,
       order: order ?? this.order,
       features: [
-        TypographyWidgetFeatureModel(
-          id: features.first.id,
+        feature.copyWith(
           data: text ?? feature.data,
           format: TypographyFormat.material,
           textStyle: textStyle ?? feature.textStyle,

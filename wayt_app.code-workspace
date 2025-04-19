@@ -13,6 +13,7 @@
     "todo-tree.filtering.excludeGlobs": ["**/node_modules/*/**"],
     "dart.debugSdkLibraries": true,
     "dart.debugExternalPackageLibraries": true,
-    "todo-tree.tree.scanMode": "workspace"
+    "todo-tree.tree.scanMode": "workspace",
+    "dart.flutterSdkPath": ".fvm/flutter_sdk"
   }
 }

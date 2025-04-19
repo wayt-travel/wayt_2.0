@@ -64,8 +64,8 @@ class _PlanItemListState extends State<PlanItemList> {
     if (item is TextWidgetModel) {
       return ListTile(
         title: Text(
-          item.textFeature.data,
-          style: item.textFeature.textStyle?.toFlutterTextStyle(context),
+          item.text,
+          style: item.textStyle?.toFlutterTextStyle(context),
         ),
       );
     }

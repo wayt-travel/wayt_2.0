@@ -1,5 +1,5 @@
 import '../../travel_document_repository/models/travel_document_id.dart';
-import '../widget_folder_repository.dart';
+import '../widget_folder.dart';
 
 /// Data source for WidgetFolder entities.
 abstract interface class WidgetFolderDataSource {
