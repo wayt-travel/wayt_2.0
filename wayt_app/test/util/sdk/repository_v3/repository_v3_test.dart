@@ -60,7 +60,7 @@ class _RepoV3
     extends RepositoryV3<String, _Item, RepositoryState<_Item>, WError> {
   _RepoV3();
 
-  Future<WEither<List<_Item>>> fetch() {
+  WTaskEither<List<_Item>> fetch() {
     return queueSequential<List<_Item>>(
       (emit) => TaskEither(() async {
         cache
@@ -72,7 +72,7 @@ class _RepoV3
     );
   }
 
-  Future<WEither<_Item>> update(String id, int value) async {
+  WTaskEither<_Item> update(String id, int value) {
     return queueSequential(
       (emit) => TaskEither.tryCatch(
         () async {
@@ -88,7 +88,7 @@ class _RepoV3
     );
   }
 
-  Future<WEither<_Item>> delete(String id) async {
+  WTaskEither<_Item> delete(String id) {
     return queueSequential(
       (emit) => TaskEither.tryCatch(
         () async {
@@ -110,7 +110,7 @@ class _BlocObserver extends BlocObserver {
   void onEvent(Bloc<dynamic, dynamic> bloc, Object? event) {
     super.onEvent(bloc, event);
     // ignore: avoid_print
-    print('${bloc.runtimeType} $event');
+    print('${bloc.runtimeType} ${event.runtimeType}');
   }
 
   @override
@@ -161,13 +161,13 @@ void main() {
 
   group('RepositoryV3 (new)', () {
     test('Does not throw when executed sequentially', () async {
-      await repoV3.fetch();
+      await repoV3.fetch().run();
       expect(repoV3.items.isNotEmpty, true);
       final count = repoV3.items.length;
       final id = repoV3.values.first.id;
       await Future.wait([
-        repoV3.update(id, 100),
-        repoV3.delete(id),
+        repoV3.update(id, 100).run(),
+        repoV3.delete(id).run(),
       ]);
       expect(repoV3.get(id), isNull);
       expect(repoV3.items.length, count - 1);

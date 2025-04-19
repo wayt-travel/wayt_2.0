@@ -91,7 +91,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       return;
     }
 
-    final either = await travelItemRepository.createWidget(
+    final task = travelItemRepository.createWidget(
       widget: TextWidgetModel(
         id: const Uuid().v4(),
         text: state.text!.trim(),
@@ -104,7 +104,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       index: index,
     );
 
-    either.fold(
+    (await task.run()).fold(
       (error) {
         logger.e('Error creating text widget: $error');
         emit(state.copyWithError(error));

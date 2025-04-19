@@ -98,19 +98,19 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
 
     // We don't care about the return value of the either, we just want to
     // know if it was successful or not.
-    late final WEither<void> either;
+    late final WTaskEither<void> task;
     if (!isUpdate) {
-      either = await travelItemRepository
+      task = travelItemRepository
           .createFolder(state.toCreateInput(travelDocumentId, index));
     } else {
-      either = await travelItemRepository.updateFolder(
+      task = travelItemRepository.updateFolder(
         id: folderToUpdate!.id,
         travelDocumentId: travelDocumentId,
         input: state.toUpdateInput(),
       );
     }
 
-    either.match(
+    (await task.run()).match(
       (error) {
         logger.e('Error upserting folder: $error');
         emit(state.copyWithError(error));

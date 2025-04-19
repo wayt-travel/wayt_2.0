@@ -547,7 +547,7 @@ void main() {
         );
       });
 
-      final output = await repository.createFolder(input);
+      final output = await repository.createFolder(input).run();
       final created = output.getRight().getOrElse(() => throw Exception());
       verify(() => repository.widgetFolderDataSource.create(input));
       expect(repository.travelDocumentToItemsMap, hasLength(1));
@@ -615,6 +615,7 @@ void main() {
             travelDocumentId: travelDocumentId2,
             input: updateInput,
           )
+          .run()
           .then((e) => e.getRight().getOrElse(() => throw Exception()));
       verify(
         () => repository.widgetFolderDataSource.update(

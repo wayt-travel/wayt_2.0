@@ -62,10 +62,10 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
     required this.index,
   }) : super(const CreatePhotoWidgetState.initial());
 
-  Future<WEither<UpsertWidgetOutput>> _createPhotoWidget(
+  WTaskEither<UpsertWidgetOutput> _createPhotoWidget(
     String id,
     ProcessImageServiceProcessedImage processedImage,
-  ) async {
+  ) {
     final photo = PhotoWidgetModel(
       id: id,
       url: null,
@@ -127,35 +127,32 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
         absoluteDestinationPath: path,
       );
 
-      // final either = await processor.run();
-
-      // await TaskEither(() async => Either.right(null)).run();
-
-      // await (await either.map(
-      //   (success) async => _createPhotoWidget(id, success),
-      // ))
-      //     .match(
-      //   (err) async => emit(
-      //     state.copyWith(
-      //       // Never emit failure, only progress and success
-      //       // even if some images failed to be processed.
-      //       status: StateStatus.progress,
-      //       errors: [
-      //         ...state.errors,
-      //         (error: err, file: file),
-      //       ],
-      //     ),
-      //   ),
-      //   (_) async => emit(
-      //     state.copyWith(
-      //       status: StateStatus.success,
-      //       processed: [
-      //         ...state.processed,
-      //         photo,
-      //       ],
-      //     ),
-      //   ),
-      // );
+      await processor
+          .getProcess()
+          .flatMap((processedImage) => _createPhotoWidget(id, processedImage))
+          .match(
+            (err) => emit(
+              state.copyWith(
+                // Never emit failure, only progress and success
+                // even if some images failed to be processed.
+                status: StateStatus.progress,
+                errors: [
+                  ...state.errors,
+                  (error: err, file: file),
+                ],
+              ),
+            ),
+            (result) => emit(
+              state.copyWith(
+                status: StateStatus.success,
+                processed: [
+                  ...state.processed,
+                  result.widget as PhotoWidgetModel,
+                ],
+              ),
+            ),
+          )
+          .run();
     }
   }
 }

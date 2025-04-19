@@ -426,7 +426,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
   }
 
   @override
-  WFutureEither<void> deleteItem(String id) => queueSequential(
+  WTaskEither<void> deleteItem(String id) => queueSequential(
         (emit) => TaskEither.tryCatch(
           () => _deleteItem(id, emit),
           (e, __) => e.errorOrGeneric,
@@ -650,7 +650,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
   }
 
   @override
-  WFutureEither<void> addAll({
+  WTaskEither<void> addAll({
     required Iterable<TravelItemEntityWrapper> travelItems,
     bool shouldEmit = true,
   }) =>
@@ -666,7 +666,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       );
 
   @override
-  WFutureEither<UpsertWidgetFolderOutput> createFolder(
+  WTaskEither<UpsertWidgetFolderOutput> createFolder(
     CreateWidgetFolderInput input,
   ) =>
       queueSequential(
@@ -677,7 +677,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       );
 
   @override
-  WFutureEither<UpsertWidgetOutput> createWidget({
+  WTaskEither<UpsertWidgetOutput> createWidget({
     required WidgetModel widget,
     required int? index,
   }) =>
@@ -689,7 +689,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       );
 
   @override
-  WFutureEither<Map<String, int>> reorderItems({
+  WTaskEither<Map<String, int>> reorderItems({
     required TravelDocumentId travelDocumentId,
     required List<String> reorderedItemIds,
     String? folderId,
@@ -707,7 +707,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       );
 
   @override
-  WFutureEither<UpsertWidgetFolderOutput> updateFolder({
+  WTaskEither<UpsertWidgetFolderOutput> updateFolder({
     required String id,
     required TravelDocumentId travelDocumentId,
     required UpdateWidgetFolderInput input,

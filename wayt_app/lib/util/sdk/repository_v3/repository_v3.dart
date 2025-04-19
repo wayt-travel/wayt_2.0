@@ -69,9 +69,9 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
   ///
   /// See [addSequential] for more details.
   @protected
-  Future<Either<Err, Value>> queueSequential<Value>(
+  TaskEither<Err, Value> queueSequential<Value>(
     RepositoryV3EventTask<Err, Value, State> task,
-  ) async {
+  ) {
     final completer = Completer<Either<Err, Value>>();
     _bloc.add(
       _SequentialBlocEvent<Err, dynamic, State>(
@@ -90,7 +90,7 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
         },
       ),
     );
-    return completer.future;
+    return TaskEither(() => completer.future);
   }
 
   /// Adds a new [event] to the repository that will be process concurrently
@@ -102,9 +102,9 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
   /// **It is generally recommended to use [addSequentialAndWait] instead of
   /// this method.**
   @protected
-  Future<Either<Err, Value>> queueConcurrent<Value>(
+  TaskEither<Err, Value> queueConcurrent<Value>(
     RepositoryV3EventTask<Err, Value, State> task,
-  ) async {
+  ) {
     final completer = Completer<Either<Err, Value>>();
     _bloc.add(
       _ConcurrentBlocEvent<Err, dynamic, State>(
@@ -123,7 +123,7 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
         },
       ),
     );
-    return completer.future;
+    return TaskEither(() => completer.future);
   }
 
   /// Closes the repository and releases all resources, i.e., the bloc.

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../error/errors.dart';
@@ -73,30 +74,33 @@ class ProcessImageService {
   });
 
   /// Runs the image processing service.
-  Future<WEither<ProcessImageServiceProcessedImage>> run() async {
-    // Validate
-    // TODO: Implement validation logic here AND ERROR HANDLING
-    final bytes = await imageFile.readAsBytes();
+  WTaskEither<ProcessImageServiceProcessedImage> getProcess() {
+    return TaskEither.tryCatch(
+      () async {
+        // Validate
+        // TODO: Implement validation logic here AND ERROR HANDLING
+        final bytes = await imageFile.readAsBytes();
 
-    // Compress
-    // TODO: Implement compression logic here
+        // Compress
+        // TODO: Implement compression logic here
 
-    // TODO: read EXIF data
+        // TODO: read EXIF data
 
-    // Save
-    final compressedFile = File(absoluteDestinationPath);
-    final outputFile = await compressedFile.writeAsBytes(bytes);
+        // Save
+        final compressedFile = File(absoluteDestinationPath);
+        final outputFile = await compressedFile.writeAsBytes(bytes);
 
-    // Return
-    return WEither.right(
-      ProcessImageServiceProcessedImage(
-        file: outputFile,
-        // FIXME: Use actual size
-        size: (width: 0, height: 0),
-        byteCount: bytes.lengthInBytes,
-        metadata: null,
-        latLng: null,
-      ),
+        // Return
+        return ProcessImageServiceProcessedImage(
+          file: outputFile,
+          // FIXME: Use actual size
+          size: (width: 0, height: 0),
+          byteCount: bytes.lengthInBytes,
+          metadata: null,
+          latLng: null,
+        );
+      },
+      (e, __) => e.errorOrGeneric,
     );
   }
 }

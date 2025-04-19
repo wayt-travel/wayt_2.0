@@ -70,25 +70,25 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
   /// whose order has been updated with the corresponding updated value.
   ///
   /// See [UpsertWidgetOutput].
-  WFutureEither<UpsertWidgetOutput> createWidget({
+  WTaskEither<UpsertWidgetOutput> createWidget({
     required WidgetModel widget,
     required int? index,
   });
 
   /// Creates a new widget folder.
-  WFutureEither<UpsertWidgetFolderOutput> createFolder(
+  WTaskEither<UpsertWidgetFolderOutput> createFolder(
     CreateWidgetFolderInput input,
   );
 
   /// Updates an existing widget folder with the given [id].
-  WFutureEither<UpsertWidgetFolderOutput> updateFolder({
+  WTaskEither<UpsertWidgetFolderOutput> updateFolder({
     required String id,
     required TravelDocumentId travelDocumentId,
     required UpdateWidgetFolderInput input,
   });
 
   /// Deletes a widget or folder by its [id].
-  WFutureEither<void> deleteItem(String id);
+  WTaskEither<void> deleteItem(String id);
 
   /// Reorders the items in a travel document based on the provided
   /// [reorderedItemIds].
@@ -100,7 +100,7 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
   /// If [reorderedItemIds] does not match the list of items currently contained
   /// in the repo for the travel document with [travelDocumentId] the method
   /// will throw an [ArgumentError].
-  WFutureEither<Map<String, int>> reorderItems({
+  WTaskEither<Map<String, int>> reorderItems({
     required TravelDocumentId travelDocumentId,
     required List<String> reorderedItemIds,
     String? folderId,
@@ -113,7 +113,7 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
   ///
   /// If [shouldEmit] is `false`, the repository will not emit a state change
   /// upon adding the travel items.
-  WFutureEither<void> addAll({
+  WTaskEither<void> addAll({
     required Iterable<TravelItemEntityWrapper> travelItems,
     bool shouldEmit = true,
   });
