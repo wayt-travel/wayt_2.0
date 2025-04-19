@@ -4,11 +4,15 @@ import 'package:fpdart/fpdart.dart';
 
 /// Generic type for the success result of a function that returns an
 /// [Either].
-/// 
+///
 /// The success type is the type of the value returned on success.
-/// 
+///
 /// The error type is the type of the error returned on failure.
 typedef WEither<Success> = Either<WError, Success>;
+
+/// Generic type for the success result of a function that returns a
+/// [Future] that returns an [Either].
+typedef WFutureEither<Success> = Future<WEither<Success>>;
 
 /// Generic type for the success result of a function that returns a
 /// [TaskEither].

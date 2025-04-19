@@ -81,7 +81,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
     );
     return travelItemRepository.addConcurrentAndWait<UpsertWidgetOutput>(
       TravelItemRepoWidgetCreatedEvent(
-        (widget: photo, index: index),
+        widget: photo, index: index,
       ),
     );
   }
@@ -129,35 +129,35 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
         absoluteDestinationPath: path,
       );
 
-      final either = await processor.run();
+      // final either = await processor.run();
 
-      await TaskEither(() async => Either.right(null)).run();
+      // await TaskEither(() async => Either.right(null)).run();
 
-      await (await either.map(
-        (success) async => _createPhotoWidget(id, success),
-      ))
-          .match(
-        (err) async => emit(
-          state.copyWith(
-            // Never emit failure, only progress and success
-            // even if some images failed to be processed.
-            status: StateStatus.progress,
-            errors: [
-              ...state.errors,
-              (error: err, file: file),
-            ],
-          ),
-        ),
-        (_) async => emit(
-          state.copyWith(
-            status: StateStatus.success,
-            processed: [
-              ...state.processed,
-              photo,
-            ],
-          ),
-        ),
-      );
+      // await (await either.map(
+      //   (success) async => _createPhotoWidget(id, success),
+      // ))
+      //     .match(
+      //   (err) async => emit(
+      //     state.copyWith(
+      //       // Never emit failure, only progress and success
+      //       // even if some images failed to be processed.
+      //       status: StateStatus.progress,
+      //       errors: [
+      //         ...state.errors,
+      //         (error: err, file: file),
+      //       ],
+      //     ),
+      //   ),
+      //   (_) async => emit(
+      //     state.copyWith(
+      //       status: StateStatus.success,
+      //       processed: [
+      //         ...state.processed,
+      //         photo,
+      //       ],
+      //     ),
+      //   ),
+      // );
     }
   }
 }

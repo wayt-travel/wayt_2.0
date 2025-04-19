@@ -3,6 +3,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/widgets.dart';
 import '../../bloc/create_photo_widget/create_photo_widget_cubit.dart';
@@ -12,7 +13,7 @@ class PhotoWidgetPickerModal extends StatelessWidget {
   const PhotoWidgetPickerModal._();
 
   /// Show the modal.
-  /// 
+  ///
   /// Upon showing the modal, the cubit will start and prompt the user to pick
   /// photos. Then if the user has selected no photos, the modal will close.
   /// If the user has selected photos, the cubit will start processing them and
@@ -31,7 +32,8 @@ class PhotoWidgetPickerModal extends StatelessWidget {
               travelDocumentId: travelDocumentId,
               folderId: folderId,
               index: index,
-              authRepository: context.read<AuthRepository>(),
+              authRepository: $.repo.auth(),
+              travelItemRepository: $.repo.travelItem(),
             )..pick(),
             child: const PhotoWidgetPickerModal._(),
           ),
