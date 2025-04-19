@@ -91,19 +91,17 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       return;
     }
 
-    final either = await travelItemRepository.addSequentialAndWait<void>(
-      TravelItemRepoWidgetCreatedEvent(
-        widget: TextWidgetModel(
-          id: const Uuid().v4(),
-          text: state.text!.trim(),
-          textStyle: state.featureTextStyle,
-          travelDocumentId: travelDocumentId,
-          folderId: folderId,
-          // The order is neglected at creation time.
-          order: -1,
-        ),
-        index: index,
+    final either = await travelItemRepository.createWidget(
+      widget: TextWidgetModel(
+        id: const Uuid().v4(),
+        text: state.text!.trim(),
+        textStyle: state.featureTextStyle,
+        travelDocumentId: travelDocumentId,
+        folderId: folderId,
+        // The order is neglected at creation time.
+        order: -1,
       ),
+      index: index,
     );
 
     either.fold(

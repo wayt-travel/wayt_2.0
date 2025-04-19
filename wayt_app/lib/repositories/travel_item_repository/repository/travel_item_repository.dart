@@ -70,8 +70,10 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
   /// whose order has been updated with the corresponding updated value.
   ///
   /// See [UpsertWidgetOutput].
-  WFutureEither<UpsertWidgetOutput> createWidget(
-      WidgetModel widget, int? index);
+  WFutureEither<UpsertWidgetOutput> createWidget({
+    required WidgetModel widget,
+    required int? index,
+  });
 
   /// Creates a new widget folder.
   WFutureEither<UpsertWidgetFolderOutput> createFolder(

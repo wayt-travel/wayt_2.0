@@ -96,20 +96,20 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
       return;
     }
 
-    late final TravelItemRepositoryEvent event;
+    // We don't care about the return value of the either, we just want to
+    // know if it was successful or not.
+    late final WEither<void> either;
     if (!isUpdate) {
-      event = TravelItemRepoFolderCreatedEvent(
-        state.toCreateInput(travelDocumentId, index),
-      );
+      either = await travelItemRepository
+          .createFolder(state.toCreateInput(travelDocumentId, index));
     } else {
-      event = TravelItemRepoFolderUpdatedEvent(
+      either = await travelItemRepository.updateFolder(
         id: folderToUpdate!.id,
         travelDocumentId: travelDocumentId,
         input: state.toUpdateInput(),
       );
     }
 
-    final either = await travelItemRepository.addSequentialAndWait<void>(event);
     either.match(
       (error) {
         logger.e('Error upserting folder: $error');

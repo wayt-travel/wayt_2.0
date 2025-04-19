@@ -1,7 +1,6 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flext/flext.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,10 +78,9 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
       metadata: processedImage.metadata,
       folderId: folderId,
     );
-    return travelItemRepository.addConcurrentAndWait<UpsertWidgetOutput>(
-      TravelItemRepoWidgetCreatedEvent(
-        widget: photo, index: index,
-      ),
+    return travelItemRepository.createWidget(
+      widget: photo,
+      index: index,
     );
   }
 

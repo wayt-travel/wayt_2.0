@@ -60,14 +60,12 @@ void main() {
       summaryHelperRepository: MockSummaryHelperRepository(),
     );
 
-    await repository.addConcurrentAndWait<void>(
-      TravelItemRepoItemsAddedEvent(
-        travelItems: [
-          TravelItemEntityWrapper.widget(
-            _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
-          ),
-        ],
-      ),
+    await repository.addAll(
+      travelItems: [
+        TravelItemEntityWrapper.widget(
+          _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
+        ),
+      ],
     );
   });
 
@@ -549,10 +547,7 @@ void main() {
         );
       });
 
-      final output =
-          await repository.addSequentialAndWait<UpsertWidgetFolderOutput>(
-        TravelItemRepoFolderCreatedEvent(input),
-      );
+      final output = await repository.createFolder(input);
       final created = output.getRight().getOrElse(() => throw Exception());
       verify(() => repository.widgetFolderDataSource.create(input));
       expect(repository.travelDocumentToItemsMap, hasLength(1));
@@ -615,12 +610,10 @@ void main() {
       });
 
       final updated = await repository
-          .addSequentialAndWait<UpsertWidgetFolderOutput>(
-            TravelItemRepoFolderUpdatedEvent(
-              id: created.id,
-              travelDocumentId: travelDocumentId2,
-              input: updateInput,
-            ),
+          .updateFolder(
+            id: created.id,
+            travelDocumentId: travelDocumentId2,
+            input: updateInput,
           )
           .then((e) => e.getRight().getOrElse(() => throw Exception()));
       verify(

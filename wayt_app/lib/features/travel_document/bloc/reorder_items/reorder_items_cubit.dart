@@ -57,14 +57,10 @@ class ReorderItemsCubit extends Cubit<ReorderItemsState> with LoggerMixin {
       state.copyWith(status: StateStatus.progress),
     );
 
-    final either = await travelItemRepository.addSequentialAndWait<void>(
-      TravelItemRepoItemsReorderedEvent(
-        TravelItemReorderedInput(
-          travelDocumentId: travelDocumentId,
-          folderId: folderId,
-          reorderedItemIds: reorderedItemIds,
-        ),
-      ),
+    final either = await travelItemRepository.reorderItems(
+      travelDocumentId: travelDocumentId,
+      folderId: folderId,
+      reorderedItemIds: reorderedItemIds,
     );
 
     either.match(

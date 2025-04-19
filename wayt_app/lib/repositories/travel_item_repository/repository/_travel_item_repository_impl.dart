@@ -425,6 +425,14 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     return response;
   }
 
+  @override
+  WFutureEither<void> deleteItem(String id) => queueSequential(
+        (emit) => TaskEither.tryCatch(
+          () => _deleteItem(id, emit),
+          (e, __) => e.errorOrGeneric,
+        ),
+      );
+
   Future<void> _deleteItem(
     String id,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
@@ -669,21 +677,13 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       );
 
   @override
-  WFutureEither<UpsertWidgetOutput> createWidget(
-    WidgetModel widget,
-    int? index,
-  ) =>
+  WFutureEither<UpsertWidgetOutput> createWidget({
+    required WidgetModel widget,
+    required int? index,
+  }) =>
       queueSequential(
         (emit) => TaskEither.tryCatch(
           () => _createWidget(widget, index, emit),
-          (e, __) => e.errorOrGeneric,
-        ),
-      );
-
-  @override
-  WFutureEither<void> deleteItem(String id) => queueSequential(
-        (emit) => TaskEither.tryCatch(
-          () => _deleteItem(id, emit),
           (e, __) => e.errorOrGeneric,
         ),
       );
