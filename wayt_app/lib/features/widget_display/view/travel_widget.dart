@@ -2,7 +2,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
 import '../../../repositories/repositories.dart';
-import 'travel_item_widget_context_menu.dart';
+import '../../features.dart';
 
 /// A widget that wraps a travel item and provides context menu on tap.
 ///
@@ -17,14 +17,10 @@ class TravelWidget extends StatefulWidget {
   /// The travel item to wrap.
   final TravelItemEntity travelItem;
 
-  /// The child widget to wrap.
-  final Widget child;
-
   /// Creates a travel widget.
   const TravelWidget({
     required this.index,
     required this.travelItem,
-    required this.child,
     super.key,
   });
 
@@ -34,6 +30,19 @@ class TravelWidget extends StatefulWidget {
 
 class _TravelWidgetState extends State<TravelWidget> {
   bool _isHovering = false;
+
+  Widget _getTile() {
+    final item = widget.travelItem;
+    if (item is PhotoWidgetModel) {
+      return PhotoWidgetTile(item);
+    } else if (item is TextWidgetModel) {
+      return TextWidgetTile(item);
+    }
+    return ListTile(
+      title: Text('Item ${item.asWidget.type} is not supported yet'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -56,7 +65,7 @@ class _TravelWidgetState extends State<TravelWidget> {
         color: _isHovering
             ? context.col.primary.withValues(alpha: 0.3)
             : Colors.transparent,
-        child: widget.child,
+        child: _getTile(),
       ),
     );
   }

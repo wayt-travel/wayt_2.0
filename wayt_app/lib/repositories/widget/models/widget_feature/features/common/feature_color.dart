@@ -8,23 +8,58 @@ import 'package:flutter/material.dart';
 /// It does not include black and white because they behave differently in
 /// Flutter, i.e., they're not defined as [MaterialColor].
 enum FeatureColor {
+  /// Red material color.
   red,
+
+  /// Pink material color.
   pink,
+
+  /// Purple material color.
   purple,
+
+  /// Deep purple material color.
   deepPurple,
+
+  /// Blue material color.
   blue,
+
+  /// Light blue material color.
   lightBlue,
+
+  /// Cyan material color.
   cyan,
+
+  /// Teal material color.
   teal,
+
+  /// Green material color.
   green,
+
+  /// Light green material color.
   lightGreen,
+
+  /// Lime material color.
   lime,
+
+  /// Yellow material color.
   yellow,
+
+  /// Amber material color.
   amber,
+
+  /// Orange material color.
   orange,
+
+  /// Deep orange material color.
   deepOrange,
+
+  /// Brown material color.
   brown,
+
+  /// Grey material color.
   grey,
+
+  /// Blue grey material color.
   blueGrey;
 
   /// Factory constructor that creates a [FeatureColor] from its string

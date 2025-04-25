@@ -3,10 +3,10 @@ import 'package:bloc/bloc.dart';
 import 'package:flext/flext.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../features.dart';
 
@@ -35,7 +35,8 @@ part 'create_photo_widget_state.dart';
 /// - Notify to the user the errors that occurred during processing using the
 ///   [CreatePhotoWidgetState.errors] list.
 /// {@endtemplate}
-class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
+class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
+    with LoggerMixin {
   /// The ID of the travel document where the photo widget will be added.
   final TravelDocumentId travelDocumentId;
 
@@ -53,8 +54,12 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The travel document local media data source.
+  final TravelDocumentLocalMediaDataSource travelDocumentLocalMediaDataSource;
+
   /// {@macro create_photo_widget_cubit}
   CreatePhotoWidgetCubit({
+    required this.travelDocumentLocalMediaDataSource,
     required this.travelDocumentId,
     required this.folderId,
     required this.authRepository,
@@ -62,21 +67,23 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
     required this.index,
   }) : super(const CreatePhotoWidgetState.initial());
 
-  WTaskEither<UpsertWidgetOutput> _createPhotoWidget(
-    String id,
-    ProcessImageServiceProcessedImage processedImage,
-  ) {
+  WTaskEither<UpsertWidgetOutput> _createPhotoWidget({
+    required String mediaId,
+    required ProcessImageServiceProcessedImage processedImage,
+  }) {
     final photo = PhotoWidgetModel(
-      id: id,
-      url: null,
+      id: const Uuid().v4(),
+      mediaId: mediaId,
+      url: processedImage.file.path,
       // The order does not matter at creation time.
       // It will be updated by the repository.
       order: 0,
       travelDocumentId: travelDocumentId,
       byteCount: processedImage.byteCount,
       coordinates: processedImage.latLng,
-      metadata: processedImage.metadata,
+      size: processedImage.size,
       folderId: folderId,
+      mediaExtension: extension(processedImage.file.path),
     );
     return travelItemRepository.createWidget(
       widget: photo,
@@ -86,15 +93,25 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
 
   /// Launches the picker to select images from the gallery and processes them.
   Future<void> pick() async {
+    logger.d(
+      'Launching $CreatePhotoWidgetCubit pick process {travelDocumentId: '
+      '$travelDocumentId, folderId: $folderId, index: $index}',
+    );
     final pickedImages = await ImagePicker().pickMultiImage(
       maxWidth: 2560,
       maxHeight: 2560,
     );
 
     if (pickedImages.isEmpty) {
+      logger.d('No images picked');
       emit(state.copyWith(status: StateStatus.success));
       return;
     }
+
+    logger.v(
+      'Picked ${pickedImages.length} images: '
+      '${pickedImages.map((e) => e.path).join(', ')}',
+    );
 
     emit(
       state.copyWith(
@@ -104,6 +121,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
     );
 
     for (final file in pickedImages) {
+      logger.v('Processing image: ${file.path}');
       emit(
         state.copyWith(
           requests: pickedImages,
@@ -111,25 +129,31 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
           index: pickedImages.indexOf(file),
         ),
       );
-      final id = const Uuid().v4();
-      final root = await getApplicationDocumentsDirectory();
-      final userId = authRepository.getOrThrow().user!.id;
-      var path = '$root/users/$userId/travel_documents/${travelDocumentId.id}';
-      if (folderId != null) {
-        path = join(path, folderId);
-      }
-      path = join(path, '$id${extension(file.path)}');
+      final mediaId = const Uuid().v4();
+
+      final destinationPath = travelDocumentLocalMediaDataSource.getMediaPath(
+        travelDocumentId: travelDocumentId,
+        folderId: folderId,
+        mediaWidgetFeatureId: mediaId,
+        mediaExtension: extension(file.path),
+      );
+      logger.v('The image will be saved at: $destinationPath');
 
       final processor = ProcessImageService(
         imageFile: file,
         maxWidth: 2560,
         maxHeight: 2560,
-        absoluteDestinationPath: path,
+        absoluteDestinationPath: destinationPath,
       );
 
       await processor
-          .getProcess()
-          .flatMap((processedImage) => _createPhotoWidget(id, processedImage))
+          .task()
+          .flatMap(
+            (processedImage) => _createPhotoWidget(
+              mediaId: mediaId,
+              processedImage: processedImage,
+            ),
+          )
           .match(
             (err) => emit(
               state.copyWith(
@@ -144,7 +168,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
             ),
             (result) => emit(
               state.copyWith(
-                status: StateStatus.success,
+                status: StateStatus.progress,
                 processed: [
                   ...state.processed,
                   result.widget as PhotoWidgetModel,
@@ -154,5 +178,16 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState> {
           )
           .run();
     }
+
+    logger.i(
+      'Finished processing ${pickedImages.length} images: '
+      '${pickedImages.map((e) => e.path).join(', ')}',
+    );
+    emit(
+      state.copyWith(
+        status: StateStatus.success,
+        requests: pickedImages,
+      ),
+    );
   }
 }

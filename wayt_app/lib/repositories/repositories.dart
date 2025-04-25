@@ -1,6 +1,6 @@
 export 'auth_repository/auth_repository.dart';
 export 'common/common.dart';
-export 'media/media_repository.dart';
+export 'media/media.dart';
 export 'summary_helper_repository/summary_helper_repository.dart';
 export 'travel_document_repository/travel_document_repository.dart';
 export 'travel_item_repository/travel_item_repository.dart';

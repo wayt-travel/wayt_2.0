@@ -2,7 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'delete_item_state.dart';
@@ -28,7 +28,7 @@ class DeleteItemCubit extends Cubit<DeleteItemState> with LoggerMixin {
     logger.v('Deleting item $item');
     emit(state.copyWith(status: StateStatus.progress));
 
-    final either = await repository.deleteItem(item.id);
+    final either = await repository.deleteItem(item.id).run();
     either.match(
       (error) {
         logger.e('Error deleting item $item: $error');

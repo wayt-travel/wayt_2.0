@@ -7,7 +7,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 
-import '../../../error/errors.dart';
+import '../../../error/error.dart';
 import '../../../util/util.dart';
 import '../../repositories.dart';
 

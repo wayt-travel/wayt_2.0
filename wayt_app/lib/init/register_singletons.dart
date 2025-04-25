@@ -5,8 +5,8 @@ import '../core/context/context.dart';
 import '../repositories/repositories.dart';
 import 'init.dart';
 
-/// Registers the repositories of the application.
-void registerRepositories() {
+/// Registers the singletons of the application.
+void registerSingletons() {
   late final RepositoryPack repositories;
   if ($.env.useInMemoryRepositories) {
     repositories = inMemoryRepositories();
@@ -15,8 +15,8 @@ void registerRepositories() {
       'Not in-memory repositories are not supported yet.',
     );
   }
-  
-  GetIt.I.registerSingleton<InitializationCubit>(InitializationCubit()) ;
+
+  GetIt.I.registerSingleton<InitializationCubit>(InitializationCubit());
 
   // Injects the app bloc inside this method.
   // App Bloc must be register because router uses it.
@@ -35,4 +35,10 @@ void registerRepositories() {
     repositories.travelDocument,
   );
   GetIt.I.registerSingleton<TravelItemRepository>(repositories.travelItemRepo);
+  GetIt.I.registerSingleton<TravelDocumentLocalMediaDataSource>(
+    TravelDocumentLocalMediaDataSource(
+      appContext: AppContext.I,
+      authRepository: repositories.authRepo,
+    ),
+  );
 }

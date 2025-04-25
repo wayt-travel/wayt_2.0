@@ -31,11 +31,14 @@ final class PhotoWidgetModel extends WidgetModel {
   /// {@macro photo_widget_model}
   factory PhotoWidgetModel({
     required String id,
+    required String mediaId,
     required String? url,
     required int order,
     required TravelDocumentId travelDocumentId,
     required int? byteCount,
     required (double, double)? coordinates,
+    required String mediaExtension,
+    required ({int width, int height}) size,
     Map<String, dynamic>? metadata,
     String? folderId,
     DateTime? createdAt,
@@ -45,11 +48,15 @@ final class PhotoWidgetModel extends WidgetModel {
         order: order,
         features: [
           MediaWidgetFeatureModel(
-            id: const Uuid().v4(),
+            id: mediaId,
             url: url,
+            mediaExtension: mediaExtension,
             byteCount: byteCount,
             mediaType: MediaFeatureType.image,
-            metadata: metadata,
+            metadata: {
+              'size': size,
+              ...?metadata,
+            },
             index: 0,
           ),
           if (coordinates != null)
@@ -84,7 +91,12 @@ final class PhotoWidgetModel extends WidgetModel {
   /// Path to the local file of the photo.
   ///
   /// Returns null if the photo is not stored locally.
-  String? get localPath => throw UnimplementedError();
+  String? get localPath => TravelDocumentLocalMediaDataSource.I.getMediaPath(
+        travelDocumentId: travelDocumentId,
+        folderId: folderId,
+        mediaExtension: _mediaFeature.mediaExtension,
+        mediaWidgetFeatureId: _mediaFeature.id,
+      );
 
   /// {@macro media_widget_feature_byte_count}
   int? get byteCount => _mediaFeature.byteCount;
@@ -99,6 +111,10 @@ final class PhotoWidgetModel extends WidgetModel {
 
   GeoWidgetFeatureModel? get _geoFeature =>
       features.whereType<GeoWidgetFeatureModel>().firstOrNull;
+
+  /// The size of the photo.
+  ({int width, int height})? get size =>
+      _mediaFeature.metadata?['size'] as ({int width, int height})?;
 
   @override
   WidgetModel copyWith({

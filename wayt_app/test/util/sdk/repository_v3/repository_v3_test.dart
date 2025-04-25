@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wayt_app/error/errors.dart';
+import 'package:wayt_app/error/error.dart';
 import 'package:wayt_app/util/sdk/repository_v3/repository_v3.dart';
 
 class _Item {
@@ -83,7 +83,7 @@ class _RepoV3
           emit(RepositoryItemUpdated(item, updatedItem));
           return updatedItem;
         },
-        (_, __) => $errors.generic,
+        (_, __) => $errors.core.generic,
       ),
     );
   }
@@ -97,7 +97,7 @@ class _RepoV3
           emit(RepositoryItemDeleted(item));
           return item;
         },
-        (_, __) => $errors.generic,
+        (_, __) => $errors.core.generic,
       ),
     );
   }

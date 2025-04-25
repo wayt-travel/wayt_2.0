@@ -6,7 +6,7 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/context/context.dart';
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../util/util.dart';
 

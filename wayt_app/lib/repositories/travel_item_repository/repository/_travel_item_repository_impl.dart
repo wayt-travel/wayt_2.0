@@ -429,7 +429,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
   WTaskEither<void> deleteItem(String id) => queueSequential(
         (emit) => TaskEither.tryCatch(
           () => _deleteItem(id, emit),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 
@@ -661,7 +661,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
             emit: emit,
             shouldEmit: shouldEmit,
           ),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 
@@ -672,7 +672,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       queueSequential(
         (emit) => TaskEither.tryCatch(
           () => _createFolder(input, emit),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 
@@ -684,7 +684,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       queueSequential(
         (emit) => TaskEither.tryCatch(
           () => _createWidget(widget, index, emit),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 
@@ -702,7 +702,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
             folderId: folderId,
             emit: emit,
           ),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 
@@ -720,7 +720,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
             input: input,
             emit: emit,
           ),
-          (e, __) => e.errorOrGeneric,
+          taskEitherOnError(logger),
         ),
       );
 }

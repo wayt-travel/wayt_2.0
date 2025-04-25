@@ -35,6 +35,11 @@ abstract interface class MediaWidgetFeatureEntity
   /// This is a map of key-value pairs that can be used to store additional
   /// information about the media.
   Map<String, dynamic>? get metadata;
+
+  /// The extension of the media, such as `.jpg`, `.png`.
+  ///
+  /// **It includes the dot.**
+  String get mediaExtension;
 }
 
 /// {@macro media_widget_feature}
@@ -52,6 +57,9 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
   @override
   final Map<String, dynamic>? metadata;
 
+  @override
+  final String mediaExtension;
+
   /// Creates a new [MediaWidgetFeatureModel] instance.
   ///
   /// {@macro media_widget_feature}
@@ -61,6 +69,7 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
     required this.mediaType,
     required this.byteCount,
     required this.metadata,
+    required this.mediaExtension,
     required super.index,
   }) : super(
           type: WidgetFeatureType.media,
@@ -80,6 +89,7 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
         mediaType: mediaType,
         byteCount: byteCount ?? this.byteCount,
         metadata: metadata ?? this.metadata,
+        mediaExtension: mediaExtension,
         index: index,
       );
 
@@ -88,6 +98,7 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
         ...super.props,
         url,
         mediaType,
+        mediaExtension,
         byteCount,
         metadata,
       ];
@@ -95,6 +106,7 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
   @override
   Map<String, dynamic> $toMap() => {
         ...super.$toMap(),
+        'mediaExtension': mediaExtension,
         'mediaType': mediaType.toString(),
         'url': url,
         'byteCount': byteCount,

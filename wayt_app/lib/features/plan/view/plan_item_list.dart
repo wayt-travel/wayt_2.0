@@ -59,22 +59,6 @@ class _PlanItemListState extends State<PlanItemList> {
     _isReordering = context.read<ReorderItemsCubit>().isReordering;
   }
 
-  /// Builds a tile for a travel item.
-  Widget _buildTile(BuildContext context, TravelItemEntity item) {
-    if (item is TextWidgetModel) {
-      return ListTile(
-        title: Text(
-          item.text,
-          style: item.textStyle?.toFlutterTextStyle(context),
-        ),
-      );
-    }
-    // TODO: Implement other widget types
-    return ListTile(
-      title: Text('Item ${item.asWidget.type} is not supported yet'),
-    );
-  }
-
   void _onReorder(int oldIndex, int newIndex) {
     // Copy the list to avoid modifying the original list.
     final items = [..._reorderedItemIds];
@@ -137,7 +121,6 @@ class _PlanItemListState extends State<PlanItemList> {
             child = TravelWidget(
               index: index,
               travelItem: wrapper.value,
-              child: _buildTile(context, wrapper.value),
             );
           }
           return Material(

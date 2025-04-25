@@ -1,4 +1,4 @@
-import '../errors.dart';
+import '../error.dart';
 
 /// Exception thrown when the user is not authenticated.
 class UnauthenticatedException extends WException {

@@ -1,4 +1,4 @@
-import '../errors.dart';
+import '../error.dart';
 
 /// Exception thrown when the sign-in fails.
 class SignInFailedException extends WException {

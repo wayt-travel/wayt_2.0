@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../error/errors.dart';
+import '../../../error/error.dart';
 
 /// {@template process_image_service_processed_image}
 /// Processed image returned by the [ProcessImageService].
@@ -14,9 +17,6 @@ class ProcessImageServiceProcessedImage {
 
   /// The size of the image in bytes.
   final int? byteCount;
-
-  /// The metadata of the image.
-  final Map<String, dynamic>? metadata;
 
   /// The latitude and longitude of the image.
   final (double, double)? latLng;
@@ -31,7 +31,6 @@ class ProcessImageServiceProcessedImage {
     required this.file,
     required this.size,
     required this.byteCount,
-    required this.metadata,
     required this.latLng,
   });
 }
@@ -50,7 +49,7 @@ class ProcessImageServiceProcessedImage {
 /// [maxWidth] and [maxHeight]. If the image is larger than the specified
 /// dimensions, it will be resized to fit within those dimensions.
 /// {@endtemplate}
-class ProcessImageService {
+class ProcessImageService with LoggerMixin {
   /// The image file to process.
   final XFile imageFile;
 
@@ -74,33 +73,49 @@ class ProcessImageService {
   });
 
   /// Runs the image processing service.
-  WTaskEither<ProcessImageServiceProcessedImage> getProcess() {
+  WTaskEither<ProcessImageServiceProcessedImage> task() {
     return TaskEither.tryCatch(
       () async {
+        logger.i('Processing image: ${imageFile.path}');
         // Validate
         // TODO: Implement validation logic here AND ERROR HANDLING
         final bytes = await imageFile.readAsBytes();
-
+        logger.v(
+          'The image is ${NumberFormat.compact().format(bytes.lengthInBytes)} '
+          'bytes',
+        );
         // Compress
         // TODO: Implement compression logic here
 
         // TODO: read EXIF data
 
+        // Determine the size of the image
+        final descriptor = await ImageDescriptor.encoded(
+          await ImmutableBuffer.fromUint8List(bytes),
+        );
+        final size = (width: descriptor.width, height: descriptor.height);
+
         // Save
         final compressedFile = File(absoluteDestinationPath);
+        await compressedFile.parent.create(recursive: true);
         final outputFile = await compressedFile.writeAsBytes(bytes);
+        logger.v('The image was saved at: ${outputFile.path}');
 
         // Return
         return ProcessImageServiceProcessedImage(
           file: outputFile,
-          // FIXME: Use actual size
-          size: (width: 0, height: 0),
+          size: size,
           byteCount: bytes.lengthInBytes,
-          metadata: null,
           latLng: null,
         );
       },
-      (e, __) => e.errorOrGeneric,
-    );
+      taskEitherOnError(
+        logger,
+        message: 'Failed to process image ${imageFile.path}',
+      ),
+    ).map((r) {
+      logger.i('Image processed successfully: ${r.file.path}');
+      return r;
+    });
   }
 }

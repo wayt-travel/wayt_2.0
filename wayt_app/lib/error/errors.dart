@@ -1,17 +1,31 @@
-import 'errors.dart';
-
-export 'exceptions/exceptions.dart';
-export 'w_error.dart';
+import 'error.dart';
 
 const _somethingWentWrongMessage = 'Oops, Something went wrong.';
 
 /// All app errors.
 final $errors = (
-  generic: WError(
-    code: 'GENERIC_ERROR',
-    defaultMessage: 'A generic error occurred.',
-    // FIXME: l10n
-    userIntlMessage: (context) => _somethingWentWrongMessage,
+  core: (
+    generic: WError(
+      code: 'GENERIC_ERROR',
+      defaultMessage: 'A generic error occurred.',
+      // FIXME: l10n
+      userIntlMessage: (context) => _somethingWentWrongMessage,
+    ),
+    badState: WError(
+      code: 'BAD_STATE',
+      defaultMessage: 'The application reached a bad state. This should '
+          'never happen. A bug is probably present in the code.',
+      // FIXME: l10n
+      userIntlMessage: (context) => _somethingWentWrongMessage,
+    ),
+  ),
+  system: (
+    io: WError(
+      code: 'IO_ERROR',
+      defaultMessage: 'An IO error occurred.',
+      // FIXME: l10n
+      userIntlMessage: (context) => _somethingWentWrongMessage,
+    )
   ),
   auth: (
     unauthenticated: WError(

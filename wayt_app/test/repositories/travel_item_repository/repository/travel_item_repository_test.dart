@@ -66,7 +66,7 @@ void main() {
           _buildWidget(travelDocumentId: travelDocumentId2, order: 0),
         ),
       ],
-    );
+    ).run();
   });
 
   group('TravelItemRepository.upsertInCacheAndMaps', () {

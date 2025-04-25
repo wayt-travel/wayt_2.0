@@ -18,9 +18,9 @@ class PhotoWidgetPickerModal extends StatelessWidget {
   /// photos. Then if the user has selected no photos, the modal will close.
   /// If the user has selected photos, the cubit will start processing them and
   /// the modal will show a progress indicator until the processing is done.
-  Future<void> show({
+  static Future<void> show({
     required BuildContext context,
-    required int index,
+    required int? index,
     required String? folderId,
     required TravelDocumentId travelDocumentId,
   }) =>
@@ -34,6 +34,8 @@ class PhotoWidgetPickerModal extends StatelessWidget {
               index: index,
               authRepository: $.repo.auth(),
               travelItemRepository: $.repo.travelItem(),
+              travelDocumentLocalMediaDataSource:
+                  TravelDocumentLocalMediaDataSource.I,
             )..pick(),
             child: const PhotoWidgetPickerModal._(),
           ),
@@ -68,19 +70,21 @@ class PhotoWidgetPickerModal extends StatelessWidget {
               automaticallyImplyLeading: false,
             ),
             body: Center(
-              child: Column(
-                children: [
-                  LinearProgressIndicator(
-                    value: state.processed.length / state.requests.length,
-                  ),
-                  $style.insets.sm.asVSpan,
-                  Text(
-                    // FIXME: l10n
-                    'Processing photos: ${state.processed.length} / '
-                    '${state.requests.length}',
-                  ),
-                ],
-              ),
+              child: !state.status.isInitial && state.requests.isNotEmpty
+                  ? Column(
+                      children: [
+                        LinearProgressIndicator(
+                          value: state.processed.length / state.requests.length,
+                        ),
+                        $style.insets.sm.asVSpan,
+                        Text(
+                          // FIXME: l10n
+                          'Processing photos: ${state.processed.length} / '
+                          '${state.requests.length}',
+                        ),
+                      ],
+                    )
+                  : const CircularProgressIndicator(),
             ),
           ),
         );

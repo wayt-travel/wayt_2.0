@@ -8,7 +8,7 @@ class InitializationCubit extends Cubit<bool?> {
   /// Creates a new instance of [InitializationCubit].
   InitializationCubit() : super(null);
 
-  /// Run the app inizialization 
+  /// Run the app initialization 
   Future<void> onSetup() async {
     // TEMP: remove this line
     await Future<void>.delayed(const Duration(milliseconds: 1000));

@@ -5,6 +5,7 @@ typedef RepositoryV3EventCallback<Err, Value> = void Function(
   Either<Err, Value> result,
 );
 
+/// 
 typedef RepositoryV3EventTask<Err, Value, State> = TaskEither<Err, Value>
     Function(
   Emitter<State?> emit,
