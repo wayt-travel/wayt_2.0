@@ -1,4 +1,3 @@
-import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
 import '../../../repositories/repositories.dart';
@@ -10,7 +9,7 @@ import '../../features.dart';
 /// the widget is highlighted with a semi-transparent color.
 ///
 /// This widget is common to all [TravelItemEntity]s.
-class TravelWidget extends StatefulWidget {
+class TravelWidget extends StatelessWidget {
   /// The index of the travel item in the list of items.
   final int index;
 
@@ -24,19 +23,18 @@ class TravelWidget extends StatefulWidget {
     super.key,
   });
 
-  @override
-  State<TravelWidget> createState() => _TravelWidgetState();
-}
-
-class _TravelWidgetState extends State<TravelWidget> {
-  bool _isHovering = false;
-
   Widget _getTile() {
-    final item = widget.travelItem;
+    final item = travelItem;
     if (item is PhotoWidgetModel) {
-      return PhotoWidgetTile(item);
+      return PhotoWidgetTile(
+        index: index,
+        photo: item,
+      );
     } else if (item is TextWidgetModel) {
-      return TextWidgetTile(item);
+      return TextWidgetTile(
+        index: index,
+        text: item,
+      );
     }
     return ListTile(
       title: Text('Item ${item.asWidget.type} is not supported yet'),
@@ -45,28 +43,6 @@ class _TravelWidgetState extends State<TravelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      // onLongPress: () {
-      //   SnackBarHelper.I.showNotImplemented(context);
-      // },
-      onTapUp: (details) {
-        setState(() => _isHovering = true);
-        TravelItemWidgetContextMenu.showForItem(
-          context: context,
-          position: details.globalPosition,
-          travelItem: widget.travelItem,
-          folderId: widget.travelItem.isWidget
-              ? widget.travelItem.asWidget.folderId
-              : null,
-          index: widget.index,
-        ).then((_) => setState(() => _isHovering = false));
-      },
-      child: ColoredBox(
-        color: _isHovering
-            ? context.col.primary.withValues(alpha: 0.3)
-            : Colors.transparent,
-        child: _getTile(),
-      ),
-    );
+    return _getTile();
   }
 }
