@@ -32,16 +32,9 @@ class FolderCubit extends Cubit<FolderState> {
         ) {
     _travelItemRepoSub = travelItemRepository.listen((repoState) {
       if (isClosed) return;
-      if (repoState is TravelItemRepositoryTravelItemUpdated &&
-          repoState.updatedItem.isFolderWidget &&
-          repoState.updatedItem.value.id == folderId) {
-        // Case: the current folder is updated
-        emit(
-          FolderUpdateSuccess(repoState.updatedItem.asFolderWidgetWrapper),
-        );
-      } else if (repoState is TravelItemRepositoryTravelItemDeleted &&
-          repoState.item.isWidget &&
-          repoState.item.asWidgetWrapper.value.folderId == folderId) {
+       if (repoState is TravelItemRepoItemDeleteSuccess &&
+          repoState.itemWrapper.isWidget &&
+          repoState.itemWrapper.asWidgetWrapper.value.folderId == folderId) {
         // Case: a widget contained in the current folder is deleted
         emit(
           FolderUpdateSuccess(
@@ -50,9 +43,9 @@ class FolderCubit extends Cubit<FolderState> {
                 .asFolderWidgetWrapper,
           ),
         );
-      } else if (repoState is TravelItemRepositoryTravelItemAdded &&
-          repoState.item.isWidget &&
-          repoState.item.asWidgetWrapper.value.folderId == folderId) {
+      } else if (repoState is TravelItemRepoItemCreateSuccess &&
+          repoState.itemWrapper.isWidget &&
+          repoState.itemWrapper.asWidgetWrapper.value.folderId == folderId) {
         emit(
           FolderUpdateSuccess(
             travelItemRepository

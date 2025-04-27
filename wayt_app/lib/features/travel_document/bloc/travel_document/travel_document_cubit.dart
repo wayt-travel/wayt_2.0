@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../orchestration/fetch_travel_document_orchestrator.dart';
 import '../../../../repositories/repositories.dart';
 
@@ -77,16 +77,15 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
     // Listen to the travel items repository and update the state accordingly
     _travelItemRepoSub = travelItemRepository.listen((repoState) {
       // Whether a new item has been added to the travel document.
-      final hasAddedWidget = repoState is TravelItemRepositoryTravelItemAdded &&
-          repoState.item.value.travelDocumentId == travelDocumentId;
+      final hasAddedWidget = repoState is TravelItemRepoItemCreateSuccess &&
+          repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
       // Whether an item has been deleted from the travel document.
-      final hasDeletedWidget =
-          repoState is TravelItemRepositoryTravelItemDeleted &&
-              repoState.item.value.travelDocumentId == travelDocumentId;
+      final hasDeletedWidget = repoState is TravelItemRepoItemDeleteSuccess &&
+          repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
       // Whether the collection of travel items has been fetched.
       final hasFetchedCollection =
-          repoState is TravelItemRepositoryTravelItemCollectionFetched &&
-              repoState.items.any(
+          repoState is TravelItemRepoItemCollectionFetchSuccess &&
+              repoState.itemWrappers.any(
                 (widget) => widget.value.travelDocumentId == travelDocumentId,
               );
       // If any of the above conditions is true, emit a new state to update
@@ -115,19 +114,25 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
   Future<void> fetch({required bool force}) async {
     logger.v('Fetching $travelDocumentId');
     emit(TravelDocumentFetchInProgress());
-    try {
-      await fetchTravelDocumentOrchestrator.fetchTravelDocument(
-        travelDocumentId: travelDocumentId,
-        force: force,
-      );
-      logger.d(
-        '$travelDocumentId fetched. The new state will be emitted via the repo '
-        'listener',
-      );
-    } catch (e, s) {
-      logger.e('Failed to fetch $travelDocumentId', e, s);
-      emit(TravelDocumentFetchFailure(e.errorOrGeneric));
-    }
+    final either = await fetchTravelDocumentOrchestrator
+        .task(
+          travelDocumentId: travelDocumentId,
+          force: force,
+        )
+        .run();
+
+    either.match(
+      (error) {
+        logger.e('Error fetching $travelDocumentId: $error');
+        emit(TravelDocumentFetchFailure(error));
+      },
+      (_) {
+        logger.d(
+          '$travelDocumentId fetched. The new state will be emitted via the '
+          'repo listener',
+        );
+      },
+    );
   }
 
   @override

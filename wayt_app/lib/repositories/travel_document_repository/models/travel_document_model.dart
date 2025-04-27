@@ -4,7 +4,9 @@ import 'plan_entity.dart';
 import 'travel_document_entity.dart';
 import 'travel_document_id.dart';
 
-/// Model for all journals and plans.
+/// {@template travel_document_model}
+/// Model for travel documents (journals and plans are both travel documents).
+/// {@endtemplate}
 class TravelDocumentModel extends Model implements TravelDocumentEntity {
   /// The name of the travel plan.
   @override
@@ -23,6 +25,7 @@ class TravelDocumentModel extends Model implements TravelDocumentEntity {
   @override
   final DateTime? updatedAt;
 
+  /// {@macro travel_document_model}
   const TravelDocumentModel({
     required this.name,
     required this.userId,

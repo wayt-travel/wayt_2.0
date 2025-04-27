@@ -6,7 +6,7 @@ import 'package:luthor/luthor.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../../../../core/context/context.dart';
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'upsert_folder_state.dart';
@@ -96,25 +96,29 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
       return;
     }
 
-    try {
-      if (!isUpdate) {
-        await travelItemRepository.createFolder(
-          state.toCreateInput(travelDocumentId, index),
-        );
-      } else {
-        await travelItemRepository.updateFolder(
-          folderToUpdate!.id,
-          travelDocumentId: travelDocumentId,
-          input: state.toUpdateInput(),
-        );
-      }
-
-      logger.i('Folder ${!isUpdate ? 'created' : 'updated'} successfully.');
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error ${!isUpdate ? 'creating' : 'updating'} folder: $e', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
+    // We don't care about the return value of the either, we just want to
+    // know if it was successful or not.
+    late final WTaskEither<void> task;
+    if (!isUpdate) {
+      task = travelItemRepository
+          .createFolder(state.toCreateInput(travelDocumentId, index));
+    } else {
+      task = travelItemRepository.updateFolder(
+        id: folderToUpdate!.id,
+        travelDocumentId: travelDocumentId,
+        input: state.toUpdateInput(),
+      );
     }
+
+    (await task.run()).match(
+      (error) {
+        logger.e('Error upserting folder: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Folder upserted successfully.');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

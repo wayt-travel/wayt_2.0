@@ -7,6 +7,7 @@ import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/modal/modal.dart';
 import '../../features.dart';
+import 'gallery/photo_widget_picker_modal.dart';
 
 /// Modal bottom sheet to add a new widget in a travel document.
 class AddWidgetMbs extends StatelessWidget {
@@ -149,6 +150,41 @@ class AddWidgetMbs extends StatelessWidget {
                         )
                         .toList(),
                   ).asSliver,
+                ],
+              ),
+              ..._buildSection(
+                context: context,
+                // FIXME: l10n
+                title: 'Media',
+                children: [
+                  SliverGrid.count(
+                    crossAxisCount: 4,
+                    crossAxisSpacing: $insets.md,
+                    mainAxisSpacing: $insets.md,
+                    children: [
+                      NewItemButton(
+                        // FIXME: l10n
+                        label: 'Photo',
+                        size: size,
+                        child: const Icon(Icons.photo, size: 32),
+                        onTap: (context) {
+                          context.navRoot.pop();
+                          PhotoWidgetPickerModal.show(
+                            context: context,
+                            index: index,
+                            folderId: folderId,
+                            travelDocumentId: travelDocumentId,
+                          );
+                        },
+                      ),
+                      ...RandomColor.materialColors.take(3).map(
+                            (color) => SizedBox.square(
+                              dimension: size,
+                              child: Placeholder(color: color),
+                            ),
+                          ),
+                    ],
+                  ),
                 ],
               ),
               ..._buildSection(

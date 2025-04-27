@@ -2,7 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'delete_item_state.dart';
@@ -27,18 +27,17 @@ class DeleteItemCubit extends Cubit<DeleteItemState> with LoggerMixin {
   Future<void> delete() async {
     logger.v('Deleting item $item');
     emit(state.copyWith(status: StateStatus.progress));
-    try {
-      if (item.isFolderWidget) {
-        await repository.deleteFolder(item.id);
-      } else {
-        await repository.deleteWidget(item.id);
-      }
-      logger.i('Item $item deleted successfully');
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error deleting item $item', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
-    }
+
+    final either = await repository.deleteItem(item.id).run();
+    either.match(
+      (error) {
+        logger.e('Error deleting item $item: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Item $item deleted successfully');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

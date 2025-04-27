@@ -2,10 +2,12 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 
 import '../../repositories.dart';
 
+/// {@template travel_item_model}
 /// Base model class for [TravelItemEntity] implementations.
 ///
 /// It represents an item (either a widget or widget folder) in a plan or
 /// journal.
+/// {@endtemplate}
 abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   final String id;
@@ -19,6 +21,7 @@ abstract class TravelItemModel extends Model implements TravelItemEntity {
   @override
   final DateTime? updatedAt;
 
+  /// {@macro travel_item_model}
   const TravelItemModel({
     required this.travelDocumentId,
     required this.createdAt,

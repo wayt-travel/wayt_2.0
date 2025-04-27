@@ -2,7 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'reorder_items_state.dart';
@@ -57,19 +57,21 @@ class ReorderItemsCubit extends Cubit<ReorderItemsState> with LoggerMixin {
       state.copyWith(status: StateStatus.progress),
     );
 
-    try {
-      await travelItemRepository.reorderItems(
-        travelDocumentId: travelDocumentId,
-        folderId: folderId,
-        reorderedItemIds: reorderedItemIds,
-      );
+    final either = await travelItemRepository.reorderItems(
+      travelDocumentId: travelDocumentId,
+      folderId: folderId,
+      reorderedItemIds: reorderedItemIds,
+    ).run();
 
-      emit(
-        state.copyWith(status: StateStatus.success),
-      );
-    } catch (e, s) {
-      logger.e('Failed to save reordered items', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-    }
+    either.match(
+      (error) {
+        logger.e('Error saving reordered items: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Reordered items saved successfully');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

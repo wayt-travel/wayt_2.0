@@ -6,7 +6,7 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/context/context.dart';
-import '../../../../error/errors.dart';
+import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../util/util.dart';
 
@@ -91,25 +91,28 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       return;
     }
 
-    try {
-      await travelItemRepository.createWidget(
-        TextWidgetModel(
-          id: const Uuid().v4(),
-          text: state.text!.trim(),
-          textStyle: state.featureTextStyle,
-          travelDocumentId: travelDocumentId,
-          folderId: folderId,
-          // The order is neglected at creation time.
-          order: -1,
-        ),
-        // When creating a new widget the index is defined.
-        index,
-      );
-      emit(state.copyWith(status: StateStatus.success));
-    } catch (e, s) {
-      logger.e('Error creating text widget: $e', e, s);
-      emit(state.copyWithError(e.errorOrGeneric));
-      return;
-    }
+    final task = travelItemRepository.createWidget(
+      widget: TextWidgetModel(
+        id: const Uuid().v4(),
+        text: state.text!.trim(),
+        textStyle: state.featureTextStyle,
+        travelDocumentId: travelDocumentId,
+        folderId: folderId,
+        // The order is neglected at creation time.
+        order: -1,
+      ),
+      index: index,
+    );
+
+    (await task.run()).fold(
+      (error) {
+        logger.e('Error creating text widget: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.d('Text widget created successfully');
+        emit(state.copyWith(status: StateStatus.success));
+      },
+    );
   }
 }

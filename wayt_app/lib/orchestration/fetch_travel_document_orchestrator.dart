@@ -1,5 +1,7 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
+import '../error/error.dart';
 import '../repositories/repositories.dart';
 
 /// Orchestrates the fetching of a [TravelDocumentEntity].
@@ -29,7 +31,19 @@ final class FetchTravelDocumentOrchestrator with LoggerMixin {
             travelDocumentRepository as TravelDocumentRepositoryWithDataSource;
 
   /// Fetches a travel document by its [travelDocumentId].
-  Future<void> fetchTravelDocument({
+  WTaskEither<void> task({
+    required TravelDocumentId travelDocumentId,
+    required bool force,
+  }) =>
+      TaskEither.tryCatch(
+        () => _fetchTravelDocument(
+          travelDocumentId: travelDocumentId,
+          force: force,
+        ),
+        taskEitherOnError(logger),
+      );
+
+  Future<void> _fetchTravelDocument({
     required TravelDocumentId travelDocumentId,
     required bool force,
   }) async {
@@ -71,11 +85,13 @@ final class FetchTravelDocumentOrchestrator with LoggerMixin {
 
     // No need to emit the state here as the travel document has just been
     // fetched.
-    travelItemRepository.addAll(
-      travelDocumentId: travelDocumentId,
-      travelItems: wrapper.travelItems,
-      shouldEmit: false,
-    );
+    (await travelItemRepository
+            .addAll(
+              shouldEmit: false,
+              travelItems: travelItems,
+            )
+            .run())
+        .mapLeft((e) => throw WException.generic(e));
 
     // The travel document has been fully fetched and its items have been
     // loaded completely.

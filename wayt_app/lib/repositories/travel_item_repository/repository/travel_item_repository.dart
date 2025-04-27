@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 
+import '../../../error/error.dart';
 import '../../../util/util.dart';
 import '../../repositories.dart';
 
 part '_travel_item_repository_impl.dart';
-part 'travel_item_repository_state.dart';
 
 /// Repository for [TravelItemEntity].
 ///
 /// This repository manages widgets and folders in a travel document.
-abstract interface class TravelItemRepository
-    extends Repository<String, TravelItemEntity, TravelItemRepositoryState> {
+abstract interface class TravelItemRepository extends RepositoryV3<String,
+    TravelItemEntity, TravelItemRepositoryState, WError> {
   /// Creates a new instance of [TravelItemRepository].
   factory TravelItemRepository({
     required SummaryHelperRepository summaryHelperRepository,
@@ -31,52 +31,6 @@ abstract interface class TravelItemRepository
         widgetDataSource: widgetDataSource,
         widgetFolderDataSource: widgetFolderDataSource,
       );
-
-  /// Creates a new Widget at the given [index] in the plan or journal.
-  ///
-  /// The widget.order in model is disregarded as it will be recomputed using
-  /// the provided [index] based on the existing widgets in the plan or journal.
-  /// If [index] is `null`, the widget will be added at the end of the list.
-  /// If [index] is out of bounds, the widget will be added at the end of the
-  /// list.
-  ///
-  /// The response includes also a map of the widgets of the plan or journal
-  /// whose order has been updated with the corresponding updated value.
-  ///
-  /// See [UpsertWidgetOutput].
-  Future<UpsertWidgetOutput> createWidget(WidgetModel widget, int? index);
-
-  /// Creates a new widget folder.
-  Future<UpsertWidgetFolderOutput> createFolder(CreateWidgetFolderInput input);
-
-  /// Updates a widget folder with id [id].
-  Future<UpsertWidgetFolderOutput> updateFolder(
-    String id, {
-    required TravelDocumentId travelDocumentId,
-    required UpdateWidgetFolderInput input,
-  });
-
-  /// Deletes a widget by its [id].
-  Future<void> deleteWidget(String id);
-
-  /// Deletes a folder by its [id].
-  Future<void> deleteFolder(String id);
-
-  /// Reorders the items in a travel document based on the provided
-  /// [reorderedItemIds].
-  ///
-  /// This method supports reordering the items in the root of the travel
-  /// document as well as the items contained in a folder. For the latter, the
-  /// [folderId] should be provided.
-  ///
-  /// If [reorderedItemIds] does not match the list of items currently contained
-  /// in the repo for the travel document with [travelDocumentId] the method
-  /// will throw an [ArgumentError].
-  Future<Map<String, int>> reorderItems({
-    required TravelDocumentId travelDocumentId,
-    required List<String> reorderedItemIds,
-    String? folderId,
-  });
 
   /// Gets the travel item wrapper of the travel item with the given [id] from
   /// the cache.
@@ -104,15 +58,62 @@ abstract interface class TravelItemRepository
   /// [journalId] from the
   List<TravelItemEntityWrapper> getAllOfJournal(String journalId);
 
-  /// Adds all [travelItems] of [travelDocumentId] into the repository without
-  /// fetching them from the data source.
+  /// Creates a new Widget at the given [index] in the plan or journal.
+  ///
+  /// The widget.order in model is disregarded as it will be recomputed using
+  /// the provided [index] based on the existing widgets in the plan or journal.
+  /// If [index] is `null`, the widget will be added at the end of the list.
+  /// If [index] is out of bounds, the widget will be added at the end of the
+  /// list.
+  ///
+  /// The response includes also a map of the widgets of the plan or journal
+  /// whose order has been updated with the corresponding updated value.
+  ///
+  /// See [UpsertWidgetOutput].
+  WTaskEither<UpsertWidgetOutput> createWidget({
+    required WidgetModel widget,
+    required int? index,
+  });
+
+  /// Creates a new widget folder.
+  WTaskEither<UpsertWidgetFolderOutput> createFolder(
+    CreateWidgetFolderInput input,
+  );
+
+  /// Updates an existing widget folder with the given [id].
+  WTaskEither<UpsertWidgetFolderOutput> updateFolder({
+    required String id,
+    required TravelDocumentId travelDocumentId,
+    required UpdateWidgetFolderInput input,
+  });
+
+  /// Deletes a widget or folder by its [id].
+  WTaskEither<void> deleteItem(String id);
+
+  /// Reorders the items in a travel document based on the provided
+  /// [reorderedItemIds].
+  ///
+  /// This method supports reordering the items in the root of the travel
+  /// document as well as the items contained in a folder. For the latter, the
+  /// [folderId] should be provided.
+  ///
+  /// If [reorderedItemIds] does not match the list of items currently contained
+  /// in the repo for the travel document with [travelDocumentId] the method
+  /// will throw an [ArgumentError].
+  WTaskEither<Map<String, int>> reorderItems({
+    required TravelDocumentId travelDocumentId,
+    required List<String> reorderedItemIds,
+    String? folderId,
+  });
+
+  /// Adds all [travelItems] into the repository without fetching them from the
+  /// data source.
   ///
   /// This operation supports overriding existing items (with the same id).
   ///
   /// If [shouldEmit] is `false`, the repository will not emit a state change
   /// upon adding the travel items.
-  void addAll({
-    required TravelDocumentId travelDocumentId,
+  WTaskEither<void> addAll({
     required Iterable<TravelItemEntityWrapper> travelItems,
     bool shouldEmit = true,
   });

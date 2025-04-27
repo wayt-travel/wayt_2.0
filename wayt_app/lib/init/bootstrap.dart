@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
+import '../core/core.dart';
+
 /// Bootstraps the application.
 ///
 /// Runs the common initialization code for the application to be executed
@@ -30,6 +32,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       ),
     ),
   );
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppContext.I.init();
   runApp(await builder());
 }
 
