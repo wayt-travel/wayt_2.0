@@ -2,7 +2,7 @@ import '../../repositories.dart';
 
 /// {@template widget_folder_model}
 /// Model implementation for a folder of widgets in a travel plan or journal.
-/// 
+///
 /// The folder can be customized with a [name], [icon], and [color].
 /// {@endtemplate}
 class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {

@@ -20,8 +20,8 @@ class AuthRepositoryState extends Equatable {
   /// The status of the authentication process.
   final AuthenticationStatus status;
 
-  /// The authenticated entity. 
-  /// 
+  /// The authenticated entity.
+  ///
   /// This is null when the user is unauthenticated.
   final AuthEntity? auth;
 

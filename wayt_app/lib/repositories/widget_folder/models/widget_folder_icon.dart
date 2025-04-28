@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 /// {@template widget_folder_icon}
 /// Model for the Icon of a widget folder.
-/// 
+///
 /// It extends [IconData] to represent the icon data so it can be used directly
 /// in Flutter widgets.
 /// {@endtemplate}

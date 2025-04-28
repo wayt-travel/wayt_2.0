@@ -4,10 +4,10 @@ import '../../repositories.dart';
 
 /// {@template auth_model}
 /// Model that represents the authenticated user.
-/// 
+///
 /// This model is used to store the authenticated user in the
 /// [AuthRepository].
-/// 
+///
 /// {@endtemplate}
 class AuthModel extends Model implements AuthEntity {
   @override
