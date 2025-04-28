@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 
 /// Splash screen page.
 class SplashPage extends StatelessWidget {
-
   /// Creates a new instance of [SplashPage].
   const SplashPage({super.key});
 

@@ -5,7 +5,7 @@ import '../../repositories.dart';
 
 /// Base state for the [TravelItemRepository].
 abstract class TravelItemRepositoryState<E extends TravelItemEntity>
-    extends RepositoryV2State<E> {
+    extends RepositoryV3State<E> {
   /// Creates a new instance of [TravelItemRepositoryState].
   const TravelItemRepositoryState();
   @override
@@ -15,13 +15,12 @@ abstract class TravelItemRepositoryState<E extends TravelItemEntity>
   bool? get stringify => false;
 }
 
-
 /// State for when the order of items is updated successfully.
-final class TravelItemRepoItemOrdersUpdateSuccess
+final class TravelItemRepoItemsReorderSuccess
     extends TravelItemRepositoryState<WidgetFolderEntity>
     with ModelToStringMixin {
   /// Creates a new instance.
-  const TravelItemRepoItemOrdersUpdateSuccess({
+  const TravelItemRepoItemsReorderSuccess({
     required this.travelDocumentId,
     required this.updatedOrders,
   });
@@ -100,30 +99,8 @@ final class TravelItemRepoItemDeleteSuccess
 
 /// State for when an item is successfully updated in the repository.
 final class TravelItemRepoItemUpdateSuccess
-    extends RepoV2ItemUpdateSuccess<TravelItemEntityWrapper, TravelItemEntity>
+    extends RepoV3ItemUpdateSuccess<TravelItemEntityWrapper, TravelItemEntity>
     implements TravelItemRepositoryState<TravelItemEntity> {
   /// Creates a new instance of [TravelItemRepoItemUpdateSuccess].
   const TravelItemRepoItemUpdateSuccess(super.previous, super.updated);
-}
-
-/// State for when the items in a travel document are successfully reordered.
-final class TravelItemRepoItemsReorderSuccess
-    extends TravelItemRepositoryState<TravelItemEntity> {
-  /// Creates a new instance of [TravelItemRepoItemsReorderSuccess].
-  const TravelItemRepoItemsReorderSuccess({
-    required this.travelDocumentId,
-    required this.updatedItemsOrder,
-  });
-
-  /// The updated items order.
-  final Map<String, int> updatedItemsOrder;
-
-  /// The travel document ID.
-  final TravelDocumentId travelDocumentId;
-
-  @override
-  List<Object?> get props => [
-        travelDocumentId,
-        updatedItemsOrder,
-      ];
 }

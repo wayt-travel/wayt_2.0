@@ -1,4 +1,4 @@
-import '../widget.dart';
+import '../../repositories.dart';
 
 /// Data source for Widget entities.
 abstract interface class WidgetDataSource {
@@ -19,4 +19,16 @@ abstract interface class WidgetDataSource {
 
   /// Deletes a widget by its [id].
   Future<void> delete(String id);
+
+  /// Moves [widgetsToMove] to the folder with the given [destinationFolderId].
+  /// If [destinationFolderId] is `null`, the widgets will be moved to the root
+  /// of the travel document.
+  ///
+  /// All widgets must belong to the same travel document [travelDocumentId]
+  /// otherwise an error will be thrown.
+  Future<List<WidgetEntity>> moveToFolder({
+    required TravelDocumentId travelDocumentId,
+    required List<WidgetEntity> widgetsToMove,
+    required String? destinationFolderId,
+  });
 }

@@ -44,7 +44,7 @@ class ReorderItemsCubit extends Cubit<ReorderItemsState> with LoggerMixin {
   ///
   /// [reorderedItemIds] is the list of the IDs of the items in the new order.
   Future<void> save(List<String> reorderedItemIds) async {
-    logger.v(
+    logger.d(
       'Starting logic to save ${reorderedItemIds.length} reordered items',
     );
     if (!isReordering) {
@@ -57,11 +57,13 @@ class ReorderItemsCubit extends Cubit<ReorderItemsState> with LoggerMixin {
       state.copyWith(status: StateStatus.progress),
     );
 
-    final either = await travelItemRepository.reorderItems(
-      travelDocumentId: travelDocumentId,
-      folderId: folderId,
-      reorderedItemIds: reorderedItemIds,
-    ).run();
+    final either = await travelItemRepository
+        .reorderItems(
+          travelDocumentId: travelDocumentId,
+          folderId: folderId,
+          reorderedItemIds: reorderedItemIds,
+        )
+        .run();
 
     either.match(
       (error) {

@@ -7,13 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../../../error/error.dart';
+import '../../../util/util.dart';
 
 /// {@template process_image_service_processed_image}
 /// Processed image returned by the [ProcessImageService].
 /// {@endtemplate}
 class ProcessImageServiceProcessedImage {
   /// The size of the image.
-  final ({int width, int height}) size;
+  final IntSize size;
 
   /// The size of the image in bytes.
   final int? byteCount;
@@ -80,7 +81,7 @@ class ProcessImageService with LoggerMixin {
         // Validate
         // TODO: Implement validation logic here AND ERROR HANDLING
         final bytes = await imageFile.readAsBytes();
-        logger.v(
+        logger.d(
           'The image is ${NumberFormat.compact().format(bytes.lengthInBytes)} '
           'bytes',
         );
@@ -93,13 +94,16 @@ class ProcessImageService with LoggerMixin {
         final descriptor = await ImageDescriptor.encoded(
           await ImmutableBuffer.fromUint8List(bytes),
         );
-        final size = (width: descriptor.width, height: descriptor.height);
+        final size = IntSize(
+          width: descriptor.width,
+          height: descriptor.height,
+        );
 
         // Save
         final compressedFile = File(absoluteDestinationPath);
         await compressedFile.parent.create(recursive: true);
         final outputFile = await compressedFile.writeAsBytes(bytes);
-        logger.v('The image was saved at: ${outputFile.path}');
+        logger.d('The image was saved at: ${outputFile.path}');
 
         // Return
         return ProcessImageServiceProcessedImage(

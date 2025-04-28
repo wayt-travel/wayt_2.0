@@ -1,7 +1,6 @@
 import 'package:pub_semver/pub_semver.dart';
 
 import '../../widget_feature.dart';
-import 'media_feature_type.dart';
 
 /// {@template media_widget_feature}
 /// A media feature.

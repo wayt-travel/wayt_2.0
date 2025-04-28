@@ -8,6 +8,7 @@ import '../../repositories.dart';
 final class InMemoryUserDataSource implements UserDataSource {
   final InMemoryDataHelper _dataHelper;
 
+  /// Creates a new instance of [InMemoryUserDataSource].
   InMemoryUserDataSource(this._dataHelper);
 
   @override

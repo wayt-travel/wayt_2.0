@@ -108,7 +108,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
       return;
     }
 
-    logger.v(
+    logger.d(
       'Picked ${pickedImages.length} images: '
       '${pickedImages.map((e) => e.path).join(', ')}',
     );
@@ -121,7 +121,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
     );
 
     for (final file in pickedImages) {
-      logger.v('Processing image: ${file.path}');
+      logger.d('Processing image: ${file.path}');
       emit(
         state.copyWith(
           requests: pickedImages,
@@ -137,7 +137,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
         mediaWidgetFeatureId: mediaId,
         mediaExtension: extension(file.path),
       );
-      logger.v('The image will be saved at: $destinationPath');
+      logger.d('The image will be saved at: $destinationPath');
 
       final processor = ProcessImageService(
         imageFile: file,

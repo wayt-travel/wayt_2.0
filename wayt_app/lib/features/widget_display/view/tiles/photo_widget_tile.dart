@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -37,10 +38,6 @@ class PhotoWidgetTile extends StatelessWidget {
     final fileWidget = TravelWidgetGestureWrapper(
       index: index,
       travelItem: photo,
-      onLongPressOverride: Option.of(
-        (globalPosition, showContextMenu) =>
-            showContextMenu(context, globalPosition),
-      ),
       onTapOverride: Option.of(
         (_, __) {
           // TODO: Implement photo tap action
@@ -54,23 +51,29 @@ class PhotoWidgetTile extends StatelessWidget {
           key: ValueKey(photo.localPath),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return const Icon(Icons.error);
+            return Container(
+              color: context.col.surfaceContainer,
+              constraints: const BoxConstraints.expand(),
+              child: const Icon(
+                Icons.broken_image,
+                size: 64,
+              ),
+            );
           },
         ),
       ),
     );
-    if (photo.size != null) {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return SizedBox(
-            height:
-                constraints.maxWidth * (photo.size!.height / photo.size!.width),
-            width: constraints.maxWidth,
-            child: fileWidget,
-          );
-        },
-      );
-    }
-    return fileWidget;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: Option.fromNullable(photo.size).match(
+            () => constraints.maxWidth,
+            (size) => constraints.maxWidth * (size.height / size.width),
+          ),
+          width: constraints.maxWidth,
+          child: fileWidget,
+        );
+      },
+    );
   }
 }

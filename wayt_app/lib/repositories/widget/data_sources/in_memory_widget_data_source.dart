@@ -1,4 +1,5 @@
 import 'package:flext/flext.dart';
+import 'package:fpdart/fpdart.dart';
 
 import '../../../init/in_memory_data.dart';
 import '../../repositories.dart';
@@ -80,5 +81,72 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   Future<void> delete(String id) async {
     await waitFakeTime();
     _dataHelper.deleteItem(id);
+  }
+
+  @override
+  Future<List<WidgetEntity>> moveToFolder({
+    required TravelDocumentId travelDocumentId,
+    required List<WidgetEntity> widgetsToMove,
+    required String? destinationFolderId,
+  }) {
+    if (!_dataHelper.containsTravelDocument(travelDocumentId)) {
+      throw ArgumentError.value(
+        travelDocumentId,
+        'widget.travelDocumentId',
+        'The travel document does not exist.',
+      );
+    }
+    // Check if all widgets belong to the same travel document.
+    final allWidgetsBelongsToTravelDocument = widgetsToMove.fold(
+      true,
+      (acc, item) => acc && item.travelDocumentId == travelDocumentId,
+    );
+    if (!allWidgetsBelongsToTravelDocument) {
+      throw ArgumentError.value(
+        widgetsToMove,
+        'widgetsToMove',
+        'All widgets must belong to the same travel document '
+            '$travelDocumentId.',
+      );
+    }
+    // If the destinationFolderId does not exist in the travel document,
+    // an error will be thrown by the data helper.
+    final dstFolder = destinationFolderId != null
+        ? _dataHelper.getWidgetFolder(destinationFolderId)
+        : null;
+
+    var startingOrder = -1;
+    if (dstFolder != null) {
+      // Get the last order of the destination folder.
+      startingOrder = _dataHelper
+              .getWidgetFolderWrapper(dstFolder.id)
+              .children
+              .map((w) => w.order)
+              .maxOrNull ??
+          -1;
+    } else {
+      // Get the last order of the root travel items.
+      startingOrder = _dataHelper
+              .getTravelDocumentWrapper(travelDocumentId)
+              .rootTravelItems
+              .map((w) => w.order)
+              .maxOrNull ??
+          -1;
+    }
+    startingOrder += 1;
+
+    final updatedWidgets = widgetsToMove
+        .map(
+          (w) => w.copyWith(
+            order: startingOrder++,
+            folderId: Option.of(dstFolder?.id),
+          ),
+        )
+        .cast<WidgetEntity>()
+        .toList();
+
+    _dataHelper.saveTravelItems(updatedWidgets);
+
+    return Future.value(updatedWidgets);
   }
 }

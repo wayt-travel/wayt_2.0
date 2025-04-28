@@ -1,9 +1,11 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import '../../repositories.dart';
 
+/// Interface for a Widget entity.
 abstract interface class WidgetEntity
     implements
         TravelItemEntity,
@@ -33,4 +35,10 @@ abstract interface class WidgetEntity
 
   /// The version of the widget.
   Version get version;
+
+  @override
+  TravelItemEntity copyWith({
+    int? order,
+    Option<String?> folderId,
+  });
 }

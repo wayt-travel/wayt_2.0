@@ -7,7 +7,7 @@ import '../../repositories.dart';
 final class InMemoryWidgetFolderDataSource implements WidgetFolderDataSource {
   final InMemoryDataHelper _dataHelper;
 
-  /// /// Create a new instance of [InMemoryWidgetFolderDataSource].
+  /// Create a new instance of [InMemoryWidgetFolderDataSource].
   InMemoryWidgetFolderDataSource(this._dataHelper);
 
   @override

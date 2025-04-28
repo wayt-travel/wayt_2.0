@@ -68,9 +68,9 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   Future<PlanEntity> createPlan(CreatePlanInput input) async {
-    logger.v('Creating plan with input: $input');
+    logger.d('Creating plan with input: $input');
     final created = await dataSource.createPlan(input);
-    logger.v('${created.toShortString()} created. Adding to cache and map.');
+    logger.d('${created.toShortString()} created. Adding to cache and map.');
     _addToCacheAndMap(created);
     emit(TravelDocumentRepositoryEntityAdded(created));
     // When the plan is created, it is fully loaded because it does not have
@@ -83,10 +83,10 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   Future<TravelDocumentWrapper> fetchOne(String id) async {
-    logger.v('Fetching travel document with id: $id');
+    logger.d('Fetching travel document with id: $id');
     final wrapper = await dataSource.readById(id);
     final travelDocument = wrapper.travelDocument;
-    logger.v(
+    logger.d(
       '${travelDocument.toShortString()} fetched. Adding it to cache and map.',
     );
     _addToCacheAndMap(travelDocument);
@@ -103,10 +103,10 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   Future<void> delete(String id) async {
-    logger.v('Deleting plan with id: $id');
+    logger.d('Deleting plan with id: $id');
     await dataSource.delete(id);
     final deletedItem = cache.getOrThrow(id);
-    logger.v(
+    logger.d(
       'Plan ${deletedItem.id} deleted. Removing it from cache and map.',
     );
     _removeFromCacheAndMap(deletedItem);
@@ -118,9 +118,9 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   Future<List<PlanEntity>> fetchAllPlansOfUser(String userId) async {
-    logger.v('Fetching all plans of user with id: $userId');
+    logger.d('Fetching all plans of user with id: $userId');
     final plans = await dataSource.readAllPlansOfUser(userId);
-    logger.v('${plans.length} plans fetched. Adding them to cache and map.');
+    logger.d('${plans.length} plans fetched. Adding them to cache and map.');
     _clearCacheAndMap(_TravelDocumentType.plans);
     _addAllToCacheAndMap(plans);
     // Unsets all plans of the user from the summary helper repository.
@@ -134,7 +134,7 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   void add(TravelDocumentEntity travelDocument, {bool shouldEmit = true}) {
-    logger.v('Adding ${travelDocument.toShortString()} to cache and map');
+    logger.d('Adding ${travelDocument.toShortString()} to cache and map');
     _addToCacheAndMap(travelDocument);
     logger.i('${travelDocument.toShortString()} added to cache and map');
     if (shouldEmit) {
@@ -147,7 +147,7 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
     Iterable<TravelDocumentEntity> travelDocuments, {
     bool shouldEmit = true,
   }) {
-    logger.v('Adding ${travelDocuments.length} plans to cache and map');
+    logger.d('Adding ${travelDocuments.length} plans to cache and map');
     _addAllToCacheAndMap(travelDocuments);
     logger.i('${travelDocuments.length} plans added to cache and map');
     if (shouldEmit) {
@@ -169,10 +169,10 @@ class _TravelDocumentRepositoryImpl extends Repository<String,
 
   @override
   Future<PlanEntity> updatePlan(String id, UpdatePlanInput input) async {
-    logger.v('Updating the plan with id $id and input: $input');
+    logger.d('Updating the plan with id $id and input: $input');
     final previous = cache.getOrThrow(id);
     final updated = await dataSource.updatePlan(id, input: input);
-    logger.v('${updated.toShortString()} updated. Updating to cache and map.');
+    logger.d('${updated.toShortString()} updated. Updating to cache and map.');
     _addToCacheAndMap(updated);
     emit(TravelDocumentRepositoryItemUpdated(previous, updated));
     logger.i('Plan updated to cache and map [$updated].');

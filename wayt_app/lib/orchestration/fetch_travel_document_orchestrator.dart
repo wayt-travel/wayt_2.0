@@ -56,7 +56,7 @@ final class FetchTravelDocumentOrchestrator with LoggerMixin {
           'It will be fetched',
         );
       } else if (!summaryHelperRepository.isFullyLoaded(travelDocumentId)) {
-        logger.v(
+        logger.d(
           '$travelDocumentId found in repository cache but it is '
           'not fully loaded, it will be fully fetched',
         );
@@ -72,7 +72,7 @@ final class FetchTravelDocumentOrchestrator with LoggerMixin {
       }
     }
 
-    logger.v('Fetching $travelDocumentId from the data source');
+    logger.d('Fetching $travelDocumentId from the data source');
     final wrapper =
         await travelDocumentRepository.dataSource.readById(travelDocumentId.id);
     final travelDocument = wrapper.travelDocument;

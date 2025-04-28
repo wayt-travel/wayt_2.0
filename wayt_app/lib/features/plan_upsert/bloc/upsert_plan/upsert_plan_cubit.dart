@@ -68,7 +68,7 @@ class UpsertPlanCubit extends Cubit<UpsertPlanState> with LoggerMixin {
 
   /// Submits the plan to the repository.
   Future<void> submit() async {
-    logger.v(
+    logger.d(
       isUpdate ? 'Updating plan $planToUpdate...' : 'Creating new plan...',
     );
     emit(state.copyWith(status: StateStatus.progress));

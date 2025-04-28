@@ -10,6 +10,7 @@ import '../../../widgets/widgets.dart';
 import '../../folder_display/view/folder_page.dart';
 import '../../folder_upsert/view/folder_modal.dart';
 import '../../item_delete/bloc/delete_item/delete_item_cubit.dart';
+import '../../item_move/view/move_travel_item_modal.dart';
 import '../../widget_upsert/view/add_widget_mbs.dart';
 import 'travel_widget.dart';
 
@@ -139,110 +140,137 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
     }
   }
 
+  static void _onDelete({
+    required BuildContext context,
+    required BuildContext innerContext,
+    required TravelItemEntity travelItem,
+  }) {
+// FIXME: l10n
+    var subtitle = 'This action cannot be undone.';
+
+    if (travelItem.isFolderWidget) {
+      // FIXME: l10n
+      subtitle += ' All widgets inside this folder will be deleted too.';
+    }
+    WConfirmDialog.show(
+      context: innerContext,
+      // FIXME: l10n
+      title: 'Are you sure?',
+      confirmActionColor: context.col.error,
+      subtitle: subtitle,
+      onConfirm: () async {
+        final bloc = DeleteItemCubit(
+          item: travelItem,
+          repository: $.repo.travelItem(),
+          travelDocumentLocalMediaDataSource:
+              TravelDocumentLocalMediaDataSource.I,
+        );
+        await context.navRoot
+            .pushBlocListenerBarrier<DeleteItemCubit, DeleteItemState>(
+          bloc: bloc,
+          trigger: bloc.delete,
+          listener: (context, state) {
+            if (state.status == StateStatus.success) {
+              context.navRoot.pop();
+            } else if (state.status == StateStatus.failure) {
+              SnackBarHelper.I.showError(
+                context: context,
+                message: state.error.toString(),
+              );
+              context.pop();
+            }
+          },
+        );
+
+        bloc.close().ignore();
+      },
+    );
+  }
+
   /// Shows the context menu for a travel item.
   static Future<void> showForItem({
     required int index,
     required BuildContext context,
     required TravelItemEntity travelItem,
     required Offset position,
-    String? folderId,
-  }) =>
-      TravelItemWidgetContextMenu._show(
-        context,
-        travelItem: travelItem,
-        position: position,
-        actions: [
-          if (travelItem.isFolderWidget)
-            ModalBottomSheetAction(
-              // FIXME: l10n
-              title: 'Open',
-              iconData: Icons.launch,
-              onTap: (context) => FolderPage.push(
-                context,
+  }) {
+    final folderId = travelItem.isWidget ? travelItem.asWidget.folderId : null;
+    return TravelItemWidgetContextMenu._show(
+      context,
+      travelItem: travelItem,
+      position: position,
+      actions: [
+        if (travelItem.isFolderWidget)
+          ModalBottomSheetAction(
+            // FIXME: l10n
+            title: 'Open',
+            iconData: Icons.launch,
+            onTap: (context) => FolderPage.push(
+              context,
+              travelDocumentId: travelItem.travelDocumentId,
+              folderId: travelItem.id,
+            ),
+          ),
+        ModalBottomSheetAction(
+          // FIXME: l10n
+          title: 'Add widget above',
+          iconData: Icons.arrow_upward,
+          onTap: (context) => AddWidgetMbs.show(
+            context,
+            folderId: folderId,
+            id: travelItem.travelDocumentId,
+            // By passing the same index as the current widget, the new
+            // widget will be inserted above the current widget.
+            index: index,
+          ),
+        ),
+        ModalBottomSheetAction(
+          // FIXME: l10n
+          title: 'Add widget below',
+          iconData: Icons.arrow_downward,
+          onTap: (context) => AddWidgetMbs.show(
+            context,
+            folderId: folderId,
+            id: travelItem.travelDocumentId,
+            // By passing the index + 1, the new widget will be inserted
+            // below the current widget. It is not a problem if the index is
+            // >= the number of widgets in the list, as in such case the new
+            // widget will be added at the end of the list.
+            index: index + 1,
+          ),
+        ),
+        ModalBottomSheetActions.edit(context).copyWith(
+          onTap: (_) => _onEdit(
+            context,
+            travelItem: travelItem,
+          ),
+        ),
+        if (!travelItem.isFolderWidget)
+          ModalBottomSheetAction(
+            // FIXME: l10n
+            title: folderId != null ? 'Move' : 'Move into folder...',
+            iconData: Icons.drive_file_move,
+            onTap: (context) {
+              MoveTravelItemModal.show(
+                context: context,
+                travelItemsToMove: [travelItem],
                 travelDocumentId: travelItem.travelDocumentId,
-                folderId: travelItem.id,
-              ),
-            ),
-          ModalBottomSheetAction(
-            // FIXME: l10n
-            title: 'Add widget above',
-            iconData: Icons.arrow_upward,
-            onTap: (context) => AddWidgetMbs.show(
-              context,
-              folderId: folderId,
-              id: travelItem.travelDocumentId,
-              // By passing the same index as the current widget, the new
-              // widget will be inserted above the current widget.
-              index: index,
-            ),
-          ),
-          ModalBottomSheetAction(
-            // FIXME: l10n
-            title: 'Add widget below',
-            iconData: Icons.arrow_downward,
-            onTap: (context) => AddWidgetMbs.show(
-              context,
-              folderId: folderId,
-              id: travelItem.travelDocumentId,
-              // By passing the index + 1, the new widget will be inserted
-              // below the current widget. It is not a problem if the index is
-              // >= the number of widgets in the list, as in such case the new
-              // widget will be added at the end of the list.
-              index: index + 1,
-            ),
-          ),
-          ModalBottomSheetActions.edit(context).copyWith(
-            onTap: (_) => _onEdit(
-              context,
-              travelItem: travelItem,
-            ),
-          ),
-          ModalBottomSheetActions.divider,
-          ModalBottomSheetActions.delete(context).copyWith(
-            onTap: (innerContext) {
-              // FIXME: l10n
-              var subtitle = 'This action cannot be undone.';
-
-              if (travelItem.isFolderWidget) {
-                // FIXME: l10n
-                subtitle +=
-                    ' All widgets inside this folder will be deleted too.';
-              }
-              WConfirmDialog.show(
-                context: innerContext,
-                // FIXME: l10n
-                title: 'Are you sure?',
-                subtitle: subtitle,
-                onConfirm: () async {
-                  final bloc = DeleteItemCubit(
-                    item: travelItem,
-                    repository: $.repo.travelItem(),
-                  );
-                  await context.navRoot.pushBlocListenerBarrier<DeleteItemCubit,
-                      DeleteItemState>(
-                    bloc: bloc,
-                    trigger: bloc.delete,
-                    listener: (context, state) {
-                      if (state.status == StateStatus.success) {
-                        context.navRoot.pop();
-                      } else if (state.status == StateStatus.failure) {
-                        SnackBarHelper.I.showError(
-                          context: context,
-                          message: state.error.toString(),
-                        );
-                        context.pop();
-                      }
-                    },
-                  );
-
-                  bloc.close().ignore();
-                },
+                sourceFolderId: folderId,
               );
             },
-            isDangerous: true,
           ),
-        ],
-      );
+        ModalBottomSheetActions.divider,
+        ModalBottomSheetActions.delete(context).copyWith(
+          onTap: (innerContext) => _onDelete(
+            context: context,
+            innerContext: innerContext,
+            travelItem: travelItem,
+          ),
+          isDangerous: true,
+        ),
+      ],
+    );
+  }
 
   static Future<void> _show(
     BuildContext context, {

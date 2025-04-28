@@ -76,7 +76,7 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
 
   /// Submits the text widget addition or modification based on the cubit state.
   Future<void> submit() async {
-    logger.v(
+    logger.d(
       'Submitting text widget in $travelDocumentId and folderId=$folderId...',
     );
     emit(

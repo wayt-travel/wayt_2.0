@@ -18,6 +18,7 @@ sealed class PlanPageMoreMbs {
       context: context,
       // FIXME: l10n
       title: 'Are you sure?',
+      confirmActionColor: context.col.error,
       onConfirm: () async {
         final cubit = DeletePlanCubit(
           travelDocumentRepository: GetIt.I.get(),

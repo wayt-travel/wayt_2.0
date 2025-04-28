@@ -38,7 +38,7 @@ final class PhotoWidgetModel extends WidgetModel {
     required int? byteCount,
     required (double, double)? coordinates,
     required String mediaExtension,
-    required ({int width, int height}) size,
+    required IntSize size,
     Map<String, dynamic>? metadata,
     String? folderId,
     DateTime? createdAt,
@@ -54,7 +54,7 @@ final class PhotoWidgetModel extends WidgetModel {
             byteCount: byteCount,
             mediaType: MediaFeatureType.image,
             metadata: {
-              'size': size,
+              'size': size.toJson(),
               ...?metadata,
             },
             index: 0,
@@ -113,8 +113,9 @@ final class PhotoWidgetModel extends WidgetModel {
       features.whereType<GeoWidgetFeatureModel>().firstOrNull;
 
   /// The size of the photo.
-  ({int width, int height})? get size =>
-      _mediaFeature.metadata?['size'] as ({int width, int height})?;
+  IntSize? get size => IntSize.maybeFromJson(
+        _mediaFeature.metadata?['size'] as Map<String, dynamic>?,
+      );
 
   @override
   WidgetModel copyWith({

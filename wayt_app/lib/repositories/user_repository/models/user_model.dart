@@ -2,6 +2,7 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 
 import 'models.dart';
 
+/// The model that represents a user in the application.
 class UserModel extends Model implements UserEntity {
   @override
   final String id;
@@ -15,6 +16,7 @@ class UserModel extends Model implements UserEntity {
   @override
   final String lastName;
 
+  /// Creates a new instance of [UserModel].
   const UserModel({
     required this.id,
     required this.email,
@@ -33,6 +35,8 @@ class UserModel extends Model implements UserEntity {
   @override
   List<Object?> get props => [id, email, firstName, lastName];
 
+  /// Creates a new instance of [UserModel] with the same properties as this
+  /// instance replaced by the given properties.
   UserModel copyWith({
     String? id,
     String? email,

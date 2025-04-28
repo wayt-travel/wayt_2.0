@@ -112,7 +112,7 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
   /// already fully loaded in the repository. This parameter is passed to the
   /// orchestrator.
   Future<void> fetch({required bool force}) async {
-    logger.v('Fetching $travelDocumentId');
+    logger.d('Fetching $travelDocumentId');
     emit(TravelDocumentFetchInProgress());
     final either = await fetchTravelDocumentOrchestrator
         .task(

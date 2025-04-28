@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../../../../error/error.dart';
+import '../../../../orchestration/orchestration.dart';
 import '../../../../repositories/repositories.dart';
 
 part 'delete_item_state.dart';
@@ -17,18 +18,27 @@ class DeleteItemCubit extends Cubit<DeleteItemState> with LoggerMixin {
   /// The travel item repository.
   final TravelItemRepository repository;
 
+  /// The travel document local media data source.
+  final TravelDocumentLocalMediaDataSource travelDocumentLocalMediaDataSource;
+
   /// Creates a new instance of [DeleteItemCubit].
   DeleteItemCubit({
     required this.item,
     required this.repository,
+    required this.travelDocumentLocalMediaDataSource,
   }) : super(const DeleteItemState.initial());
 
   /// Runs the delete operation.
   Future<void> delete() async {
-    logger.v('Deleting item $item');
+    logger.d('Deleting item $item');
     emit(state.copyWith(status: StateStatus.progress));
 
-    final either = await repository.deleteItem(item.id).run();
+    final either = await DeleteTravelItemOrchestrator(
+      travelItem: item,
+      travelItemRepository: repository,
+      travelDocumentLocalMediaDataSource: travelDocumentLocalMediaDataSource,
+    ).task().run();
+
     either.match(
       (error) {
         logger.e('Error deleting item $item: $error');

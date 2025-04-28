@@ -16,7 +16,7 @@ class _AuthRepositoryImpl
 
   @override
   Future<void> signIn({required String email, required String password}) async {
-    logger.v('Signing in with email: $email');
+    logger.d('Signing in with email: $email');
     final authUser = await dataSource.signIn(email: email, password: password);
     logger.d('Signed in: $authUser');
     cache.save(authUser);

@@ -106,6 +106,22 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
     String? folderId,
   });
 
+  /// Moves the travel items to a different folder in the travel document or
+  /// to the root of the travel document itself.
+  ///
+  /// The [travelItemsToMove] list must contain the travel items to be moved.
+  /// All the items in the list must belong to the same travel document with
+  /// [travelDocumentId] or the task will fail with an error.
+  ///
+  /// The [destinationFolderId] is the id of the folder where the items will be
+  /// moved. If it is `null`, the items will be moved to the root of the travel
+  /// document.
+  WTaskEither<void> moveTravelItems({
+    required TravelDocumentId travelDocumentId,
+    required List<TravelItemEntity> travelItemsToMove,
+    required String? destinationFolderId,
+  });
+
   /// Adds all [travelItems] into the repository without fetching them from the
   /// data source.
   ///

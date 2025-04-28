@@ -80,7 +80,7 @@ class UpsertFolderCubit extends Cubit<UpsertFolderState> with LoggerMixin {
 
   /// Submits the creation/update of the folder based on the current state.
   Future<void> submit() async {
-    logger.v(
+    logger.d(
       '${!isUpdate ? 'Submitting new folder' : 'Updating folder '
           '$folderToUpdate'} ',
     );
