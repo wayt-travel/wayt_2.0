@@ -1,10 +1,13 @@
 import 'package:flext/flext.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wayt_app/error/error.dart';
 import 'package:wayt_app/repositories/repositories.dart';
+import 'package:wayt_app/util/util.dart';
 
 class MockWidgetFolderDataSource extends Mock
     implements WidgetFolderDataSource {}
@@ -52,6 +55,13 @@ void main() {
   final travelDocumentId = TravelDocumentId.plan(const Uuid().v4());
   final travelDocumentId2 = TravelDocumentId.plan(const Uuid().v4());
 
+  setUpAll(() {
+    registerFallbackValue(const <WidgetEntity>[]);
+    registerFallbackValue(const <String, int>{});
+    registerFallbackValue(const Uuid().v4());
+    registerFallbackValue(TravelDocumentId.plan(const Uuid().v4()));
+  });
+
   setUp(() async {
     repository = TravelItemRepositoryImpl(
       travelItemDataSource: MockTravelItemDataSource(),
@@ -67,6 +77,27 @@ void main() {
         ),
       ],
     ).run();
+
+    when(
+      () => repository.widgetDataSource.moveToFolder(
+        destinationFolderId: any(named: 'destinationFolderId'),
+        travelDocumentId: any(named: 'travelDocumentId'),
+        widgetsToMove: any(named: 'widgetsToMove'),
+      ),
+    ).thenAnswer(
+      (args) async => (args.namedArguments[const Symbol('widgetsToMove')]
+              as List<WidgetEntity>)
+          .map(
+            (w) => w.copyWith(
+              folderId: Option.of(
+                args.namedArguments[const Symbol('destinationFolderId')]
+                    as String?,
+              ),
+            ),
+          )
+          .cast<WidgetEntity>()
+          .toList(),
+    );
   });
 
   group('TravelItemRepository.upsertInCacheAndMaps', () {
@@ -636,6 +667,293 @@ void main() {
       expect(item.isFolderWidget, isTrue);
       expect(item.value.asFolderWidget.name, updated.widgetFolder.name);
       expect(item.value.asFolderWidget.color, updated.widgetFolder.color);
+    });
+  });
+
+  group('TravelItemRepositoryImpl.moveTravelItems', () {
+    test('should do nothing if the input list is empty', () async {
+      final result = await repository
+          .moveTravelItems(
+            travelDocumentId: travelDocumentId,
+            travelItemsToMove: [],
+            destinationFolderId: null,
+          )
+          .run();
+      expect(result.isRight(), isTrue);
+      verifyNever(
+        () => repository.widgetDataSource.moveToFolder(
+          destinationFolderId: any(named: 'destinationFolderId'),
+          travelDocumentId: any(named: 'travelDocumentId'),
+          widgetsToMove: any(named: 'widgetsToMove'),
+        ),
+      );
+    });
+
+    test(
+      'should throw if items belong to different travel documents',
+      () async {
+        final widget1 = _buildWidget(
+          travelDocumentId: TravelDocumentId.journal(const Uuid().v4()),
+          order: 0,
+        );
+        final widget2 = _buildWidget(
+          travelDocumentId: TravelDocumentId.plan(const Uuid().v4()),
+          order: 1,
+        );
+        final folder = _buildFolder(
+          travelDocumentId: travelDocumentId,
+          order: 2,
+        );
+        await repository.addAll(
+          travelItems: [
+            TravelItemEntityWrapper.widget(widget1),
+            TravelItemEntityWrapper.widget(widget2),
+            TravelItemEntityWrapper.folder(folder, []),
+          ],
+        ).run();
+        final result = await repository
+            .moveTravelItems(
+              travelDocumentId: travelDocumentId,
+              travelItemsToMove: [widget1, widget2],
+              destinationFolderId: folder.id,
+            )
+            .run();
+        // Result is a left (error)
+        expect(result.isLeft(), isTrue);
+        // The error is a bad state because caused by an Error (ArgumentError)
+        expect(
+          result.getLeftOrThrow(),
+          equals($errors.core.badState),
+        );
+        // The folder should be empty as no items were moved inside it
+        expect(
+          repository
+              .getWrappedOrThrow(folder.id)
+              .asFolderWidgetWrapper
+              .children,
+          hasLength(0),
+        );
+        // The items should not be moved
+        verifyNever(
+          () => repository.widgetDataSource.moveToFolder(
+            destinationFolderId: any(named: 'destinationFolderId'),
+            travelDocumentId: any(named: 'travelDocumentId'),
+            widgetsToMove: any(named: 'widgetsToMove'),
+          ),
+        );
+      },
+    );
+
+    test('should move items from the travel document to a folder', () async {
+      final widget1 = _buildWidget(
+        travelDocumentId: travelDocumentId,
+        order: 0,
+      );
+      final widget2 = _buildWidget(
+        travelDocumentId: travelDocumentId,
+        order: 1,
+      );
+      final folder = _buildFolder(
+        travelDocumentId: travelDocumentId,
+        order: 0,
+      );
+      await repository.addAll(
+        travelItems: [
+          TravelItemEntityWrapper.widget(widget1),
+          TravelItemEntityWrapper.widget(widget2),
+          TravelItemEntityWrapper.folder(folder, []),
+        ],
+      ).run();
+      final result = await repository
+          .moveTravelItems(
+            travelDocumentId: travelDocumentId,
+            travelItemsToMove: [widget1, widget2],
+            destinationFolderId: folder.id,
+          )
+          .run();
+      expect(result.isRight(), isTrue);
+      expect(
+        setEquals(
+          repository
+              .getWrappedOrThrow(folder.id)
+              .asFolderWidgetWrapper
+              .children
+              .map((e) => e.id)
+              .toSet(),
+          {widget1.id, widget2.id},
+        ),
+        isTrue,
+      );
+      verify(
+        () => repository.widgetDataSource.moveToFolder(
+          destinationFolderId: folder.id,
+          travelDocumentId: travelDocumentId,
+          widgetsToMove: [widget1, widget2],
+        ),
+      ).called(1);
+    });
+
+    test(
+      'should move items from a folder to another folder in the same travel '
+      'document',
+      () async {
+        final folder1 = _buildFolder(
+          travelDocumentId: travelDocumentId,
+          order: 0,
+          id: const Uuid().v4(),
+        );
+        final folder2 = _buildFolder(
+          travelDocumentId: travelDocumentId,
+          order: 1,
+          id: const Uuid().v4(),
+        );
+        final widget1 = _buildWidget(
+          travelDocumentId: travelDocumentId,
+          order: 0,
+          folderId: folder1.id,
+        );
+        final widget2 = _buildWidget(
+          travelDocumentId: travelDocumentId,
+          order: 1,
+          folderId: folder1.id,
+        );
+        await repository.addAll(
+          travelItems: [
+            TravelItemEntityWrapper.widget(widget1),
+            TravelItemEntityWrapper.widget(widget2),
+            TravelItemEntityWrapper.folder(folder1, [widget1, widget2]),
+            TravelItemEntityWrapper.folder(folder2, []),
+          ],
+        ).run();
+        final result = await repository
+            .moveTravelItems(
+              travelDocumentId: travelDocumentId,
+              travelItemsToMove: [widget1, widget2],
+              destinationFolderId: folder2.id,
+            )
+            .run();
+        expect(result.isRight(), isTrue);
+        expect(
+          setEquals(
+            repository
+                .getWrappedOrThrow(folder2.id)
+                .asFolderWidgetWrapper
+                .children
+                .map((e) => e.id)
+                .toSet(),
+            {widget1.id, widget2.id},
+          ),
+          isTrue,
+        );
+        expect(
+          repository
+              .getWrappedOrThrow(folder1.id)
+              .asFolderWidgetWrapper
+              .children,
+          isEmpty,
+        );
+        verify(
+          () => repository.widgetDataSource.moveToFolder(
+            destinationFolderId: folder2.id,
+            travelDocumentId: travelDocumentId,
+            widgetsToMove: [widget1, widget2],
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'should move items to the travel document root (i.e., null destination '
+      'folder)',
+      () async {
+        final folder = _buildFolder(
+          travelDocumentId: travelDocumentId,
+          order: 0,
+        );
+        final widget1 = _buildWidget(
+          travelDocumentId: travelDocumentId,
+          order: 0,
+          folderId: folder.id,
+        );
+        final widget2 = _buildWidget(
+          travelDocumentId: travelDocumentId,
+          order: 1,
+          folderId: folder.id,
+        );
+        await repository.addAll(
+          travelItems: [
+            TravelItemEntityWrapper.widget(widget1),
+            TravelItemEntityWrapper.widget(widget2),
+            TravelItemEntityWrapper.folder(folder, [widget1, widget2]),
+          ],
+        ).run();
+        final result = await repository
+            .moveTravelItems(
+              travelDocumentId: travelDocumentId,
+              travelItemsToMove: [widget1, widget2],
+              destinationFolderId: null,
+            )
+            .run();
+        expect(result.isRight(), isTrue);
+        expect(repository.getOrThrow(widget1.id).asWidget.folderId, isNull);
+        expect(repository.getOrThrow(widget2.id).asWidget.folderId, isNull);
+        expect(
+          repository
+              .getWrappedOrThrow(folder.id)
+              .asFolderWidgetWrapper
+              .children,
+          isEmpty,
+        );
+        verify(
+          () => repository.widgetDataSource.moveToFolder(
+            destinationFolderId: null,
+            travelDocumentId: travelDocumentId,
+            widgetsToMove: [widget1, widget2],
+          ),
+        ).called(1);
+      },
+    );
+
+    test('should ignore folders (folders cannot be moved around)', () async {
+      final widget = _buildWidget(
+        travelDocumentId: travelDocumentId,
+        order: 0,
+      );
+      final folder = _buildFolder(
+        travelDocumentId: travelDocumentId,
+        order: 1,
+      );
+      final dstFolder = _buildFolder(
+        travelDocumentId: travelDocumentId,
+        order: 2,
+      );
+      await repository.addAll(
+        travelItems: [
+          TravelItemEntityWrapper.widget(widget),
+          TravelItemEntityWrapper.folder(folder, []),
+          TravelItemEntityWrapper.folder(dstFolder, []),
+        ],
+      ).run();
+      final result = await repository
+          .moveTravelItems(
+            travelDocumentId: travelDocumentId,
+            travelItemsToMove: [widget, folder],
+            destinationFolderId: dstFolder.id,
+          )
+          .run();
+      expect(result.isRight(), isTrue);
+      expect(
+        setEquals(
+          repository
+              .getWrappedOrThrow(dstFolder.id)
+              .asFolderWidgetWrapper
+              .children
+              .map((e) => e.id)
+              .toSet(),
+          {widget.id},
+        ),
+        isTrue,
+      );
     });
   });
 }

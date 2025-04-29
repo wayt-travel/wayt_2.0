@@ -1,30 +1,29 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:uuid/uuid.dart';
-import 'package:wayt_app/core/core.dart';
 import 'package:wayt_app/error/error.dart';
 import 'package:wayt_app/orchestration/orchestration.dart';
 import 'package:wayt_app/repositories/repositories.dart';
-import 'package:wayt_app/util/util.dart';
 
 import '../test_helpers/test_helpers.dart';
-
-final class MockTravelItemRepository extends Mock
-    implements TravelItemRepository {}
-
-final class MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late TravelDocumentLocalMediaDataSource travelDocumentLocalMediaDataSource;
   late TravelItemRepository travelItemRepository;
   late AuthRepository authRepository;
-  late AppContext appContext;
+  late TravelDocumentId travelDocumentId;
+  late DummyTestData dummyTestData;
 
-  setUpAll(() async {
-    mockPathProvider();
-    appContext = MockAppContext();
+  setUpAll(() {
+    travelDocumentId = TravelDocumentId.plan(const Uuid().v4());
+    dummyTestData = DummyTestData(travelDocumentId);
+    registerFallbackValue(const Uuid().v4());
+    registerFallbackValue(travelDocumentId);
+    registerFallbackValue(dummyTestData.buildFolderWidget());
+    registerFallbackValue(dummyTestData.buildTextWidget());
+    registerFallbackValue(dummyTestData.buildPhotoWidget());
   });
 
   setUp(() {
@@ -40,47 +39,13 @@ void main() {
         ),
       ),
     );
-    travelDocumentLocalMediaDataSource = TravelDocumentLocalMediaDataSource(
-      appContext: appContext,
-      authRepository: MockAuthRepository(),
-    );
+    travelDocumentLocalMediaDataSource =
+        MockTravelDocumentLocalMediaDataSource();
   });
-
-  WidgetEntity buildTextWidget() => TextWidgetModel(
-        id: const Uuid().v4(),
-        text: 'Dummy',
-        order: 0,
-        textStyle: const TypographyFeatureStyle.body(),
-        travelDocumentId: TravelDocumentId.plan(const Uuid().v4()),
-      );
-
-  WidgetFolderEntity buildFolderWidget() => WidgetFolderModel(
-        id: const Uuid().v4(),
-        name: 'Dummy',
-        order: 0,
-        travelDocumentId: TravelDocumentId.plan(const Uuid().v4()),
-        color: FeatureColor.amber,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        icon: WidgetFolderIcon.fromIconData(Icons.folder),
-      );
-
-  WidgetEntity buildPhotoWidget() => PhotoWidgetModel(
-        id: const Uuid().v4(),
-        order: 0,
-        travelDocumentId: TravelDocumentId.plan(const Uuid().v4()),
-        mediaExtension: 'jpg',
-        folderId: const Uuid().v4(),
-        byteCount: 1000,
-        mediaId: const Uuid().v4(),
-        size: const IntSize.square(256),
-        url: null,
-        coordinates: null,
-      );
 
   group('DeleteTravelItemOrchestrator', () {
     test('should delete a widget if it has no media', () async {
-      final widget = buildTextWidget();
+      final widget = dummyTestData.buildTextWidget();
       when(() => travelItemRepository.deleteItem(widget.id))
           .thenAnswer((_) => WTaskEither.right(null));
       final orchestrator = DeleteTravelItemOrchestrator(
@@ -93,8 +58,10 @@ void main() {
       verify(() => travelItemRepository.deleteItem(widget.id)).called(1);
     });
 
+    // The media does not exist but the deletion should never raise an error,
+    // so it will look like the media was deleted.
     test('should delete a widget and its media', () async {
-      final widget = buildPhotoWidget();
+      final widget = dummyTestData.buildPhotoWidget();
       when(() => travelItemRepository.deleteItem(widget.id))
           .thenAnswer((_) => WTaskEither.right(null));
       final orchestrator = DeleteTravelItemOrchestrator(
@@ -110,16 +77,73 @@ void main() {
     test(
       'should delete a folder and all the media of widgets contained in '
       'the folder',
-      () async {},
+      () async {
+        final folder = dummyTestData.buildFolderWidget();
+        final textWidget = dummyTestData.buildTextWidget(folderId: folder.id);
+        final photoWidget = dummyTestData.buildPhotoWidget(folderId: folder.id);
+        when(
+          () => travelItemRepository.deleteItem(
+            any(that: anyOf(folder.id, textWidget.id, photoWidget.id)),
+          ),
+        ).thenAnswer((_) => WTaskEither.right(null));
+        final orchestrator = DeleteTravelItemOrchestrator(
+          travelItemRepository: travelItemRepository,
+          travelDocumentLocalMediaDataSource:
+              travelDocumentLocalMediaDataSource,
+          travelItem: folder,
+        );
+        final result = await orchestrator.task().run();
+        expect(result.isRight(), isTrue);
+        verify(() => travelItemRepository.deleteItem(folder.id)).called(1);
+        verifyNever(() => travelItemRepository.deleteItem(textWidget.id));
+        verifyNever(() => travelItemRepository.deleteItem(photoWidget.id));
+        verify(
+          () => travelDocumentLocalMediaDataSource.buildMediaPath(
+            travelDocumentId: travelDocumentId,
+            folderId: folder.id,
+            suffix: any(named: 'suffix'),
+            userId: any(named: 'userId'),
+          ),
+        ).called(1);
+      },
     );
-    test(
-      'should delete the item even if the media deletion fails',
-      () async {},
-    );
+
+    // Untestable
     test(
       'should do a best effort to delete all media of the widget even if '
       'some failed',
       () async {},
+      skip: true,
+    );
+
+    test(
+      'should not delete any media and return an error if the item delete '
+      'fails in the repository',
+      () async {
+        final widget = dummyTestData.buildPhotoWidget();
+        when(() => travelItemRepository.deleteItem(widget.id))
+            .thenAnswer((_) => WTaskEither.left($errors.core.badState));
+        final orchestrator = DeleteTravelItemOrchestrator(
+          travelItemRepository: travelItemRepository,
+          travelDocumentLocalMediaDataSource:
+              travelDocumentLocalMediaDataSource,
+          travelItem: widget,
+        );
+        final result = await orchestrator.task().run();
+        expect(result.isLeft(), isTrue);
+        expect(
+          result.getLeft().getOrElse(() => throw Exception()),
+          $errors.core.badState,
+        );
+        verifyNever(
+          () => travelDocumentLocalMediaDataSource.getMediaPath(
+            travelDocumentId: travelDocumentId,
+            folderId: widget.folderId,
+            mediaWidgetFeatureId: widget.id,
+            mediaExtension: widget.mediaExtension,
+          ),
+        );
+      },
     );
   });
 }

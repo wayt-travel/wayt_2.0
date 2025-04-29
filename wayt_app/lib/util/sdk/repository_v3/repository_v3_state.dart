@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'repository_v3.dart';
+import '../../util.dart';
 
 /// Parent class for the states of [RepositoryV3] implementations.
 abstract class RepositoryV3State<Entity> extends Equatable {
@@ -12,6 +12,7 @@ abstract class RepositoryV3State<Entity> extends Equatable {
 }
 
 /// State for when a collection of items is fetched successfully.
+@SdkCandidate()
 class RepoV3CollectionFetchSuccess<Entity> extends RepositoryV3State<Entity> {
   /// Creates a new instance of [RepoV3CollectionFetchSuccess].
   const RepoV3CollectionFetchSuccess(this.items);

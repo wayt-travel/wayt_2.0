@@ -106,6 +106,17 @@ final class PhotoWidgetModel extends WidgetModel {
   /// Returns null if the photo is not geotagged.
   (double, double)? get coordinates => _geoFeature?.coordinates;
 
+  /// The type of the media.
+  MediaFeatureType get mediaType => _mediaFeature.mediaType;
+
+  /// {@macro media_widget_feature_extension}
+  String get mediaExtension => _mediaFeature.mediaExtension;
+
+  /// The ID of the media.
+  ///
+  /// This is the ID of the media file, not the widget.
+  String get mediaId => _mediaFeature.id;
+
   MediaWidgetFeatureModel get _mediaFeature =>
       features.whereType<MediaWidgetFeatureModel>().first;
 

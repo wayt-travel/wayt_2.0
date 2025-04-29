@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
+import '../../util.dart';
+
 export 'repository_v3_state.dart';
 
 part '_bloc.dart';
@@ -38,6 +40,7 @@ part '_bloc.dart';
 ///
 /// Any actor can subscribe to the repository events using the [listen] method.
 /// {@endtemplate}
+@SdkCandidate()
 abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
   /// Internal cache storing the items of the repository.
   @protected

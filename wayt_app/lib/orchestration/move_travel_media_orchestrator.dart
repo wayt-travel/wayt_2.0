@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flext/flext.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
@@ -54,7 +55,7 @@ final class MoveTravelMediaOrchestrator with LoggerMixin {
 
   /// Gets the task to move the travel media.
   WTaskEither<void> task() {
-    final mediaList = _getMediaList();
+    final mediaList = getMediaList();
 
     // Copy the travel item media to the new location
     final copyFilesTask = WTaskEither.tryCatch(
@@ -118,7 +119,9 @@ final class MoveTravelMediaOrchestrator with LoggerMixin {
     return copyFilesTask.flatMap((_) => moveTask).flatMap((_) => deleteTask);
   }
 
-  _MediaList _getMediaList() =>
+  @visibleForTesting
+  // ignore: public_member_api_docs, library_private_types_in_public_api
+  _MediaList getMediaList() =>
       travelItemsToMove.whereType<WidgetEntity>().flatMap((widget) {
         final features = widget.features;
         final mediaList =

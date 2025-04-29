@@ -3,7 +3,10 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 
+import '../util.dart';
+
 /// A class that represents a size with integer width and height.
+@SdkCandidate()
 class IntSize with EquatableMixin {
   /// The width of the size.
   final int width;
