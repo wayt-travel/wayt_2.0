@@ -96,6 +96,7 @@ class UpsertPlanModal extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
+          $insets.xs.asVSpan.asSliver,
           BlocSelector<UpsertPlanCubit, UpsertPlanState, String?>(
             selector: (state) => state.name,
             builder: (context, name) => SliverPadding(
@@ -107,7 +108,8 @@ class UpsertPlanModal extends StatelessWidget {
                 validator: TravelDocumentEntity.getNameValidator(context)
                     .formFieldValidator,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: const InputDecoration(
+                decoration: WInputDecoration(
+                  context,
                   // FIXME: l10n
                   labelText: 'Name',
                 ),

@@ -118,6 +118,7 @@ class _FormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
+        $insets.xs.asVSpan.asSliver,
         BlocSelector<UpsertFolderCubit, UpsertFolderState, String?>(
           selector: (state) => state.name,
           builder: (context, name) => SliverPadding(
@@ -129,7 +130,8 @@ class _FormBody extends StatelessWidget {
               validator: WidgetFolderEntity.getNameValidator(context)
                   .formFieldValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: const InputDecoration(
+              decoration: WInputDecoration(
+                context,
                 // FIXME: l10n
                 labelText: 'Name',
               ),

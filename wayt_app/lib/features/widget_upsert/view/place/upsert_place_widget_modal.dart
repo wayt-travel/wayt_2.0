@@ -159,10 +159,10 @@ class _FormBody extends StatelessWidget {
                   ? cubit.updateLat(doubleValue)
                   : cubit.updateLng(doubleValue);
             },
-            decoration: InputDecoration(
+            decoration: WInputDecoration(
+              context,
               // FIXME: l10n
               labelText: isLat ? 'Latitude' : 'Longitude',
-              errorMaxLines: 4,
             ),
           );
         },
@@ -174,6 +174,7 @@ class _FormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
+        $insets.xs.asVSpan.asSliver,
         BlocSelector<UpsertPlaceWidgetCubit, UpsertPlaceWidgetState, String?>(
           selector: (state) => state.name,
           builder: (context, name) {
@@ -186,10 +187,10 @@ class _FormBody extends StatelessWidget {
                   .formFieldValidator,
               onChanged: (value) =>
                   context.read<UpsertPlaceWidgetCubit>().updateName(value),
-              decoration: const InputDecoration(
+              decoration: WInputDecoration(
+                context,
                 // FIXME: l10n
                 labelText: 'Name',
-                errorMaxLines: 10,
               ),
             ).asSliver;
           },
@@ -211,7 +212,8 @@ class _FormBody extends StatelessWidget {
               initialValue: address,
               onChanged: (value) =>
                   context.read<UpsertPlaceWidgetCubit>().updateAddress(value),
-              decoration: const InputDecoration(
+              decoration: WInputDecoration(
+                context,
                 // FIXME: l10n
                 labelText: 'Address',
               ),

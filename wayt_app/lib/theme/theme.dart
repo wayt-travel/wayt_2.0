@@ -3,6 +3,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
 export 'random_color.dart';
+export 'w_input_decoration.dart';
 
 const kFontFamilySans = 'Noto Sans';
 const kFontFamilySerif = 'Noto Serif';
