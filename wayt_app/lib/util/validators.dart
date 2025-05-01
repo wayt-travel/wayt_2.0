@@ -6,7 +6,14 @@ export 'validator_extension.dart';
 
 /// Common validators with localization.
 final class Validators {
-  static const _maxTextShortLength = 144;
+  /// The maximum length for an email address.
+  static const emailMaxLength = 254;
+
+  /// The maximum length for a full name.
+  static const fullNameMaxLength = 100;
+
+  /// The maximum length for a short text.
+  static const maxTextShortLength = 144;
 
   /// The context to use for localization.
   final BuildContext? context;
@@ -37,9 +44,9 @@ final class Validators {
   /// Returns a validator that requires the value to be a short string allowing
   /// null values.
   Validator textShortOptional() => l.string().max(
-        _maxTextShortLength,
+        maxTextShortLength,
         // FIXME: l10n
-        message: 'It should be at most $_maxTextShortLength characters long',
+        message: 'It should be at most $maxTextShortLength characters long',
       );
 
   /// Returns a validator that requires the value to be a non-empty string
@@ -50,20 +57,19 @@ final class Validators {
       .string()
       .min(1);
 
-  /// Returns a validator to validates a tuple of coordinates `(double,
-  /// double)`. The first value is the latitude and the second value is the
-  /// longitude. The value must not be null.
-  Validator coordinates() => l
-          // FIXME: l10n
-          .required(message: 'It cannot be empty')
-          .custom(
-        (coords) {
-          if (coords is! (double, double)) return false;
-          final (lat, lon) = coords;
-          return l.double().min(-90).max(90).validateValue(lat).isValid &&
-              l.double().min(-180).max(180).validateValue(lon).isValid;
-        },
-        // FIXME: l10n
-        message: 'Invalid coordinates',
-      );
+  /// Returns a validator to validates a double value for latitude coordinates.
+  Validator latitude() => l
+      // FIXME: l10n
+      .required(message: 'It cannot be empty')
+      .double()
+      .min(-90)
+      .max(90);
+
+  /// Returns a validator to validates a double value for longitude coordinates.
+  Validator longitude() => l
+      // FIXME: l10n
+      .required(message: 'It cannot be empty')
+      .double()
+      .min(-180)
+      .max(180);
 }

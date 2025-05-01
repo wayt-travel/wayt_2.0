@@ -1,3 +1,4 @@
-export 'add_widget_mbs.dart';
-export 'new_item_button.dart';
+export 'gallery/gallery.dart';
+export 'modal/modal.dart';
+export 'place/place.dart';
 export 'text/text.dart';

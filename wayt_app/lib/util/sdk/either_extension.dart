@@ -24,3 +24,14 @@ extension EitherExtension<L, R> on Either<L, R> {
         (right) => right,
       );
 }
+
+/// Extension methods for [Option].
+extension OptionExtension<T> on Option<T> {
+  /// Returns the value of the [Option] if it is a [Some], or returns
+  /// [other] if it is a [None].
+  T getOr(T other) => getOrElse(() => other);
+
+  /// Returns the value of the [Option] if it is a [Some], or returns
+  /// `null` if it is a [None].
+  T? getOrNull() => map((t) => t as T?).getOrElse(() => null);
+}

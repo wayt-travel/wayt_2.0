@@ -76,7 +76,7 @@ class UpsertPlanModal extends StatelessWidget {
           } else if (state.status == StateStatus.failure) {
             SnackBarHelper.I.showError(
               context: context,
-              message: state.error.toString(),
+              message: state.error!.userIntlMessage(context),
             );
             context.pop();
           }

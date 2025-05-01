@@ -4,8 +4,8 @@ import 'package:luthor/luthor.dart';
 /// Extension methods for [Validator].
 extension ValidatorExtension on Validator {
   /// Returns a function to be used as form field validator.
-  String? Function(String? value)? get formFieldValidator =>
-      (String? value) => validateValue(value)
+  String? Function(dynamic value) get formFieldValidator =>
+      (dynamic value) => validateValue(value)
           .let((result) => result.isValid ? null : result.asError.errors.first);
 }
 

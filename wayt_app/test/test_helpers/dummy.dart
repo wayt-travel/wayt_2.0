@@ -55,6 +55,6 @@ class DummyTestData {
         mediaId: const Uuid().v4(),
         size: const IntSize.square(256),
         url: null,
-        coordinates: null,
+        latLng: null,
       );
 }

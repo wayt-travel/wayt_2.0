@@ -8,7 +8,7 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
-import '../../widget_upsert/view/add_widget_mbs.dart';
+import '../../widget_upsert/view/modal/add_widget_mbs.dart';
 import '../plan.dart';
 
 /// Page for displaying a plan.

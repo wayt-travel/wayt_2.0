@@ -80,7 +80,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
       order: 0,
       travelDocumentId: travelDocumentId,
       byteCount: processedImage.byteCount,
-      coordinates: processedImage.latLng,
+      latLng: processedImage.latLng,
       size: processedImage.size,
       folderId: folderId,
       mediaExtension: extension(processedImage.file.path),

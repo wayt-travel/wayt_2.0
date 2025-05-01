@@ -59,7 +59,7 @@ class FolderModal extends StatelessWidget {
       SnackBarHelper.I.showWarning(
         context: context,
         // FIXME: l10n
-        message: 'Please fill in all required fields',
+        message: 'Please check the input fields',
       );
     } else {
       await context.navRoot
@@ -74,7 +74,7 @@ class FolderModal extends StatelessWidget {
           } else if (state.status == StateStatus.failure) {
             SnackBarHelper.I.showError(
               context: context,
-              message: state.error.toString(),
+              message: state.error!.userIntlMessage(context),
             );
             context.pop();
           }
