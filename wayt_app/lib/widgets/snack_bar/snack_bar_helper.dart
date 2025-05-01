@@ -1,6 +1,7 @@
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
+import '../../error/error.dart';
 import '../../util/sdk_candidate.dart';
 
 enum _MessageType {
@@ -70,6 +71,18 @@ class SnackBarHelper {
         context,
         message: message,
         type: _MessageType.error,
+        action: action,
+      );
+
+  /// Shows an error message from a [WError].
+  void showFromWError({
+    required BuildContext context,
+    required WError error,
+    SnackBarAction? action,
+  }) =>
+      showError(
+        context: context,
+        message: error.userIntlMessage(context),
         action: action,
       );
 

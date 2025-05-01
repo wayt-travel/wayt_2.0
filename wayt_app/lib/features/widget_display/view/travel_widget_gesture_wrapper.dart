@@ -20,12 +20,7 @@ typedef TravelWidgetGestureOverride = void Function(
   TravelWidgetShowContextMenu showContextMenu,
 );
 
-/// A widget that wraps a travel item and provides context menu on tap.
-///
-/// When the widget is tapped, a context menu is shown at the tap position and
-/// the widget is highlighted with a semi-transparent color.
-///
-/// This widget is common to all [TravelItemEntity]s.
+/// A widget that wraps a travel item and provides gesture handling.
 class TravelWidgetGestureWrapper extends StatefulWidget {
   /// The index of the travel item in the list of items.
   final int index;
@@ -78,26 +73,20 @@ class _TravelWidgetGestureWrapperState
       context: context,
       position: globalPosition ?? _globalPosition,
       travelItem: widget.travelItem,
-      folderId: widget.travelItem.isWidget
-          ? widget.travelItem.asWidget.folderId
-          : null,
       index: widget.index,
     ).then((_) => setState(() => _isHovering = false));
   }
 
-  Widget _addGestures(BuildContext context) {
+  Widget _addGestures(BuildContext context, {required Widget child}) {
     final bothNull = Option.Do(($) {
       final t = $(widget.onTapOverride);
       final l = $(widget.onLongPressOverride);
       return t == null && l == null;
     });
     if (bothNull.getOrElse(() => false)) {
-      return widget.child;
+      return child;
     }
     return InkWell(
-      onTapDown: (details) {
-        _globalPosition = details.globalPosition;
-      },
       onLongPress: widget.onLongPressOverride.match(
         () => () => _gestureHandler(context),
         (f) => f == null ? null : () => f(_globalPosition, _gestureHandler),
@@ -108,28 +97,34 @@ class _TravelWidgetGestureWrapperState
             ? null
             : (details) => f(details.globalPosition, _gestureHandler),
       ),
-      child: widget.child,
+      child: child,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        widget.child,
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: ColoredBox(
-              color: _isHovering
-                  ? context.col.primary.withValues(alpha: 0.3)
-                  : Colors.transparent,
-              child: _addGestures(context),
+    return GestureDetector(
+      onTapDown: (details) => _globalPosition = details.globalPosition,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          widget.child,
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: ColoredBox(
+                color: _isHovering
+                    ? context.col.primary.withValues(alpha: 0.3)
+                    : Colors.transparent,
+                child: _addGestures(
+                  context,
+                  child: const SizedBox.expand(),
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

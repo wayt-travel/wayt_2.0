@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
+import '../../util.dart';
+
 export 'repository_v3_state.dart';
 
 part '_bloc.dart';
@@ -19,21 +21,26 @@ part '_bloc.dart';
 /// their [Key] using the [get], [keys], [values], [items] and [getOrThrow]
 /// methods.
 ///
-/// The repository is event-driven, meaning it accepts events of type [Event]
-/// added via [add] (and similar) methods, processes them and responds emitting
-/// states of type [State].
+/// The repository allows to execute tasks that can be either sequential or
+/// concurrent. The tasks are executed using the [queueSequential] and
+/// [queueConcurrent] methods. With the former, the tasks are executed in the
+/// order they are added to the queue and one at a time. With the latter, the
+/// tasks are executed concurrently and the order is not guaranteed.
+/// The two methods use different queues, meaning that if you add a task
+/// using [queueConcurrent] while another task is being processed using
+/// [queueSequential], they will be executed in parallel.
 ///
-/// Upon instantiation, you need to register the event handlers using the [on]
-/// method, just like you would do with a [Bloc].
+/// Usually it is recommended to use [queueSequential] method to ensure that
+/// the tasks are processed in the order they are added and one at a time,
+/// making the repository thread-safe.
 ///
 /// Internally it uses a [Bloc] to handle events and states. The events are
 /// processed sequentially or concurrently depending on the method used to add
-/// them to the repository. Usually it is recommended to use [addSequential]
-/// method to ensure that the events are processed in the order they are added
-/// and one at a time, making the repository thread-safe.
+/// them to the repository.
 ///
 /// Any actor can subscribe to the repository events using the [listen] method.
 /// {@endtemplate}
+@SdkCandidate()
 abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
   /// Internal cache storing the items of the repository.
   @protected
@@ -60,14 +67,8 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
       );
   }
 
-  /// Adds a new [event] to the repository that will be process sequentially
+  /// Queue a new [task] in the repository that will be process sequentially
   /// with a FIFO strategy and waits for the result.
-  ///
-  /// Similar to [addSequential], but returns a [Future] that completes with the
-  /// result of the event handler. This is useful when you want to wait for the
-  /// result of the event before continuing.
-  ///
-  /// See [addSequential] for more details.
   @protected
   TaskEither<Err, Value> queueSequential<Value>(
     RepositoryV3EventTask<Err, Value, State> task,
@@ -93,14 +94,11 @@ abstract class RepositoryV3<Key, Entity, State, Err> with LoggerMixin {
     return TaskEither(() => completer.future);
   }
 
-  /// Adds a new [event] to the repository that will be process concurrently
-  /// and waits for the result.
+  /// Queue a new [task] in the repository that will be process concurrently
+  /// with all the other tasks queued with this method.
   ///
-  /// Similar to [addSequentialAndWait], but allows concurrent execution of
-  /// events.
-  ///
-  /// **It is generally recommended to use [addSequentialAndWait] instead of
-  /// this method.**
+  /// **It is generally recommended to use [queueSequential] instead of this
+  /// method.**
   @protected
   TaskEither<Err, Value> queueConcurrent<Value>(
     RepositoryV3EventTask<Err, Value, State> task,

@@ -368,17 +368,17 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     CreateWidgetFolderInput input,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
-    logger.v('Creating folder with input: $input');
+    logger.d('Creating folder with input: $input');
     final response = await widgetFolderDataSource.create(input);
     final (widgetFolder: created, :updatedOrders) = response;
-    logger.v(
+    logger.d(
       '${created.toShortString()} created and ${updatedOrders.length} other '
       'item orders updated.',
     );
     updateItemOrders(created.travelDocumentId, updatedOrders);
     upsertInCacheAndMaps(created);
     emit(
-      TravelItemRepoItemOrdersUpdateSuccess(
+      TravelItemRepoItemsReorderSuccess(
         travelDocumentId: created.travelDocumentId,
         updatedOrders: updatedOrders,
       ),
@@ -399,10 +399,10 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     int? index,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
-    logger.v('Creating widget with input: ${widget.toStringVerbose()}');
+    logger.d('Creating widget with input: ${widget.toStringVerbose()}');
     final response = await widgetDataSource.create(widget, index: index);
     final (widget: created, :updatedOrders) = response;
-    logger.v(
+    logger.d(
       '${created.toShortString()} created and ${updatedOrders.length} other '
       'item orders updated.',
     );
@@ -411,7 +411,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     emit(
       TravelItemRepoItemsReorderSuccess(
         travelDocumentId: created.travelDocumentId,
-        updatedItemsOrder: updatedOrders,
+        updatedOrders: updatedOrders,
       ),
     );
     emit(
@@ -437,7 +437,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     String id,
     Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   ) async {
-    logger.v('Deleting travel item with id: $id');
+    logger.d('Deleting travel item with id: $id');
     final deletedItemWrapper = getWrappedOrThrow(id);
     final deletedItem = deletedItemWrapper.value;
     if (deletedItem.isFolderWidget) {
@@ -445,7 +445,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     } else {
       await widgetDataSource.delete(id);
     }
-    logger.v(
+    logger.d(
       'Item ${deletedItem.id} deleted. Removing it from cache and maps.',
     );
     removeFromCacheAndMaps(deletedItem);
@@ -459,7 +459,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     required Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
     String? folderId,
   }) async {
-    logger.v(
+    logger.d(
       'Reordering ${reorderedItemIds.length} items in travel document '
       '$travelDocumentId (folderId=$folderId)',
     );
@@ -501,11 +501,11 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       return updatedOrders;
     }
 
-    logger.v('Items reordered. Updating the cache and maps.');
+    logger.d('Items reordered. Updating the cache and maps.');
 
     updateItemOrders(travelDocumentId, updatedOrders);
     emit(
-      TravelItemRepoItemOrdersUpdateSuccess(
+      TravelItemRepoItemsReorderSuccess(
         travelDocumentId: travelDocumentId,
         updatedOrders: updatedOrders,
       ),
@@ -560,7 +560,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     required Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
     bool shouldEmit = true,
   }) {
-    logger.v('Adding ${travelItems.length} items to cache and maps');
+    logger.d('Adding ${travelItems.length} items to cache and maps');
     // We need to insert folders before widgets because when inserting a widget
     // that is contained in a folder it is required that the folder is already
     // in the cache and maps.
@@ -627,7 +627,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     required UpdateWidgetFolderInput input,
     required Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
   }) async {
-    logger.v('Updating folder with input: $input');
+    logger.d('Updating folder with input: $input');
     final previousItemWrapper = getWrappedOrThrow(id).asFolderWidgetWrapper;
     final response = await widgetFolderDataSource.update(
       id,
@@ -635,7 +635,7 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       input: input,
     );
     final (widgetFolder: updated, updatedOrders: _) = response;
-    logger.v('${updated.toShortString()} updated');
+    logger.d('${updated.toShortString()} updated');
     upsertInCacheAndMaps(updated);
     emit(
       TravelItemRepoItemUpdateSuccess(
@@ -723,4 +723,54 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
           taskEitherOnError(logger),
         ),
       );
+
+  @override
+  WTaskEither<void> moveTravelItems({
+    required TravelDocumentId travelDocumentId,
+    required List<TravelItemEntity> travelItemsToMove,
+    required String? destinationFolderId,
+  }) {
+    return queueSequential(
+      (emit) => TaskEither.tryCatch(
+        () async {
+          logger.d(
+            'Moving ${travelItemsToMove.length} items to folder '
+            '$destinationFolderId in travel document $travelDocumentId',
+          );
+          if (travelItemsToMove.isEmpty) {
+            logger.i('No items to move.');
+            return;
+          }
+          final allItemsBelongsToTravelDocument = travelItemsToMove.fold(
+            true,
+            (acc, item) => acc && item.travelDocumentId == travelDocumentId,
+          );
+          if (!allItemsBelongsToTravelDocument) {
+            throw ArgumentError.value(
+              travelItemsToMove,
+              'travelItemsToMove',
+              'All items must belong to the same travel document '
+                  '$travelDocumentId.',
+            );
+          }
+          final movedItems = await widgetDataSource.moveToFolder(
+            travelDocumentId: travelDocumentId,
+            widgetsToMove: travelItemsToMove.whereType<WidgetEntity>().toList(),
+            destinationFolderId: destinationFolderId,
+          );
+          for (final updated in movedItems) {
+            final previous = cache.getOrThrow(updated.id);
+            removeFromCacheAndMaps(previous);
+            upsertInCacheAndMaps(updated);
+          }
+          emit(
+            TravelItemRepoItemCollectionFetchSuccess(
+              getAllOf(travelDocumentId),
+            ),
+          );
+        },
+        taskEitherOnError(logger),
+      ),
+    );
+  }
 }

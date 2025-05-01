@@ -1,7 +1,6 @@
 import 'package:pub_semver/pub_semver.dart';
 
 import '../../widget_feature.dart';
-import 'media_feature_type.dart';
 
 /// {@template media_widget_feature}
 /// A media feature.
@@ -36,9 +35,11 @@ abstract interface class MediaWidgetFeatureEntity
   /// information about the media.
   Map<String, dynamic>? get metadata;
 
+  /// {@template media_widget_feature_extension}
   /// The extension of the media, such as `.jpg`, `.png`.
   ///
   /// **It includes the dot.**
+  /// {@endtemplate}
   String get mediaExtension;
 }
 

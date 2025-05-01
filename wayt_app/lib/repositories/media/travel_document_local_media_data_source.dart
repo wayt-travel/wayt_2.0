@@ -107,7 +107,7 @@ class TravelDocumentLocalMediaDataSource with LoggerMixin {
           await file.parent.create(recursive: true);
           return file.writeAsBytes(bytes);
         },
-        taskEitherOnError(logger, error: $errors.system.io),
+        taskEitherOnError(logger, fallbackError: $errors.system.io),
       );
 
   /// Copies the given [file] into the specified [travelDocumentId].
@@ -132,6 +132,6 @@ class TravelDocumentLocalMediaDataSource with LoggerMixin {
           await newFile.parent.create(recursive: true);
           return file.copy(newFile.path);
         },
-        taskEitherOnError(logger, error: $errors.system.io),
+        taskEitherOnError(logger, fallbackError: $errors.system.io),
       );
 }

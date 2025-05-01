@@ -1,6 +1,10 @@
 import '../../repositories.dart';
 
+/// {@template widget_folder_model}
 /// Model implementation for a folder of widgets in a travel plan or journal.
+///
+/// The folder can be customized with a [name], [icon], and [color].
+/// {@endtemplate}
 class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {
   @override
   final String name;
@@ -14,6 +18,7 @@ class WidgetFolderModel extends TravelItemModel implements WidgetFolderEntity {
   @override
   final int order;
 
+  /// {@macro widget_folder_model}
   const WidgetFolderModel({
     required super.id,
     required super.travelDocumentId,

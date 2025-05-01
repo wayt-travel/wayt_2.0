@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../util/util.dart';
 import '../../repositories.dart';
-import 'widget_feature/features/media/media.dart';
 
 part 'widgets/text_widget_model.dart';
 part 'widgets/photo_widget_model.dart';
@@ -83,6 +83,8 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
   @override
   bool get doesNotBelongToAFolder => folderId == null;
 
+  /// Copies the current instance and returns a new instance with the
+  /// provided parameters.
   @override
   WidgetModel copyWith({
     Option<String?> folderId = const Option.none(),

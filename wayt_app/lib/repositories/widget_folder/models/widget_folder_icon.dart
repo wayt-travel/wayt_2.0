@@ -2,10 +2,16 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-/// Model for the Icon of a folder.
+/// {@template widget_folder_icon}
+/// Model for the Icon of a widget folder.
+///
+/// It extends [IconData] to represent the icon data so it can be used directly
+/// in Flutter widgets.
+/// {@endtemplate}
 final class WidgetFolderIcon extends IconData
     with EquatableMixin, ModelToStringMixin
     implements Entity, IModel {
+  /// {@macro widget_folder_icon}
   WidgetFolderIcon({
     required int codePoint,
     String? fontFamily,
@@ -14,6 +20,7 @@ final class WidgetFolderIcon extends IconData
           fontFamily: fontFamily,
         );
 
+  /// Creates a [WidgetFolderIcon] from an [IconData] object.
   WidgetFolderIcon.fromIconData(IconData iconData)
       : super(
           iconData.codePoint,

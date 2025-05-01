@@ -5,6 +5,7 @@ import '../user_repository.dart';
 part '_user_repository_impl.dart';
 part 'user_repository_state.dart';
 
+/// The repository that manages users in the application.
 abstract interface class UserRepository
     extends Repository<String, UserEntity, UserRepositoryState> {
   /// Creates a new instance of [UserRepository] that uses the provided data
