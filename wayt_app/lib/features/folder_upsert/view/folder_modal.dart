@@ -130,8 +130,7 @@ class _FormBody extends StatelessWidget {
               validator: WidgetFolderEntity.getNameValidator(context)
                   .formFieldValidator,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: WInputDecoration(
-                context,
+              decoration: const InputDecoration(
                 // FIXME: l10n
                 labelText: 'Name',
               ),

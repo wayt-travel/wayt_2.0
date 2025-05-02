@@ -159,8 +159,7 @@ class _FormBody extends StatelessWidget {
                   ? cubit.updateLat(doubleValue)
                   : cubit.updateLng(doubleValue);
             },
-            decoration: WInputDecoration(
-              context,
+            decoration: InputDecoration(
               // FIXME: l10n
               labelText: isLat ? 'Latitude' : 'Longitude',
             ),
@@ -187,8 +186,7 @@ class _FormBody extends StatelessWidget {
                   .formFieldValidator,
               onChanged: (value) =>
                   context.read<UpsertPlaceWidgetCubit>().updateName(value),
-              decoration: WInputDecoration(
-                context,
+              decoration: const InputDecoration(
                 // FIXME: l10n
                 labelText: 'Name',
               ),
@@ -212,8 +210,7 @@ class _FormBody extends StatelessWidget {
               initialValue: address,
               onChanged: (value) =>
                   context.read<UpsertPlaceWidgetCubit>().updateAddress(value),
-              decoration: WInputDecoration(
-                context,
+              decoration: const InputDecoration(
                 // FIXME: l10n
                 labelText: 'Address',
               ),
