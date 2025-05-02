@@ -15,7 +15,12 @@ import 'text_widget_modal_bottom_bar.dart';
 /// Modal for adding or editing a text widget.
 class TextWidgetModal extends StatelessWidget {
   /// Creates a new instance of [TextWidgetModal].
-  const TextWidgetModal({super.key});
+  const TextWidgetModal._({required this.textWidget});
+
+  /// {@macro text_widget_to_update}
+  final TextWidgetModel? textWidget;
+
+  bool get _isEditing => textWidget != null;
 
   /// Pushes the modal to the navigator.
   static void show({
@@ -24,6 +29,7 @@ class TextWidgetModal extends StatelessWidget {
     required int? index,
     required String? folderId,
     required TypographyFeatureScale textScale,
+    TextWidgetModel? textWidget,
   }) {
     context.navRoot.push(
       MaterialPageRoute<void>(
@@ -32,12 +38,12 @@ class TextWidgetModal extends StatelessWidget {
           create: (context) => UpsertTextWidgetCubit(
             travelDocumentId: travelDocumentId,
             index: index,
-            text: null,
             textScale: textScale,
             folderId: folderId,
             travelItemRepository: $.repo.travelItem(),
+            textWidgetToUpdate: textWidget,
           ),
-          child: const TextWidgetModal(),
+          child: TextWidgetModal._(textWidget: textWidget),
         ),
       ),
     );
@@ -47,9 +53,9 @@ class TextWidgetModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           // FIXME: l10n
-          'Add text widget',
+          '${!_isEditing ? 'Add' : 'Edit'} text widget',
         ),
       ),
       body: Stack(

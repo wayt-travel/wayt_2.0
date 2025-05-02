@@ -75,6 +75,28 @@ final class InMemoryWidgetDataSource implements WidgetDataSource {
   }
 
   @override
+  Future<UpsertWidgetOutput> update(WidgetModel widget) {
+    if (!_dataHelper.containsTravelDocument(widget.travelDocumentId)) {
+      throw ArgumentError.value(
+        widget.travelDocumentId,
+        'widget.travelDocumentId',
+        'The travel document does not exist.',
+      );
+    }
+
+    // Save the updated widget.
+    _dataHelper.saveTravelItem(widget);
+
+    // Build the output.
+    return Future.value(
+      (
+        widget: _dataHelper.getWidget(widget.id),
+        updatedOrders: <String, int>{},
+      ),
+    );
+  }
+
+  @override
   Future<WidgetModel> read(String id) async => _dataHelper.getWidget(id);
 
   @override

@@ -79,6 +79,9 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
       // Whether a new item has been added to the travel document.
       final hasAddedWidget = repoState is TravelItemRepoItemCreateSuccess &&
           repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
+      // Whether an item has been updated to the travel document.
+      final hasUpdatedWidget = repoState is TravelItemRepoItemUpdateSuccess &&
+          repoState.updated.value.travelDocumentId == travelDocumentId;
       // Whether an item has been deleted from the travel document.
       final hasDeletedWidget = repoState is TravelItemRepoItemDeleteSuccess &&
           repoState.itemWrapper.value.travelDocumentId == travelDocumentId;
@@ -90,7 +93,10 @@ class TravelDocumentCubit<T extends TravelDocumentEntity>
               );
       // If any of the above conditions is true, emit a new state to update
       // the travel document items list.
-      if (hasAddedWidget || hasDeletedWidget || hasFetchedCollection) {
+      if (hasAddedWidget ||
+          hasUpdatedWidget ||
+          hasDeletedWidget ||
+          hasFetchedCollection) {
         emit(
           TravelDocumentItemListUpdateSuccess(
             TravelDocumentWrapper(

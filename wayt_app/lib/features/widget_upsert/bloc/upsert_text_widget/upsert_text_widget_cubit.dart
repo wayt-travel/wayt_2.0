@@ -32,18 +32,32 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// {@template text_widget_to_update}
+  /// The text widget to update.
+  ///
+  /// If `null` it means we're in create mode, i.e., a new text widget will be
+  /// created.
+  /// {@endtemplate}
+  final TextWidgetModel? textWidgetToUpdate;
+
+  /// Whether the cubit is in update mode.
+  bool get isUpdate => textWidgetToUpdate != null;
+
   /// Creates an upsert text widget cubit.
   UpsertTextWidgetCubit({
     required TypographyFeatureScale textScale,
-    required String? text,
     required this.index,
     required this.travelDocumentId,
     required this.folderId,
     required this.travelItemRepository,
+    this.textWidgetToUpdate,
   }) : super(
           UpsertTextWidgetState.initial(
-            featureTextStyle: TypographyFeatureStyle(scale: textScale),
-            text: text,
+            featureTextStyle: textWidgetToUpdate?.textStyle ??
+                TypographyFeatureStyle(
+                  scale: textScale,
+                ),
+            text: textWidgetToUpdate?.text,
           ),
         );
 
@@ -77,7 +91,8 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
   /// Submits the text widget addition or modification based on the cubit state.
   Future<void> submit() async {
     logger.d(
-      'Submitting text widget in $travelDocumentId and folderId=$folderId...',
+      '${!isUpdate ? 'Submitting' : 'Updating'} text widget in '
+      '$travelDocumentId and folderId=$folderId...',
     );
     emit(
       state.copyWith(status: StateStatus.progress),
@@ -90,27 +105,36 @@ class UpsertTextWidgetCubit extends Cubit<UpsertTextWidgetState>
       emit(state.copyWithError($.errors.validation.invalidCubitState));
       return;
     }
-
-    final task = travelItemRepository.createWidget(
-      widget: TextWidgetModel(
-        id: const Uuid().v4(),
-        text: state.text!.trim(),
-        textStyle: state.featureTextStyle,
-        travelDocumentId: travelDocumentId,
-        folderId: folderId,
-        // The order is neglected at creation time.
-        order: -1,
-      ),
-      index: index,
-    );
+    late final WTaskEither<void> task;
+    if (!isUpdate) {
+      task = travelItemRepository.createWidget(
+        widget: TextWidgetModel(
+          id: const Uuid().v4(),
+          text: state.text!.trim(),
+          textStyle: state.featureTextStyle,
+          travelDocumentId: travelDocumentId,
+          folderId: folderId,
+          // The order is neglected at creation time.
+          order: -1,
+        ),
+        index: index,
+      );
+    } else {
+      task = travelItemRepository.updateWidget(
+        widget: textWidgetToUpdate!.copyWith(
+          text: state.text!.trim(),
+          textStyle: state.featureTextStyle,
+        ),
+      );
+    }
 
     (await task.run()).fold(
       (error) {
-        logger.e('Error creating text widget: $error');
+        logger.e('Error upserting text widget: $error');
         emit(state.copyWithError(error));
       },
       (_) {
-        logger.d('Text widget created successfully');
+        logger.d('Text widget upserted successfully');
         emit(state.copyWith(status: StateStatus.success));
       },
     );
