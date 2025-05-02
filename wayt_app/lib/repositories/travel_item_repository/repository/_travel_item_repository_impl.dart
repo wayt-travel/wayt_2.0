@@ -649,6 +649,30 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
     return response;
   }
 
+  Future<UpsertWidgetOutput> _updateWidget(
+    WidgetModel widget,
+    Emitter<TravelItemRepositoryState<TravelItemEntity>?> emit,
+  ) async {
+    logger.d('Updating widget with input: ${widget.toStringVerbose()}');
+    final response = await widgetDataSource.update(widget);
+    final (widget: updated, :updatedOrders) = response;
+    logger.d(
+      '${updated.toShortString()} updated and ${updatedOrders.length} other '
+      'item orders updated.',
+    );
+    upsertInCacheAndMaps(updated);
+    emit(
+      TravelItemRepoItemUpdateSuccess(
+        TravelItemEntityWrapper.widget(widget),
+        TravelItemEntityWrapper.widget(updated),
+      ),
+    );
+    logger.i(
+      'Widget updated, added to cache and maps [$updated]',
+    );
+    return response;
+  }
+
   @override
   WTaskEither<void> addAll({
     required Iterable<TravelItemEntityWrapper> travelItems,
@@ -773,4 +797,16 @@ class TravelItemRepositoryImpl extends RepositoryV3<String, TravelItemEntity,
       ),
     );
   }
+
+  @override
+  WTaskEither<UpsertWidgetOutput> updateWidget({required WidgetModel widget}) =>
+      queueSequential(
+        (emit) => TaskEither.tryCatch(
+          () => _updateWidget(
+            widget,
+            emit,
+          ),
+          taskEitherOnError(logger),
+        ),
+      );
 }

@@ -75,6 +75,11 @@ abstract interface class TravelItemRepository extends RepositoryV3<String,
     required int? index,
   });
 
+  /// Updates the Widget in the plan or journal.
+  WTaskEither<UpsertWidgetOutput> updateWidget({
+    required WidgetModel widget,
+  });
+
   /// Creates a new widget folder.
   WTaskEither<UpsertWidgetFolderOutput> createFolder(
     CreateWidgetFolderInput input,

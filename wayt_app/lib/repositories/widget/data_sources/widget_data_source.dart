@@ -14,6 +14,9 @@ abstract interface class WidgetDataSource {
   /// insertion.
   Future<UpsertWidgetOutput> create(WidgetModel widget, {int? index});
 
+  /// Updates a widget on the plan or journal.
+  Future<UpsertWidgetOutput> update(WidgetModel widget);
+
   /// Reads a widget by its [id].
   Future<WidgetEntity> read(String id);
 

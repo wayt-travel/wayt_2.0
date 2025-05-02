@@ -7,12 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../widgets/widgets.dart';
-import '../../folder_display/view/folder_page.dart';
-import '../../folder_upsert/view/folder_modal.dart';
-import '../../item_delete/bloc/delete_item/delete_item_cubit.dart';
-import '../../item_move/view/move_travel_item_modal.dart';
-import '../../widget_upsert/view/add_widget_mbs.dart';
-import 'travel_widget.dart';
+import '../../features.dart';
 
 /// The steps to determine the position of the context menu on the y-axis
 /// based on the tap position.
@@ -134,6 +129,16 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
         travelDocumentId: travelItem.travelDocumentId,
         index: null,
         folder: travelItem.asFolderWidget,
+      );
+    } else if (travelItem is TextWidgetModel) {
+      final textWidget = travelItem.asWidget as TextWidgetModel;
+      TextWidgetModal.show(
+        context: context,
+        travelDocumentId: travelItem.travelDocumentId,
+        index: null,
+        textScale: textWidget.textStyle?.scale ?? TypographyFeatureScale.body,
+        folderId: textWidget.folderId,
+        textWidget: textWidget,
       );
     } else {
       SnackBarHelper.I.showNotImplemented(context);
