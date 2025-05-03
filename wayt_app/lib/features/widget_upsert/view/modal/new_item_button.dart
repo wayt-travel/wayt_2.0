@@ -1,7 +1,7 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/context/context.dart';
+import '../../../../core/context/context.dart';
 
 /// A button for adding a new item in a travel document.
 ///

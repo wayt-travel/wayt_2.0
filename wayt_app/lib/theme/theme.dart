@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
+
+import '../core/core.dart';
 
 export 'random_color.dart';
 
@@ -57,6 +60,16 @@ class WaytThemeWrapper extends StatelessWidget {
                 ),
               ),
             ),
+        inputDecorationTheme: InputDecorationTheme(
+          errorMaxLines: 4,
+          filled: true,
+          fillColor: context.col.surfaceContainer,
+          border: OutlineInputBorder(
+            borderRadius: $corners.card.asBorderRadius,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          alignLabelWithHint: true,
+        ),
         appBarTheme: theme.appBarTheme.copyWith(
           titleTextStyle: theme.textTheme.titleLarge?.copyWith(
             fontFamily: kFontFamilySerif,

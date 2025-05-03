@@ -59,7 +59,7 @@ class FolderModal extends StatelessWidget {
       SnackBarHelper.I.showWarning(
         context: context,
         // FIXME: l10n
-        message: 'Please fill in all required fields',
+        message: 'Please check the input fields',
       );
     } else {
       await context.navRoot
@@ -74,7 +74,7 @@ class FolderModal extends StatelessWidget {
           } else if (state.status == StateStatus.failure) {
             SnackBarHelper.I.showError(
               context: context,
-              message: state.error.toString(),
+              message: state.error!.userIntlMessage(context),
             );
             context.pop();
           }
@@ -118,6 +118,7 @@ class _FormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
+        $insets.xs.asVSpan.asSliver,
         BlocSelector<UpsertFolderCubit, UpsertFolderState, String?>(
           selector: (state) => state.name,
           builder: (context, name) => SliverPadding(

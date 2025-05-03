@@ -9,7 +9,7 @@ class InitializationCubit extends Cubit<bool?> {
 
   /// Run the app initialization
   Future<void> onSetup() async {
-    // TEMP: remove this line
+    // TEMP: remove this fake delay
     await Future<void>.delayed(const Duration(milliseconds: 1000));
     emit(true);
   }

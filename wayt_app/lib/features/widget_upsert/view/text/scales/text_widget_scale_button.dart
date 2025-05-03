@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../repositories/repositories.dart';
-import '../../new_item_button.dart';
+import '../../modal/new_item_button.dart';
 import 'text_widget_scale_icon.dart';
 
 /// {@template text_widget_scale_button}

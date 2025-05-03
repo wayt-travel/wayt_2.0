@@ -7,6 +7,7 @@ import '../../repositories.dart';
 
 part 'widgets/text_widget_model.dart';
 part 'widgets/photo_widget_model.dart';
+part 'widgets/place_widget_model.dart';
 
 /// A model representing a widget in a travel Plan or Journal.
 abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
@@ -71,10 +72,17 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
             travelDocumentId: travelDocumentId,
             updatedAt: updatedAt,
           ),
+        WidgetType.place => PlaceWidgetModel._(
+            id: id,
+            order: order,
+            features: features,
+            folderId: folderId,
+            createdAt: createdAt,
+            travelDocumentId: travelDocumentId,
+            updatedAt: updatedAt,
+          ),
         // TODO: Handle this case.
         WidgetType.audio => throw UnimplementedError(),
-        // TODO: Handle this case.
-        WidgetType.place => throw UnimplementedError(),
       };
 
   @override

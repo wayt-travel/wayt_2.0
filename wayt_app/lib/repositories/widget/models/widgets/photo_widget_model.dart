@@ -18,7 +18,7 @@ part of '../widget_model.dart';
 /// The [byteCount] is the size of the photo in bytes. It can be null if the
 /// size was not computed and stored.
 ///
-/// The [coordinates] are the latitude and longitude of the location where
+/// The [latLng] are the latitude and longitude of the location where
 /// the photo was taken. It can be null if the photo is not geotagged.
 ///
 /// The [folderId] is the ID of the folder where the widget is stored.
@@ -26,9 +26,20 @@ part of '../widget_model.dart';
 ///
 /// The [createdAt] is the date and time when the widget was created.
 /// If null, the current date and time is used.
+///
+/// The [updatedAt] is the date and time when the widget was last updated.
+/// If null, the widget has not been updated yet.
+///
+/// The [mediaExtension] is the extension of the media file.
+/// It includes the dot, e.g. ".jpg".
+///
+/// The [size] is the size of the photo.
+/// It is used to store the size of the photo in the metadata.
 /// {@endtemplate}
 final class PhotoWidgetModel extends WidgetModel {
   /// {@macro photo_widget_model}
+  ///
+  /// The [metadata] is a map of additional metadata that can be stored
   factory PhotoWidgetModel({
     required String id,
     required String mediaId,
@@ -36,7 +47,7 @@ final class PhotoWidgetModel extends WidgetModel {
     required int order,
     required TravelDocumentId travelDocumentId,
     required int? byteCount,
-    required (double, double)? coordinates,
+    required LatLng? latLng,
     required String mediaExtension,
     required IntSize size,
     Map<String, dynamic>? metadata,
@@ -59,10 +70,10 @@ final class PhotoWidgetModel extends WidgetModel {
             },
             index: 0,
           ),
-          if (coordinates != null)
+          if (latLng != null)
             GeoWidgetFeatureModel(
               id: const Uuid().v4(),
-              coordinates: coordinates,
+              latLng: latLng,
               index: 0,
             ),
         ],
@@ -104,7 +115,7 @@ final class PhotoWidgetModel extends WidgetModel {
   /// The coordinates where the photo was taken.
   ///
   /// Returns null if the photo is not geotagged.
-  (double, double)? get coordinates => _geoFeature?.coordinates;
+  LatLng? get latLng => _geoFeature?.latLng;
 
   /// The type of the media.
   MediaFeatureType get mediaType => _mediaFeature.mediaType;
@@ -133,29 +144,27 @@ final class PhotoWidgetModel extends WidgetModel {
     Option<String?> folderId = const Option.none(),
     int? order,
     DateTime? updatedAt,
-    (double, double)? coordinates,
+    Option<LatLng?> latLng = const Option.none(),
     Map<String, dynamic>? metadata,
-    String? url,
-    String? localPath,
-  }) {
-    return PhotoWidgetModel._(
-      id: id,
-      order: order ?? this.order,
-      travelDocumentId: travelDocumentId,
-      folderId: folderId.getOrElse(() => this.folderId),
-      createdAt: createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      features: [
-        _mediaFeature.copyWith(
-          url: url,
-          byteCount: _mediaFeature.byteCount,
-          metadata: metadata,
-        ),
-        if (coordinates != null || _geoFeature != null)
-          _geoFeature?.copyWith(
-            coordinates: coordinates,
+    Option<String?> url = const Option.none(),
+  }) =>
+      PhotoWidgetModel._(
+        id: id,
+        order: order ?? this.order,
+        travelDocumentId: travelDocumentId,
+        folderId: folderId.getOrElse(() => this.folderId),
+        createdAt: createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        features: [
+          _mediaFeature.copyWith(
+            url: url.getOrElse(() => this.url),
+            byteCount: _mediaFeature.byteCount,
+            metadata: metadata,
           ),
-      ].nonNulls.toList(),
-    );
-  }
+          if (latLng.isSome() || _geoFeature != null)
+            _geoFeature?.copyWith(
+              latLng: latLng.getOrElse(() => this.latLng),
+            ),
+        ].nonNulls.toList(),
+      );
 }

@@ -1,4 +1,5 @@
 export 'assertion_utils.dart';
+export 'double_ext.dart';
 export 'list_with_sorted_add.dart';
 export 'sdk/sdk.dart';
 export 'sdk_candidate.dart';

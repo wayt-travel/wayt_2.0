@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../../../error/error.dart';
+import '../../../repositories/repositories.dart';
 import '../../../util/util.dart';
 
 /// {@template process_image_service_processed_image}
@@ -20,7 +21,7 @@ class ProcessImageServiceProcessedImage {
   final int? byteCount;
 
   /// The latitude and longitude of the image.
-  final (double, double)? latLng;
+  final LatLng? latLng;
 
   /// The processed image file.
   ///
