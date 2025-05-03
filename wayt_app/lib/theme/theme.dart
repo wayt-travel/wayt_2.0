@@ -58,8 +58,18 @@ class WaytThemeWrapper extends StatelessWidget {
                 titleLarge: t.titleLarge?.apply(
                   fontFamily: kFontFamilySerif,
                 ),
+                headlineLarge: t.headlineLarge?.apply(
+                  fontFamily: kFontFamilySerif,
+                ),
+                headlineMedium: t.headlineMedium?.apply(
+                  fontFamily: kFontFamilySerif,
+                ),
+                headlineSmall: t.headlineSmall?.apply(
+                  fontFamily: kFontFamilySerif,
+                ),
               ),
             ),
+<<<<<<< Updated upstream
         inputDecorationTheme: InputDecorationTheme(
           errorMaxLines: 4,
           filled: true,
@@ -75,6 +85,8 @@ class WaytThemeWrapper extends StatelessWidget {
             fontFamily: kFontFamilySerif,
           ),
         ),
+=======
+>>>>>>> Stashed changes
       ),
       child: child,
     );
