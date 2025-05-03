@@ -39,7 +39,7 @@ class NewItemButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             child,
-            $.style.insets.xs.asVSpan,
+            $insets.xs.asVSpan,
             Text(label),
           ],
         ),

@@ -72,11 +72,11 @@ class _FolderWidgetState extends State<FolderWidget> {
                           ),
                           icon: const Icon(Icons.launch),
                         ),
-                        contentPadding: $.style.insets.sm.asPaddingLeft,
+                        contentPadding: $insets.sm.asPaddingLeft,
                       ),
-                      $.style.insets.xxs.asVSpan,
+                      $insets.xxs.asVSpan,
                       Padding(
-                        padding: $.style.insets.xs.asPaddingBottom,
+                        padding: $insets.xs.asPaddingBottom,
                         child: Text(
                           // FIXME: l10n
                           'This folder contains '
