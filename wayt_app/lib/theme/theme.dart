@@ -88,11 +88,6 @@ class WaytThemeWrapper extends StatelessWidget {
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           alignLabelWithHint: true,
         ),
-        appBarTheme: theme.appBarTheme.copyWith(
-          titleTextStyle: theme.textTheme.titleLarge?.copyWith(
-            fontFamily: kFontFamilySerif,
-          ),
-        ),
         cardTheme: theme.cardTheme.copyWith(
           margin: EdgeInsets.zero,
           clipBehavior: Clip.hardEdge,
