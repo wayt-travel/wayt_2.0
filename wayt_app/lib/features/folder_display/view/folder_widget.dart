@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/context/context.dart';
-import '../../../util/text_style_extension.dart';
+import '../../../util/sdk/text_style_extension.dart';
 import '../../../widgets/widgets.dart';
 import '../../widget_display/view/travel_item_widget_context_menu.dart';
 import '../bloc/folder/folder_cubit.dart';

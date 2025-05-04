@@ -4,13 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../theme/theme.dart';
+import '../../../../util/util.dart';
 import '../../../../widgets/widgets.dart';
+import '../../../features.dart';
 import '../../bloc/upsert_transfer_widget/upsert_transfer_widget_cubit.dart';
-import 'pick_means_of_transport_card.dart';
 
 /// {@template upsert_transfer_widget_modal}
 /// A modal for adding or editing a transfer widget.
@@ -47,6 +49,7 @@ class UpsertTransferWidgetModal extends StatelessWidget {
             travelDocumentId: travelDocumentId,
             index: index,
             travelItemRepository: $.repo.travelItem(),
+            travelDocumentRepository: $.repo.travelDocument(),
             folderId: folderId,
             widgetToUpdate: widgetToUpdate,
           ),
@@ -67,9 +70,7 @@ class UpsertTransferWidgetModal extends StatelessWidget {
       SnackBarHelper.I.showWarning(
         context: context,
         // FIXME: l10n
-        message: cubit.state.stops.length < 2
-            ? 'At least 2 stops are required'
-            : 'Please check the input fields',
+        message: result.asError.firstError ?? 'Please check the input fields',
       );
       return;
     }
@@ -116,16 +117,19 @@ class UpsertTransferWidgetModal extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              context.read<UpsertTransferWidgetCubit>().addStop(
-                    const TransferStop(
-                      name: 'HAHAHA',
-                      dateTime: null,
-                      latLng: LatLng(0, 0),
-                      address: null,
-                    ),
-                  );
+              final cubit = context.read<UpsertTransferWidgetCubit>();
+              UpsertTransferStopModal.show(
+                context: context,
+                travelDocumentId: cubit.travelDocumentId,
+                suggestedInitialDateTime: cubit.suggestedInitialDateTime,
+              ).then((stop) {
+                if (stop != null && context.mounted) {
+                  context.read<UpsertTransferWidgetCubit>().addStop(stop);
+                }
+              });
             },
             icon: const Icon(Icons.add_location_alt),
+            // FIXME: l10n
             label: Text('Add stop'.toUpperCase()),
           ),
           bottomNavigationBar: BottomAppBar(
@@ -150,7 +154,10 @@ class _FormBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverMainAxisGroup(
       slivers: [
-        const PickMeansOfTransportCard(),
+        SliverPadding(
+          padding: $insets.screenH.asPaddingH,
+          sliver: const PickMeansOfTransportCard().asSliver,
+        ),
         $insets.sm.asVSpan.asSliver,
         SliverPadding(
           padding: $insets.screenH.asPaddingH,
@@ -159,11 +166,13 @@ class _FormBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                // FIXME: l10n
                 'Stops',
                 style: context.tt.titleLarge,
               ),
               $insets.xxs.asVSpan,
               Text(
+                // FIXME: l10n
                 'Tap on the button to add a stop. Add at least 2 stops.',
                 style: context.tt.labelMedium,
               ),
@@ -227,9 +236,16 @@ class __TransferStopListState extends State<_TransferStopList> {
               contentPadding: $insets.sm.asPaddingLeft,
               onTap: () {},
               onLongPress: () {},
-              title: Text(stop.name),
+              title: Text(
+                stop.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(
-                '${stop.dateTime?.toIso8601String()}',
+                stop.dateTime == null
+                    // FIXME: l10n
+                    ? 'No date'
+                    : DateFormat.yMEd().format(stop.dateTime!) +
+                        ' ${DateFormat.Hm().format(stop.dateTime!)}',
               ),
               trailing: ReorderableDragStartListener(
                 index: index,

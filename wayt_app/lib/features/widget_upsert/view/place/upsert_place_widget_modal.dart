@@ -67,7 +67,7 @@ class UpsertPlaceWidgetModal extends StatelessWidget {
       SnackBarHelper.I.showWarning(
         context: context,
         // FIXME: l10n
-        message: 'Please check the input fields',
+        message: result.asError.firstError ?? 'Please check the input fields',
       );
       return;
     }
@@ -142,9 +142,7 @@ class _FormBody extends StatelessWidget {
             ),
             inputFormatters: <TextInputFormatter>[
               ReplaceCommaFormatter('.'),
-              FilteringTextInputFormatter.allow(
-                RegExp(r'^-?((0|([1-9][0-9]*))([\.,][0-9]*)?)?'),
-              ),
+              DoubleTextInputFormatter(),
             ],
             validator: (value) => isLat
                 ? cubit
@@ -193,6 +191,12 @@ class _FormBody extends StatelessWidget {
             ).asSliver;
           },
         ),
+        $insets.sm.asVSpan.asSliver,
+        Text(
+          // FIXME: l10n
+          'Coordinates and address',
+          style: context.tt.titleMedium,
+        ).asSliver,
         $insets.xs.asVSpan.asSliver,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,

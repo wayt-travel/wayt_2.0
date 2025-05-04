@@ -39,6 +39,9 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The travel document repository.
+  final TravelDocumentRepository travelDocumentRepository;
+
   /// The widget entity to update.
   ///
   /// If `null` it means we're in create mode, i.e., a new widget will be
@@ -52,10 +55,25 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
   UpsertTransferWidgetCubit({
     required this.index,
     required this.travelDocumentId,
+    required this.travelDocumentRepository,
     required this.travelItemRepository,
     required this.widgetToUpdate,
     required this.folderId,
   }) : super(const UpsertTransferWidgetState.initial());
+
+  /// The initial date time to suggest to the user for adding a new stop to the
+  /// transfer.
+  DateTime get suggestedInitialDateTime =>
+      latestNotNullDateTime ??
+      travelDocumentRepository
+          .getOrThrow(travelDocumentId.id)
+          .match(onPlan: (plan) => plan.plannedAt, onJournal: (_) => null) ??
+      DateTime.now();
+
+  /// Gets the latest date and time of the stops or null if there are no
+  /// stops or all stops have null date and time.
+  DateTime? get latestNotNullDateTime =>
+      state.stops.map((stop) => stop.dateTime).nonNulls.sorted().lastOrNull;
 
   /// Adds a stop to the list of stops of the transfer.
   void addStop(TransferStop stops) {
@@ -123,12 +141,19 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
             'the previous stops',
       );
 
-  Validator getStopsValidator(BuildContext? context) => l.custom(
+  Validator _getStopsValidator(BuildContext? context) => l
+          .custom(
+        (stops) => stops is List<TransferStop> && stops.length >= 2,
+        // FIXME: l10n
+        message: 'At least 2 stops are required',
+      )
+          .custom(
         (stops) {
           final timestamps = state.stops.map((stop) => stop.dateTime).toList();
           final timestampsNotNull = timestamps.nonNulls.toList();
           return listEquals(timestampsNotNull, timestampsNotNull.sorted());
         },
+        // FIXME: l10n
         message: 'Make sure stops are in chronological order',
       );
 
@@ -136,11 +161,12 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
   static Validator getMeansOfTransportValidator(BuildContext? context) =>
       Validators.l10n(context).required();
 
+  /// Validates the current state of the cubit.
   SchemaValidationResult<Map<String, dynamic>> validate(
     BuildContext? context,
   ) {
     return l.schema({
-      'stops': getStopsValidator(context),
+      'stops': _getStopsValidator(context),
       'meansOfTransport': getMeansOfTransportValidator(context),
     }).validateSchema<Map<String, dynamic>>({
       'stops': state.stops,

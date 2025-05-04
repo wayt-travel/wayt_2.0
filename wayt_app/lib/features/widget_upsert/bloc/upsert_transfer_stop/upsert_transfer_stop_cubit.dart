@@ -26,6 +26,9 @@ class UpsertTransferStopCubit extends Cubit<UpsertTransferStopState>
   /// The travel item repository.
   final TravelItemRepository travelItemRepository;
 
+  /// The travel document repository.
+  final TravelDocumentRepository travelDocumentRepository;
+
   /// The transfer stop to update.
   ///
   /// If `null` it means we're in create mode, i.e., a new transfer stop will be
@@ -35,11 +38,17 @@ class UpsertTransferStopCubit extends Cubit<UpsertTransferStopState>
   /// Whether the cubit is in update mode.
   bool get isUpdate => stopToUpdate != null;
 
+  /// The initial date time to suggest to the user when launching the picker
+  /// for the date time.
+  final DateTime suggestedInitialDateTime;
+
   /// {@macro upsert_transfer_stop_cubit}
   UpsertTransferStopCubit({
     required this.travelDocumentId,
     required this.travelItemRepository,
+    required this.travelDocumentRepository,
     required this.stopToUpdate,
+    required this.suggestedInitialDateTime,
   }) : super(UpsertTransferStopState.initial(stopToUpdate));
 
   /// Updates the name of the stop.
@@ -88,6 +97,19 @@ class UpsertTransferStopCubit extends Cubit<UpsertTransferStopState>
       state.copyWith(
         status: StateStatus.initial,
         dateTime: Option.of(dateTime),
+      ),
+    );
+  }
+
+  /// Updates the state from a [GeoWidgetFeatureEntity].
+  void updateFromGeoFeature(GeoWidgetFeatureEntity geoFeature) {
+    emit(
+      state.copyWith(
+        status: StateStatus.initial,
+        name: geoFeature.name,
+        address: Option.of(geoFeature.address),
+        lat: Option.of(geoFeature.latLng.latitude),
+        lng: Option.of(geoFeature.latLng.longitude),
       ),
     );
   }

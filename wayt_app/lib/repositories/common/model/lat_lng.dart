@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../util/double_ext.dart';
+import '../../../util/sdk/double_ext.dart';
 
 /// A pair of latitude and longitude coordinates, stored as degrees.
 ///
