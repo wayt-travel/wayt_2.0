@@ -76,11 +76,11 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
       state.stops.map((stop) => stop.dateTime).nonNulls.sorted().lastOrNull;
 
   /// Adds a stop to the list of stops of the transfer.
-  void addStop(TransferStop stops) {
+  void addStop(TransferStop stop) {
     emit(
       state.copyWith(
         status: StateStatus.initial,
-        stops: state.stops + [stops],
+        stops: state.stops + [stop],
       ),
     );
   }

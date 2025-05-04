@@ -156,7 +156,7 @@ class _FormBody extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: $insets.screenH.asPaddingH,
-          sliver: const PickMeansOfTransportCard().asSliver,
+          sliver: const MeansOfTransportPickerCard().asSliver,
         ),
         $insets.sm.asVSpan.asSliver,
         SliverPadding(
@@ -180,20 +180,22 @@ class _FormBody extends StatelessWidget {
           ).asSliver,
         ),
         $insets.sm.asVSpan.asSliver,
-        const _TransferStopList(),
+        const _ReorderableTransferStopList(),
       ],
     );
   }
 }
 
-class _TransferStopList extends StatefulWidget {
-  const _TransferStopList();
+class _ReorderableTransferStopList extends StatefulWidget {
+  const _ReorderableTransferStopList();
 
   @override
-  State<_TransferStopList> createState() => __TransferStopListState();
+  State<_ReorderableTransferStopList> createState() =>
+      _ReorderableTransferStopListState();
 }
 
-class __TransferStopListState extends State<_TransferStopList> {
+class _ReorderableTransferStopListState
+    extends State<_ReorderableTransferStopList> {
   List<TransferStop> _stops = [];
 
   void _onReorder(int oldIndex, int newIndex) {
@@ -211,6 +213,50 @@ class __TransferStopListState extends State<_TransferStopList> {
     _stops = items;
     setState(() {});
     context.read<UpsertTransferWidgetCubit>().setStops(_stops);
+  }
+
+  void _pushForEdit(BuildContext context, TransferStop stop) {
+    final cubit = context.read<UpsertTransferWidgetCubit>();
+    UpsertTransferStopModal.show(
+      context: context,
+      travelDocumentId: cubit.travelDocumentId,
+      suggestedInitialDateTime: cubit.suggestedInitialDateTime,
+      stopToUpdate: stop,
+    ).then((updated) {
+      if (updated != null && context.mounted) {
+        final stops = cubit.state.stops.toList();
+        final index = stops.indexOf(stop);
+        if (index == -1) {
+          throw ArgumentError.value(
+            stop,
+            'stop',
+            'Stop not found in the list of stops',
+          );
+        }
+        context.read<UpsertTransferWidgetCubit>().setStops(
+              stops
+                ..removeAt(index)
+                ..insert(index, updated),
+            );
+      }
+    });
+  }
+
+  void _onDelete(BuildContext context, TransferStop stop) {
+    context.read<UpsertTransferWidgetCubit>().removeStop(stop);
+  }
+
+  void _showMbs(BuildContext context, TransferStop stop) {
+    ModalBottomSheet.of(context).showActions<void>(
+      actions: [
+        ModalBottomSheetActions.edit(context).copyWith(
+          onTap: (_) => _pushForEdit(context, stop),
+        ),
+        ModalBottomSheetActions.delete(context).copyWith(
+          onTap: (_) => _onDelete(context, stop),
+        ),
+      ],
+    );
   }
 
   @override
@@ -234,8 +280,8 @@ class __TransferStopListState extends State<_TransferStopList> {
                 color: context.col.primary,
               ),
               contentPadding: $insets.sm.asPaddingLeft,
-              onTap: () {},
-              onLongPress: () {},
+              onTap: () => _pushForEdit(context, stop),
+              onLongPress: () => _showMbs(context, stop),
               title: Text(
                 stop.name,
                 style: const TextStyle(fontWeight: FontWeight.bold),

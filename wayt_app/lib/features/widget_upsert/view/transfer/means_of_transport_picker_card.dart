@@ -7,15 +7,15 @@ import '../../../../widgets/widgets.dart';
 import '../../../features.dart';
 import '../../bloc/upsert_transfer_widget/upsert_transfer_widget_cubit.dart';
 
-/// {@template pick_means_of_transport_card}
+/// {@template means_of_transport_picker_card}
 /// A card that allows the user to pick a means of transport.
 ///
 /// This card is used in the [UpsertTransferWidgetModal] to select a means of
 /// transport.
 /// {@endtemplate}
-class PickMeansOfTransportCard extends StatelessWidget {
-  /// {@macro pick_means_of_transport_card}
-  const PickMeansOfTransportCard({super.key});
+class MeansOfTransportPickerCard extends StatelessWidget {
+  /// {@macro means_of_transport_picker_card}
+  const MeansOfTransportPickerCard({super.key});
 
   @override
   Widget build(BuildContext context) {

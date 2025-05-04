@@ -6,35 +6,40 @@ import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../features.dart';
 
-/// {@template place_widget_tile}
-/// Tile to display a place widget in a travel document.
+/// {@template transfer_widget_tile}
+/// Tile to display a transfer widget in a travel document.
 /// {@endtemplate}
-class PlaceWidgetTile extends StatelessWidget {
+class TransferWidgetTile extends StatelessWidget {
   /// The index of the travel item in the list of items.
   final int index;
 
-  /// The place widget to display.
-  final PlaceWidgetModel place;
+  /// The transfer widget to display.
+  final TransferWidgetModel transfer;
 
-  /// {@macro place_widget_tile}
-  const PlaceWidgetTile({
+  /// {@macro transfer_widget_tile}
+  const TransferWidgetTile({
     required this.index,
-    required this.place,
+    required this.transfer,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    var subtitle = place.latLng.toPrettyString();
-    if (place.address != null) {
-      subtitle = '$subtitle — ${place.address}';
-    }
+    final stops = transfer.stops;
+    final startingStop = transfer.startingStop;
+    final endingStop = transfer.endingStop;
+
+    final subtitle = [
+      '${startingStop.name} → ${endingStop.name}',
+      if (stops.length > 2) '${stops.length - 2} intermediate stops',
+    ].join(' • ');
+
     return TravelWidgetGestureWrapper(
       onTapOverride: Option.of(
         (_, __) {},
       ),
       index: index,
-      travelItem: place,
+      travelItem: transfer,
       child: Card.outlined(
         margin: EdgeInsets.symmetric(
           vertical: $insets.xxs,
@@ -42,11 +47,11 @@ class PlaceWidgetTile extends StatelessWidget {
         ),
         child: ListTile(
           leading: Icon(
-            Icons.place,
+            transfer.meansOfTransport.icon,
             color: context.col.primary,
           ),
           title: Text(
-            place.name,
+            transfer.meansOfTransport.name,
             style: context.tt.bodyLarge,
           ),
           subtitle: Text(

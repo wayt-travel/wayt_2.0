@@ -53,6 +53,10 @@ class _FolderWidgetState extends State<FolderWidget> {
                     ? context.col.primary.withValues(alpha: 0.3)
                     : Colors.transparent,
                 child: Card.filled(
+                  margin: EdgeInsets.symmetric(
+                    vertical: $insets.xxs,
+                    horizontal: $insets.xs,
+                  ),
                   color: folder.color
                       .toFlutterColor(context)
                       .withValues(alpha: 0.4),
