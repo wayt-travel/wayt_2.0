@@ -116,7 +116,7 @@ class FolderView extends StatelessWidget {
                       folder.icon,
                       color: folder.color.toFlutterColor(context),
                     ),
-                    $.style.insets.sm.asHSpan,
+                    $insets.sm.asHSpan,
                     Text(
                       folder.name,
                       style: TextStyle(

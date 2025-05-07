@@ -34,6 +34,13 @@ abstract interface class TravelDocumentEntity
   /// Whether this entity is a journal.
   bool get isJournal;
 
+  /// Matches this entity to a specific type.
+  T match<T>({
+    required T Function(PlanEntity) onPlan,
+    /// FIXME: This should be a JournalEntity.
+    required T Function(dynamic) onJournal,
+  });
+
   /// Returns a validator for the name of the travel document.
   static Validator getNameValidator(BuildContext? context) =>
       Validators.l10n(context).textShortRequired();

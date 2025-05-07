@@ -34,7 +34,6 @@ final class TypographyWidgetFeatureModel extends WidgetFeatureModel
     required super.id,
     required this.data,
     required this.format,
-    required super.index,
     this.textStyle,
   }) : super(
           type: WidgetFeatureType.text,
@@ -50,7 +49,6 @@ final class TypographyWidgetFeatureModel extends WidgetFeatureModel
   }) =>
       TypographyWidgetFeatureModel(
         id: id,
-        index: index,
         data: data ?? this.data,
         format: format ?? this.format,
         textStyle: textStyle ?? this.textStyle,

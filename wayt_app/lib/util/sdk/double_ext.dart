@@ -1,4 +1,7 @@
+import '../util.dart';
+
 /// Extension methods for double
+@SdkCandidate()
 extension DoubleExtension on double {
   /// Converts a double to a string with the specified precision.
   double toPrecision(int n) => double.parse(toStringAsFixed(n));

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../features.dart';
@@ -82,6 +84,7 @@ class PlanTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: $insets.sm.asPaddingH,
       onTap: () => PlanPage.push(
         context,
         planId: plan.id,

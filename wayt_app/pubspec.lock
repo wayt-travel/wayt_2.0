@@ -18,11 +18,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "7.2.0"
-      resolved-ref: f06e40eb609db2358551b68ab8fb0b373a11dccf
+      ref: "7.3.3"
+      resolved-ref: "0629b74ab6757346d68ceb0751cbc0f8e1de3421"
       url: "git@github.com:app-anvil/a2f_sdk.git"
     source: git
-    version: "7.2.0"
+    version: "7.3.3"
   analyzer:
     dependency: transitive
     description:

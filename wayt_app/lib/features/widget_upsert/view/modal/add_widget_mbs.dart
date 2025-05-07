@@ -86,7 +86,7 @@ class AddWidgetMbs extends StatelessWidget {
                   fontFamily: kFontFamilySerif,
                 ),
               ).asSliver,
-              $.style.insets.sm.asVSpan.asSliver,
+              $insets.sm.asVSpan.asSliver,
               const AddWidgetMbsSection(
                 // FIXME: l10n
                 title: 'Most used',
@@ -166,6 +166,21 @@ class AddWidgetMbs extends StatelessWidget {
                     onTap: (context) {
                       context.navRoot.pop();
                       UpsertPlaceWidgetModal.show(
+                        context: context,
+                        travelDocumentId: travelDocumentId,
+                        index: index,
+                        folderId: folderId,
+                      );
+                    },
+                  ),
+                  NewItemButton(
+                    // FIXME: l10n
+                    label: 'Transfer',
+                    size: size,
+                    child: const Icon(Icons.route, size: 32),
+                    onTap: (context) {
+                      context.navRoot.pop();
+                      UpsertTransferWidgetModal.show(
                         context: context,
                         travelDocumentId: travelDocumentId,
                         index: index,

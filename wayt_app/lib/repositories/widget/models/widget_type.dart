@@ -10,5 +10,8 @@ enum WidgetType {
   photo,
 
   /// A widget representing a geographic place.
-  place;
+  place,
+
+  /// A widget representing a transfer.
+  transfer;
 }

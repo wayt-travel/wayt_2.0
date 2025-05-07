@@ -59,7 +59,7 @@ class FolderModal extends StatelessWidget {
       SnackBarHelper.I.showWarning(
         context: context,
         // FIXME: l10n
-        message: 'Please check the input fields',
+        message: result.asError.firstError ?? 'Please check the input fields',
       );
     } else {
       await context.navRoot

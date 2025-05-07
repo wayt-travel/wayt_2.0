@@ -68,13 +68,11 @@ final class PhotoWidgetModel extends WidgetModel {
               'size': size.toJson(),
               ...?metadata,
             },
-            index: 0,
           ),
           if (latLng != null)
             GeoWidgetFeatureModel(
               id: const Uuid().v4(),
               latLng: latLng,
-              index: 0,
             ),
         ],
         folderId: folderId,

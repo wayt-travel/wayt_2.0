@@ -7,7 +7,7 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/data.dart';
 import 'package:uuid/rng.dart';
 import 'package:uuid/uuid.dart';
-import 'package:world_countries/world_countries.dart';
+import 'package:world_countries/world_countries.dart' hide LatLng;
 
 import '../core/context/context.dart';
 import '../repositories/repositories.dart';
@@ -30,6 +30,33 @@ const String kLoremIpsum =
     'velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint '
     'occaecat cupidatat non proident, sunt in culpa qui officia deserunt '
     'mollit anim id est laborum.';
+
+/// In-memory data place.
+typedef InMemoryDataPlace = ({String name, LatLng latLng});
+
+/// List of places in Italy to be used in the in-memory data source.
+const List<InMemoryDataPlace> kPlaces = [
+  (name: 'Duomo di Milano', latLng: LatLng(45.464211, 9.191383)),
+  (name: 'Galleria Vittorio Emanuele II', latLng: LatLng(45.465455, 9.190498)),
+  (name: 'Teatro alla Scala', latLng: LatLng(45.467984, 9.189634)),
+  (name: 'Castello Sforzesco', latLng: LatLng(45.470339, 9.179799)),
+  (name: 'Parco Sempione', latLng: LatLng(45.472915, 9.174645)),
+  (name: 'Santa Maria delle Grazie', latLng: LatLng(45.465938, 9.170077)),
+  (name: 'Navigli District', latLng: LatLng(45.452083, 9.179839)),
+  (name: 'Pinacoteca di Brera', latLng: LatLng(45.472222, 9.188056)),
+  (name: 'San Siro Stadium', latLng: LatLng(45.478489, 9.122150)),
+  (name: 'Piazza Gae Aulenti', latLng: LatLng(45.484101, 9.190498)),
+  (name: 'Colosseum', latLng: LatLng(41.890251, 12.492373)),
+  (name: 'Roman Forum', latLng: LatLng(41.892465, 12.485324)),
+  (name: 'Pantheon', latLng: LatLng(41.898610, 12.476872)),
+  (name: 'Trevi Fountain', latLng: LatLng(41.900933, 12.483313)),
+  (name: 'Piazza Navona', latLng: LatLng(41.899157, 12.473076)),
+  (name: "St. Peter's Basilica", latLng: LatLng(41.902167, 12.453937)),
+  (name: 'Vatican Museums', latLng: LatLng(41.906487, 12.453601)),
+  (name: "Castel Sant'Angelo", latLng: LatLng(41.902916, 12.466667)),
+  (name: 'Piazza Venezia', latLng: LatLng(41.895465, 12.482324)),
+  (name: 'Villa Borghese Gardens', latLng: LatLng(41.910991, 12.486136)),
+];
 
 final _rnd = Random(281994);
 final _uuid = Uuid(
@@ -55,6 +82,8 @@ class _Data {
 ///
 /// Contains test data of the application in memory.
 class InMemoryDataHelper with LoggerMixin {
+  var _placeIndex = 0;
+
   final _data = _Data(
     users: Cache(),
     travelDocuments: Cache(),
@@ -75,6 +104,31 @@ class InMemoryDataHelper with LoggerMixin {
     );
     _addPlans();
   }
+
+  InMemoryDataPlace get _nextPlace {
+    if (_placeIndex >= kPlaces.length) {
+      _placeIndex = 0;
+    }
+    return kPlaces[_placeIndex++];
+  }
+
+  WidgetModel _buildPlaceWidget({
+    required int order,
+    required TravelDocumentId tid,
+    String? folderId,
+  }) =>
+      _nextPlace.let(
+        (place) => PlaceWidgetModel(
+          id: _uuid.v4(),
+          order: order++,
+          createdAt: DateTime.now().toUtc(),
+          travelDocumentId: tid,
+          name: place.name,
+          latLng: place.latLng,
+          address: 'Somewhere in Italy',
+          folderId: folderId,
+        ),
+      );
 
   WidgetModel _buildTextWidget({
     required int order,
@@ -117,6 +171,7 @@ class InMemoryDataHelper with LoggerMixin {
       'Stop #3',
       'Stop #4',
     ];
+    var folderCount = 1;
     var order = 0;
     for (final title in titles) {
       final items = <TravelItemModel>[
@@ -127,7 +182,7 @@ class InMemoryDataHelper with LoggerMixin {
           tid: tid,
         ),
         ..._buildWidgetFolder(
-          name: 'This is a folder',
+          name: 'Folder #${folderCount++}',
           order: order++,
           tid: tid,
         ).let(
@@ -145,7 +200,16 @@ class InMemoryDataHelper with LoggerMixin {
               tid: tid,
               folderId: folder.id,
             ),
+            _buildPlaceWidget(
+              order: 2,
+              tid: tid,
+              folderId: folder.id,
+            ),
           ],
+        ),
+        _buildPlaceWidget(
+          order: order++,
+          tid: tid,
         ),
         _buildTextWidget(
           order: order++,
@@ -157,6 +221,27 @@ class InMemoryDataHelper with LoggerMixin {
       _data.travelItems.saveAll({
         for (final item in items) item.id: item,
       });
+    }
+    // Add a transfer at the end of the list.
+    final geoFeatures = getTravelDocumentWrapper(tid)
+        .allFeatures
+        .whereType<GeoWidgetFeatureEntity>()
+        .toList();
+    if (geoFeatures.length >= 2) {
+      _data.travelItems.save(
+        _uuid.v4(),
+        TransferWidgetModel(
+          id: _uuid.v4(),
+          order: order++,
+          createdAt: DateTime.now().toUtc(),
+          travelDocumentId: tid,
+          stops: geoFeatures
+              .map(TransferStop.fromGeoWidgetFeature)
+              .toList(),
+          folderId: null,
+          meansOfTransport: MeansOfTransportType.walk,
+        ),
+      );
     }
   }
 

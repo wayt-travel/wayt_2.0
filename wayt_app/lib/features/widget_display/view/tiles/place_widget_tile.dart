@@ -2,6 +2,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../features.dart';
 
@@ -35,6 +36,10 @@ class PlaceWidgetTile extends StatelessWidget {
       index: index,
       travelItem: place,
       child: Card.outlined(
+        margin: EdgeInsets.symmetric(
+          vertical: $insets.xxs,
+          horizontal: $insets.xs,
+        ),
         child: ListTile(
           leading: Icon(
             Icons.place,

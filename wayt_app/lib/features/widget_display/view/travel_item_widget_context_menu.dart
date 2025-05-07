@@ -57,7 +57,7 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
     final y = position.dy;
     final w = context.mq.size.width;
     final h = context.mq.size.height;
-    final margin = $.style.insets.xs;
+    final margin = $insets.xs;
 
     Alignment? animationAlignment;
     double? top;

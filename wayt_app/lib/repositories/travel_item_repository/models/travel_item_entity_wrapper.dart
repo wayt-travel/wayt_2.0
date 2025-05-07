@@ -37,6 +37,30 @@ sealed class TravelItemEntityWrapper with EquatableMixin, ModelToStringMixin {
   @nonVirtual
   WidgetFolderEntityWrapper get asFolderWidgetWrapper =>
       this as WidgetFolderEntityWrapper;
+
+  /// Returns all the widgets in the item.
+  ///
+  /// If the item is a widget, it returns a list with the widget itself.
+  ///
+  /// If the item is a folder, it returns a list with all the widgets in the
+  /// folder.
+  List<WidgetEntity> get allWidgets {
+    if (isWidget) {
+      return [asWidgetWrapper.value];
+    } else {
+      return asFolderWidgetWrapper.children;
+    }
+  }
+
+  /// Returns all the features of the widgets in the item.
+  ///
+  /// If the item is a widget, it returns a list with all the features of the
+  /// widget.
+  ///
+  /// If the item is a folder, it returns a list with all the features of all
+  /// the widgets in the folder.
+  List<WidgetFeatureEntity> get allFeatures =>
+      allWidgets.map((e) => e.features).expand((e) => e).toList();
 }
 
 /// Wrapper for a folder widget.

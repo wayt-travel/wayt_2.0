@@ -61,6 +61,22 @@ class TravelDocumentModel extends Model implements TravelDocumentEntity {
       };
 
   @override
+  T match<T>({
+    required T Function(PlanEntity) onPlan,
+    required T Function(dynamic) onJournal,
+  }) {
+    if (isPlan) {
+      return onPlan(asPlan);
+    } else if (isJournal) {
+      return onJournal(asJournal);
+    } else {
+      throw ArgumentError(
+        'This entity is neither a plan nor a journal.',
+      );
+    }
+  }
+
+  @override
   List<Object?> get props => [
         id,
         name,

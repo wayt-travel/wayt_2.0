@@ -1,3 +1,5 @@
+import 'package:flext/flext.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:uuid/uuid.dart';
@@ -5,9 +7,12 @@ import 'package:uuid/uuid.dart';
 import '../../../util/util.dart';
 import '../../repositories.dart';
 
-part 'widgets/text_widget_model.dart';
+export 'widgets/transfer/transfer.dart';
+
 part 'widgets/photo_widget_model.dart';
 part 'widgets/place_widget_model.dart';
+part 'widgets/text_widget_model.dart';
+part 'widgets/transfer/transfer_widget_model.dart';
 
 /// A model representing a widget in a travel Plan or Journal.
 abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
@@ -73,6 +78,15 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
             updatedAt: updatedAt,
           ),
         WidgetType.place => PlaceWidgetModel._(
+            id: id,
+            order: order,
+            features: features,
+            folderId: folderId,
+            createdAt: createdAt,
+            travelDocumentId: travelDocumentId,
+            updatedAt: updatedAt,
+          ),
+        WidgetType.transfer => TransferWidgetModel._(
             id: id,
             order: order,
             features: features,

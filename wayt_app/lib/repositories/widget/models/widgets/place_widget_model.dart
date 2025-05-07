@@ -49,7 +49,6 @@ final class PlaceWidgetModel extends WidgetModel {
             latLng: latLng,
             address: address,
             name: name,
-            index: 0,
           ),
         ],
         folderId: folderId,

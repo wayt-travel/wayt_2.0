@@ -22,7 +22,6 @@ final class TextWidgetModel extends WidgetModel {
             data: text,
             format: TypographyFormat.material,
             textStyle: textStyle,
-            index: 0,
           ),
         ],
         folderId: folderId,

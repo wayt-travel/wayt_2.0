@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/context/context.dart';
-import '../../../util/text_style_extension.dart';
+import '../../../util/sdk/text_style_extension.dart';
 import '../../../widgets/widgets.dart';
 import '../../widget_display/view/travel_item_widget_context_menu.dart';
 import '../bloc/folder/folder_cubit.dart';
@@ -53,6 +53,10 @@ class _FolderWidgetState extends State<FolderWidget> {
                     ? context.col.primary.withValues(alpha: 0.3)
                     : Colors.transparent,
                 child: Card.filled(
+                  margin: EdgeInsets.symmetric(
+                    vertical: $insets.xxs,
+                    horizontal: $insets.xs,
+                  ),
                   color: folder.color
                       .toFlutterColor(context)
                       .withValues(alpha: 0.4),
@@ -72,11 +76,11 @@ class _FolderWidgetState extends State<FolderWidget> {
                           ),
                           icon: const Icon(Icons.launch),
                         ),
-                        contentPadding: $.style.insets.sm.asPaddingLeft,
+                        contentPadding: $insets.sm.asPaddingLeft,
                       ),
-                      $.style.insets.xxs.asVSpan,
+                      $insets.xxs.asVSpan,
                       Padding(
-                        padding: $.style.insets.xs.asPaddingBottom,
+                        padding: $insets.xs.asPaddingBottom,
                         child: Text(
                           // FIXME: l10n
                           'This folder contains '

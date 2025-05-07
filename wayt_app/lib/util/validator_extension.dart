@@ -19,6 +19,27 @@ extension SchemaValidationResultExtension<T> on SchemaValidationResult<T> {
   SchemaValidationError<T> get asError => this as SchemaValidationError<T>;
 }
 
+/// Extension methods for [SchemaValidationErrorExtension].
+extension SchemaValidationErrorExtension<T> on SchemaValidationError<T> {
+  /// Returns the first error message from the errors map.
+  String? get firstError {
+    final errors = this.errors.values.firstOrNull;
+    if (errors == null) {
+      return null;
+    }
+    if (errors is List) {
+      final first = errors.firstOrNull;
+      if (first is String) {
+        return first;
+      }
+    }
+    if (errors is String) {
+      return errors;
+    }
+    return null;
+  }
+}
+
 /// Extension methods for [SingleValidationResult].
 extension SingleValidationResultExtension<T> on SingleValidationResult<T> {
   /// Cast this result to [SingleValidationSuccess].
@@ -27,4 +48,11 @@ extension SingleValidationResultExtension<T> on SingleValidationResult<T> {
 
   /// Cast this result to [SingleValidationError].
   SingleValidationError<T> get asError => this as SingleValidationError<T>;
+}
+
+/// Extension methods for [SingleValidationErrorExtension].
+extension SingleValidationErrorExtension<T> on SingleValidationError<T> {
+  /// Returns the first error message from the errors list.
+  String? get firstError =>
+      errors.firstOrNull is String ? errors.firstOrNull : null;
 }

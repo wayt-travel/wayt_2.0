@@ -10,9 +10,6 @@ abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
   final String id;
 
   @override
-  final int index;
-
-  @override
   final WidgetFeatureType type;
 
   @override
@@ -23,7 +20,6 @@ abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
     required this.id,
     required this.version,
     required this.type,
-    required this.index,
   });
 
   @override
@@ -31,7 +27,6 @@ abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
   List<Object?> get props => [
         id,
         version,
-        index,
         type,
       ];
 
@@ -41,6 +36,5 @@ abstract class WidgetFeatureModel extends Model implements WidgetFeatureEntity {
         'id': id,
         'type': type.toString(),
         'version': version.toString(),
-        'index': index,
       };
 }

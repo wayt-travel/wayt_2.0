@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:pub_semver/pub_semver.dart';
 
+import '../../../../../../util/util.dart';
 import '../../../../../repositories.dart';
 
 /// A Widget feature that contains geographical information.
@@ -13,6 +14,11 @@ abstract interface class GeoWidgetFeatureEntity implements WidgetFeatureEntity {
 
   /// The coordinates of the location.
   LatLng get latLng;
+
+  /// The date and time when the location was recorded.
+  /// If null, the location was not recorded at a specific time or the
+  /// timestamp is not meaningful.
+  DateTime? get timestamp;
 }
 
 /// Implementation of [GeoWidgetFeatureEntity].
@@ -27,11 +33,14 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
   @override
   final LatLng latLng;
 
+  @override
+  final DateTime? timestamp;
+
   /// Creates a new [GeoWidgetFeatureModel] instance.
   GeoWidgetFeatureModel({
     required super.id,
-    required super.index,
     required this.latLng,
+    this.timestamp,
     this.name,
     this.address,
   }) : super(
@@ -44,14 +53,15 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
   GeoWidgetFeatureModel copyWith({
     Option<String?> name = const Option.none(),
     Option<String?> address = const Option.none(),
+    Option<DateTime?> timestamp = const Option.none(),
     LatLng? latLng,
   }) =>
       GeoWidgetFeatureModel(
         id: id,
-        index: index,
         latLng: latLng ?? this.latLng,
-        name: name.getOrElse(() => this.name),
-        address: address.getOrElse(() => this.address),
+        name: name.getOr(this.name),
+        address: address.getOr(this.address),
+        timestamp: timestamp.getOr(this.timestamp),
       );
 
   @override
@@ -60,6 +70,7 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
         name,
         address,
         latLng,
+        timestamp,
       ];
 
   @override
@@ -68,5 +79,6 @@ class GeoWidgetFeatureModel extends WidgetFeatureModel
         'name': name,
         'address': address,
         'latLng': latLng,
+        'timestamp': timestamp?.toIso8601String(),
       };
 }

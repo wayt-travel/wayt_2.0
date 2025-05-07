@@ -2,7 +2,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
 import '../../error/error.dart';
-import '../../util/sdk_candidate.dart';
+import '../../util/sdk/sdk_candidate.dart';
 
 enum _MessageType {
   info,

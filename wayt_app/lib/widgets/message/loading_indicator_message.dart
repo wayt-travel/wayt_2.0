@@ -20,7 +20,7 @@ class LoadingIndicatorMessage extends StatelessWidget {
             strokeWidth: 2,
           ),
         ),
-        $.style.insets.sm.asHSpan,
+        $insets.sm.asHSpan,
         // FIXME: l10n
         const Text('Loading...'),
       ],
