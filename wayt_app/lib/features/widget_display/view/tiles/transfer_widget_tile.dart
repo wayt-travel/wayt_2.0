@@ -31,8 +31,8 @@ class TransferWidgetTile extends StatelessWidget {
 
     final subtitle = [
       '${startingStop.name} → ${endingStop.name}',
-      if (stops.length > 2) '${stops.length - 2} intermediate stops',
-    ].join(' • ');
+      if (stops.length > 2) '\n${stops.length - 2} intermediate stops',
+    ].join('');
 
     return TravelWidgetGestureWrapper(
       onTapOverride: Option.of(
@@ -51,7 +51,8 @@ class TransferWidgetTile extends StatelessWidget {
             color: context.col.primary,
           ),
           title: Text(
-            transfer.meansOfTransport.name,
+            'Transfer by '
+            '${transfer.meansOfTransport.getLocalizedName(context)}',
             style: context.tt.bodyLarge,
           ),
           subtitle: Text(

@@ -222,6 +222,27 @@ class InMemoryDataHelper with LoggerMixin {
         for (final item in items) item.id: item,
       });
     }
+    // Add a transfer at the end of the list.
+    final geoFeatures = getTravelDocumentWrapper(tid)
+        .allFeatures
+        .whereType<GeoWidgetFeatureEntity>()
+        .toList();
+    if (geoFeatures.length >= 2) {
+      _data.travelItems.save(
+        _uuid.v4(),
+        TransferWidgetModel(
+          id: _uuid.v4(),
+          order: order++,
+          createdAt: DateTime.now().toUtc(),
+          travelDocumentId: tid,
+          stops: geoFeatures
+              .map(TransferStop.fromGeoWidgetFeature)
+              .toList(),
+          folderId: null,
+          meansOfTransport: MeansOfTransportType.walk,
+        ),
+      );
+    }
   }
 
   void _addPlans() {
