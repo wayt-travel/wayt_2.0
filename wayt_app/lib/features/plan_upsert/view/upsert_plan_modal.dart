@@ -125,33 +125,40 @@ class UpsertPlanModal extends StatelessWidget {
             ),
             builder: (context, selectorState) => SliverPadding(
               padding: $insets.screenH.asPaddingH,
-              sliver: Card.outlined(
-                margin: EdgeInsets.zero,
-                clipBehavior: Clip.hardEdge,
-                child: ListTile(
-                  leading: const Icon(Icons.calendar_today),
-                  title: const Text(
-                    // FIXME: l10n
-                    'Choose a date for your travel',
+              sliver: WActionCardTheme(
+                child: Card.outlined(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.calendar_today,
+                      color: context.col.primary,
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: context.col.primary,
+                    ),
+                    title: const Text(
+                      // FIXME: l10n
+                      'Choose a date for your travel',
+                    ),
+                    subtitle: PlanDateText(
+                      dateTime: selectorState.plannedAt,
+                      isMonthSet: selectorState.isMonthSet,
+                      isDaySet: selectorState.isDaySet,
+                    ),
+                    subtitleTextStyle: TextStyle(
+                      color: context.col.primary,
+                    ),
+                    onTap: () async {
+                      await PlanDatePicker.show(
+                        context,
+                        onPick: context.read<UpsertPlanCubit>().updatePlannedAt,
+                        initialDate:
+                            context.read<UpsertPlanCubit>().state.plannedAt,
+                      );
+                    },
                   ),
-                  subtitle: PlanDateText(
-                    dateTime: selectorState.plannedAt,
-                    isMonthSet: selectorState.isMonthSet,
-                    isDaySet: selectorState.isDaySet,
-                  ),
-                  subtitleTextStyle: TextStyle(
-                    color: context.col.primary,
-                  ),
-                  onTap: () async {
-                    await PlanDatePicker.show(
-                      context,
-                      onPick: context.read<UpsertPlanCubit>().updatePlannedAt,
-                      initialDate:
-                          context.read<UpsertPlanCubit>().state.plannedAt,
-                    );
-                  },
-                ),
-              ).asSliver,
+                ).asSliver,
+              ),
             ),
           ),
           getScrollableBottomPadding(context).asVSpan.asSliver,

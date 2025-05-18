@@ -33,7 +33,7 @@ class FeatureColorPicker extends StatelessWidget {
         controller: scrollController,
         slivers: [
           SliverPadding(
-            padding: $.style.insets.screenH.asPaddingH,
+            padding: $insets.screenH.asPaddingH,
             // FIXME: l10n
             sliver: SliverMainAxisGroup(
               slivers: [
@@ -41,12 +41,12 @@ class FeatureColorPicker extends StatelessWidget {
                   'Pick a color',
                   style: context.tt.titleLarge,
                 ).asSliver,
-                $.style.insets.sm.asVSpan.asSliver,
+                $insets.sm.asVSpan.asSliver,
                 SliverGrid.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
-                    crossAxisSpacing: $.style.insets.xs,
-                    mainAxisSpacing: $.style.insets.xs,
+                    crossAxisSpacing: $insets.xs,
+                    mainAxisSpacing: $insets.xs,
                   ),
                   itemCount: FeatureColor.values.length,
                   itemBuilder: (context, index) {

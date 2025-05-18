@@ -7,9 +7,6 @@ import 'widget_feature_type.dart';
 /// Parent entity for all features of a widget in a travel document.
 abstract interface class WidgetFeatureEntity
     implements Equatable, UniquelyIdentifiableEntity, Entity {
-  /// The index of the feature.
-  int get index;
-
   /// The type of the feature.
   WidgetFeatureType get type;
 

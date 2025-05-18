@@ -1,6 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../util.dart';
+
 /// Extension methods for [Either].
+@SdkCandidate()
 extension EitherExtension<L, R> on Either<L, R> {
   /// Returns the value of the [Either] if it is a [Left], or throws an
   /// [ArgumentError] if it is a [Right].

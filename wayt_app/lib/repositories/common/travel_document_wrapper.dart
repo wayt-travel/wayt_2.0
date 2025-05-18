@@ -50,4 +50,13 @@ class TravelDocumentWrapper<T extends TravelDocumentEntity>
   /// The order of the items in this list is meaningful.
   List<TravelItemEntity> get rootTravelItems =>
       travelItems.map((e) => e.value).toList();
+
+  /// Returns the travel items that are widgets either in the root or in
+  /// folders.
+  List<TravelItemEntity> get onlyWidgets =>
+      travelItemsFlattened.whereType<TravelItemEntity>().toList();
+
+  /// Returns all the features of the widgets in the travel document.
+  List<WidgetFeatureEntity> get allFeatures =>
+      travelItems.map((e) => e.allFeatures).expand((e) => e).toList();
 }

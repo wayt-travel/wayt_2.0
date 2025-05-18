@@ -9,6 +9,9 @@ enum WidgetFeatureType {
   /// A media feature.
   media,
 
+  /// A means of transport feature.
+  meansOfTransport,
+
   /// A price feature.
   price;
 }

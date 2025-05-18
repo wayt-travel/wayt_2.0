@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../util.dart';
+
 /// Extension for [TextStyle] to add some useful methods.
+@SdkCandidate()
 extension TextStyleExtension on TextStyle {
   /// Copies the current [TextStyle] and applies the italic font style.
   TextStyle get italic => copyWith(fontStyle: FontStyle.italic);

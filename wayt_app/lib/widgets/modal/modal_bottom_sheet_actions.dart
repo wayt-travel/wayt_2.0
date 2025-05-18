@@ -1,7 +1,7 @@
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 
-import '../../util/sdk_candidate.dart';
+import '../../util/sdk/sdk_candidate.dart';
 import '../snack_bar/snack_bar.dart';
 import 'modal.dart';
 import 'modal_bottom_sheet.dart';

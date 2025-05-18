@@ -1,7 +1,7 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flutter/material.dart';
 
-import '../../util/sdk_candidate.dart';
+import '../../util/sdk/sdk_candidate.dart';
 import 'modal_bottom_sheet_actions.dart';
 import 'modal_bottom_sheet_tile.dart';
 

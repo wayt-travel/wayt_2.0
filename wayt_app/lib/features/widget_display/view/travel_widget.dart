@@ -40,6 +40,11 @@ class TravelWidget extends StatelessWidget {
         index: index,
         place: item,
       );
+    } else if (item is TransferWidgetModel) {
+      return TransferWidgetTile(
+        index: index,
+        transfer: item,
+      );
     }
     return ListTile(
       title: Text('Item ${item.asWidget.type} is not supported yet'),

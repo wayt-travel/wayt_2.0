@@ -71,7 +71,6 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
     required this.byteCount,
     required this.metadata,
     required this.mediaExtension,
-    required super.index,
   }) : super(
           type: WidgetFeatureType.media,
           version: Version(1, 0, 0),
@@ -80,6 +79,7 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
   /// Creates a copy of this [MediaWidgetFeatureModel] with the given
   /// parameters.
   MediaWidgetFeatureModel copyWith({
+    int? index,
     String? url,
     int? byteCount,
     Map<String, dynamic>? metadata,
@@ -91,7 +91,6 @@ final class MediaWidgetFeatureModel extends WidgetFeatureModel
         byteCount: byteCount ?? this.byteCount,
         metadata: metadata ?? this.metadata,
         mediaExtension: mediaExtension,
-        index: index,
       );
 
   @override
