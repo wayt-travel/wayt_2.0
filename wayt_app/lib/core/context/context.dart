@@ -1,11 +1,11 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../env/env.dart';
 import '../../error/error.dart';
 import '../../repositories/repositories.dart';
 import 'context.dart';
 
+export '../../env/env.dart';
 export 'app_context.dart';
 
 /// Shortcut to access the style insets.

@@ -8,8 +8,7 @@ import '../../../core/context/context.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
-import '../../widget_upsert/view/modal/add_widget_mbs.dart';
-import '../plan.dart';
+import '../../features.dart';
 
 /// Page for displaying a plan.
 class PlanPage {
@@ -93,6 +92,34 @@ class PlanView extends StatelessWidget {
     super.key,
   });
 
+  Widget _buildAppBarBackground(BuildContext context) {
+    const buffer = 120;
+    final appBarHeight = context.mq.padding.top + kToolbarHeight;
+    final totalHeight = appBarHeight + buffer;
+    return TransparentPointer(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              context.col.surface.withValues(alpha: 0.8),
+              context.col.surface.withValues(alpha: 0.60),
+              Colors.transparent,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [
+              0,
+              ((appBarHeight - 10) / totalHeight),
+              1,
+            ],
+          ),
+        ),
+        height: totalHeight,
+        width: double.infinity,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TravelDocumentCubit, TravelDocumentState>(
@@ -152,7 +179,8 @@ class PlanView extends StatelessWidget {
               : null,
           body: CustomScrollView(
             slivers: [
-              SliverAppBar.large(
+              SliverAppBar(
+                expandedHeight: context.heightPx * .6,
                 title: Text(
                   fetchedPlan?.name ?? planSummary?.name ?? '',
                 ),
@@ -165,6 +193,20 @@ class PlanView extends StatelessWidget {
                         ),
                       ]
                     : null,
+                flexibleSpace: Stack(
+                  children: [
+                    const Positioned.fill(
+                      child: FlexibleSpaceBar(
+                        collapseMode: CollapseMode.parallax,
+                        background: TravelDocumentMapWidget(),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: _buildAppBarBackground(context),
+                    ),
+                  ],
+                ),
               ),
               content,
             ],
