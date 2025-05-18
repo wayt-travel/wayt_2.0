@@ -2,7 +2,7 @@ import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:luthor/luthor.dart';
 
-export 'validator_extension.dart';
+export 'extensions/validator_extension.dart';
 
 /// Common validators with localization.
 final class Validators {

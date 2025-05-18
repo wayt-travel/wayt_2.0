@@ -11,5 +11,6 @@ export 'plan_upsert/plan_upsert.dart';
 export 'profile/profile.dart';
 export 'splash/splash.dart';
 export 'travel_document/travel_document.dart';
+export 'travel_document_map/travel_document_map.dart';
 export 'widget_display/widget_display.dart';
 export 'widget_upsert/widget_upsert.dart';
