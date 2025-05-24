@@ -9,6 +9,7 @@ import '../../repositories.dart';
 
 export 'widgets/transfer/transfer.dart';
 
+part 'widgets/file_widget_model.dart';
 part 'widgets/photo_widget_model.dart';
 part 'widgets/place_widget_model.dart';
 part 'widgets/text_widget_model.dart';
@@ -97,6 +98,15 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
           ),
         // TODO: Handle this case.
         WidgetType.audio => throw UnimplementedError(),
+        WidgetType.file => FileWidgetModel._(
+            id: id,
+            order: order,
+            features: features,
+            folderId: folderId,
+            createdAt: createdAt,
+            travelDocumentId: travelDocumentId,
+            updatedAt: updatedAt,
+          ),
       };
 
   @override
