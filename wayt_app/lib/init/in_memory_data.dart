@@ -235,9 +235,7 @@ class InMemoryDataHelper with LoggerMixin {
           order: order++,
           createdAt: DateTime.now().toUtc(),
           travelDocumentId: tid,
-          stops: geoFeatures
-              .map(TransferStop.fromGeoWidgetFeature)
-              .toList(),
+          stops: geoFeatures.map(TransferStop.fromGeoWidgetFeature).toList(),
           folderId: null,
           meansOfTransport: MeansOfTransportType.walk,
         ),

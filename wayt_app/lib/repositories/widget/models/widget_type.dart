@@ -6,6 +6,9 @@ enum WidgetType {
   /// An audio widget.
   audio,
 
+  /// A file widget.
+  file,
+
   /// A photo widget.
   photo,
 
