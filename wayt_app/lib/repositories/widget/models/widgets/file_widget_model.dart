@@ -7,7 +7,8 @@ part of '../widget_model.dart';
 ///
 /// The [id] uniquely identifies the widget.
 ///
-/// The [name] is the name displayed in the travel document.
+/// The [name] is the name displayed in the travel document. 
+/// The default value is the name of the file.
 ///
 /// The [url] is the remote URL of the file. It can be null if the photo has
 /// not been uploaded yet.
@@ -42,7 +43,6 @@ final class FileWidgetModel extends WidgetModel {
     required TravelDocumentId travelDocumentId,
     required int? byteCount,
     required String mediaExtension,
-    required IntSize size,
     required String name,
     String? folderId,
     DateTime? createdAt,
@@ -62,9 +62,7 @@ final class FileWidgetModel extends WidgetModel {
             mediaExtension: mediaExtension,
             byteCount: byteCount,
             mediaType: MediaFeatureType.file,
-            metadata: {
-              'size': size.toJson(),
-            },
+            metadata: null,
           ),
         ],
         folderId: folderId,
