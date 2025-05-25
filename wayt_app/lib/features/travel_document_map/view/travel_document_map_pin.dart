@@ -1,4 +1,5 @@
 import '../../../repositories/repositories.dart';
+import '../../../util/util.dart';
 
 /// Enumeration representing the types of map pins used in the travel document
 /// map.
@@ -11,8 +12,8 @@ enum TravelDocumentMapPin {
 
   /// The icon asset path for the pin.
   String get assetPath => switch (this) {
-        photo => 'assets/icons/map/photo.png',
-        _ => 'assets/icons/map/other.png',
+        photo => $assets.icons.map.photo,
+        _ => $assets.icons.map.other,
       };
 
   /// Gets the enum value from the given [TravelItemEntity].

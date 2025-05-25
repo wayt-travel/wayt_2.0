@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../util/util.dart';
 import '../../repositories.dart';
 
 /// A latitude/longitude aligned rectangle.
@@ -58,10 +59,10 @@ class LatLngBounds {
       return null;
     }
     assert(
-      json is List && json.length == 2,
-      'Invalid LatLngBounds json. It should be a list of two LatLng.',
+      json is List && json.length == 2 && AssertionUtils.allNotNull(json),
+      'Invalid LatLngBounds json. It should be a list of two not null LatLng.',
     );
-    final list = json as List<Object?>;
+    final list = json as List<Object>;
     return LatLngBounds(
       southwest: LatLng.fromJson(list[0])!,
       northeast: LatLng.fromJson(list[1])!,
