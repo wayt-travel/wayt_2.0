@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
 import '../core/core.dart';
@@ -33,7 +34,10 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     ),
   );
   WidgetsFlutterBinding.ensureInitialized();
+  // TODO: move into init cubit. Beware that this must be done before
+  // registering singletons repositories.
   await AppContext.I.init();
+  MapboxOptions.setAccessToken($.env.mapboxAccessToken);
   runApp(await builder());
 }
 
