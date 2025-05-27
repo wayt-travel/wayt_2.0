@@ -121,6 +121,15 @@ final class FileWidgetModel extends WidgetModel {
     DateTime? updatedAt,
     Option<String?> url = const Option.none(),
   }) {
+    final updatedFeatures = features.map((feature) {
+    if (feature == _mediaFeature) {
+      return _mediaFeature.copyWith(
+        url: url.getOrElse(() => this.url),
+        byteCount: _mediaFeature.byteCount,
+      );
+    }
+    return feature;
+  }).nonNulls.toList();
     return FileWidgetModel._(
       id: id,
       order: order ?? this.order,
@@ -128,12 +137,7 @@ final class FileWidgetModel extends WidgetModel {
       folderId: folderId.getOrElse(() => this.folderId),
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      features: [
-        _mediaFeature.copyWith(
-          url: url.getOrElse(() => this.url),
-          byteCount: _mediaFeature.byteCount,
-        ),
-      ].nonNulls.toList(),
+      features: updatedFeatures,
     );
   }
 }

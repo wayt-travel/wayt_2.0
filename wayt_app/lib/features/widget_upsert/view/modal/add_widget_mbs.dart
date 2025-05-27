@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +7,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/context/context.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../theme/theme.dart';
-import '../../../../widgets/modal/modal.dart';
+import '../../../../widgets/widgets.dart';
 import '../../../features.dart';
+import '../../bloc/create_file_widget/create_file_widget_cubit.dart';
 
 /// Modal bottom sheet to add a new widget in a travel document.
 class AddWidgetMbs extends StatelessWidget {
@@ -135,6 +138,61 @@ class AddWidgetMbs extends StatelessWidget {
                         travelDocumentId: travelDocumentId,
                       );
                     },
+                  ),
+                  NewItemButton(
+                    label: 'File',
+                    size: size,
+                    onTap: (ctx) async {
+                      // ctx is the context of the item button
+                      // context is the context of the modal bottom sheet
+                      // when the mbs is popped the context is no
+                      // longer mounted.
+                      // So the mbs should be poppe when cubit terminates 
+                      // its processing.
+                      final cubit = CreateFileWidgetCubit(
+                        index: index,
+                        folderId: folderId,
+                        travelDocumentId: travelDocumentId,
+                        authRepository: $.repo.auth(),
+                        travelItemRepository: $.repo.travelItem(),
+                        travelDocumentLocalMediaDataSource:
+                            TravelDocumentLocalMediaDataSource.I,
+                      );
+                      await ctx.navRoot.pushBlocListenerBarrier<
+                          CreateFileWidgetCubit, CreateFileWidgetState>(
+                        bloc: cubit,
+                        trigger: () async {
+                          final files = await FileUtils.pick(context);
+                          unawaited(cubit.process(files));
+                        },
+                        listener: (_, state) {
+                          // Handle success
+                          // Pop the barrier
+                          ctx.navRoot.pop();
+                          // the mbs
+                          context.navRoot.pop();
+                          if (state.status.isSuccess) {
+                            if (state.errors.isNotEmpty) {
+                              SnackBarHelper.I.showError(
+                                context: context,
+                                // FIXME: l10n
+                                message:
+                                    'Failed to create ${state.errors.length} '
+                                    'of '
+                                    '${state.requests.length} file widgets',
+                              );
+                            }
+                          }
+                        },
+                        listenWhen: (previous, current) =>
+                            current.status.isFailure ||
+                            current.status.isSuccess,
+                      );
+                    },
+                    child: const Icon(
+                      Icons.description,
+                      size: 32,
+                    ),
                   ),
                 ],
               ),
