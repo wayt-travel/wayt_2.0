@@ -228,10 +228,11 @@ class InMemoryDataHelper with LoggerMixin {
         .whereType<GeoWidgetFeatureEntity>()
         .toList();
     if (geoFeatures.length >= 2) {
+      final transferId = _uuid.v4();
       _data.travelItems.save(
-        _uuid.v4(),
+        transferId,
         TransferWidgetModel(
-          id: _uuid.v4(),
+          id: transferId,
           order: order++,
           createdAt: DateTime.now().toUtc(),
           travelDocumentId: tid,
