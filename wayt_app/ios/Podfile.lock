@@ -48,6 +48,8 @@ PODS:
     - MapboxCommon (= 24.11.0)
     - MapboxCoreMaps (= 11.11.0)
     - Turf (= 4.0.0)
+  - native_exif (0.0.1):
+    - Flutter
   - open_filex (0.0.2):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -64,6 +66,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
+  - native_exif (from `.symlinks/plugins/native_exif/ios`)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
@@ -87,6 +90,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   mapbox_maps_flutter:
     :path: ".symlinks/plugins/mapbox_maps_flutter/ios"
+  native_exif:
+    :path: ".symlinks/plugins/native_exif/ios"
   open_filex:
     :path: ".symlinks/plugins/open_filex/ios"
   path_provider_foundation:
@@ -103,6 +108,7 @@ SPEC CHECKSUMS:
   MapboxCoreMaps: 99401a4a1cfddbd5166d29db43d26e7afa28acfd
   MapboxMaps: 5199095d616bbf02d99f6287dbb2023e66c6987c
   open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
+  native_exif: 0eb73d3d5b3ca892719228df8d2d1b13d1ae396c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4

@@ -89,7 +89,8 @@ class ProcessImageService with LoggerMixin {
         // Compress
         // TODO: Implement compression logic here
 
-        // TODO: read EXIF data
+        // read EXIF data
+        final helper = await ExifHelper.maybeFromBytes(bytes);
 
         // Determine the size of the image
         final descriptor = await ImageDescriptor.encoded(
@@ -111,7 +112,7 @@ class ProcessImageService with LoggerMixin {
           file: outputFile,
           size: size,
           byteCount: bytes.lengthInBytes,
-          latLng: null,
+          latLng: helper?.latLng,
         );
       },
       taskEitherOnError(
