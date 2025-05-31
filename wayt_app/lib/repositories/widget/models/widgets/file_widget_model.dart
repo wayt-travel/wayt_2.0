@@ -7,7 +7,7 @@ part of '../widget_model.dart';
 ///
 /// The [id] uniquely identifies the widget.
 ///
-/// The [name] is the name displayed in the travel document. 
+/// The [name] is the name displayed in the travel document.
 /// The default value is the name of the file.
 ///
 /// The [url] is the remote URL of the file. It can be null if the photo has
@@ -87,7 +87,7 @@ final class FileWidgetModel extends WidgetModel {
   // Getters
   /// Path to the local file of the photo.
   ///
-  /// Returns null if the photo is not stored locally.
+  /// Returns null if the file is not stored locally.
   String? get localPath => TravelDocumentLocalMediaDataSource.I.getMediaPath(
         travelDocumentId: travelDocumentId,
         folderId: folderId,
@@ -121,15 +121,18 @@ final class FileWidgetModel extends WidgetModel {
     DateTime? updatedAt,
     Option<String?> url = const Option.none(),
   }) {
-    final updatedFeatures = features.map((feature) {
-    if (feature == _mediaFeature) {
-      return _mediaFeature.copyWith(
-        url: url.getOrElse(() => this.url),
-        byteCount: _mediaFeature.byteCount,
-      );
-    }
-    return feature;
-  }).nonNulls.toList();
+    final updatedFeatures = features
+        .map((feature) {
+          if (feature == _mediaFeature) {
+            return _mediaFeature.copyWith(
+              url: url.getOrElse(() => this.url),
+              byteCount: _mediaFeature.byteCount,
+            );
+          }
+          return feature;
+        })
+        .nonNulls
+        .toList();
     return FileWidgetModel._(
       id: id,
       order: order ?? this.order,
