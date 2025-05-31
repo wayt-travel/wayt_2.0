@@ -5,22 +5,22 @@ import '../../../../../repositories.dart';
 /// A Widget feature that contains duration information.
 abstract interface class DurationWidgetFeatureEntity
     implements WidgetFeatureEntity {
-  /// {@template duration_widget_feature_duration}
+  /// {@template duration_widget_feature_data}
   /// The duration in seconds.
   /// {@endtemplate}
-  int get duration;
+  int get data;
 }
 
 /// Implementation of [DurationWidgetFeatureEntity].
 class DurationWidgetFeatureModel extends WidgetFeatureModel
     implements DurationWidgetFeatureEntity {
   @override
-  final int duration;
+  final int data;
 
   /// Creates a new [DurationWidgetFeatureModel] instance.
   DurationWidgetFeatureModel({
     required super.id,
-    required this.duration,
+    required this.data,
   }) : super(
           type: WidgetFeatureType.duration,
           version: Version(1, 0, 0),
@@ -29,22 +29,22 @@ class DurationWidgetFeatureModel extends WidgetFeatureModel
   /// Creates a copy of this [DurationWidgetFeatureModel] with the given
   /// parameters.
   DurationWidgetFeatureModel copyWith({
-    int? duration,
+    int? data,
   }) =>
       DurationWidgetFeatureModel(
         id: id,
-        duration: duration ?? this.duration,
+        data: data ?? this.data,
       );
 
   @override
   List<Object?> get props => [
         ...super.props,
-        duration,
+        data,
       ];
 
   @override
   Map<String, dynamic> $toMap() => {
         ...super.$toMap(),
-        'duration': duration,
+        'data': data,
       };
 }
