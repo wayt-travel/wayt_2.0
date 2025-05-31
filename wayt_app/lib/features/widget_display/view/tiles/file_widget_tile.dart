@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/core.dart';
 import '../../../../repositories/widget/models/widget_model.dart';
+import '../../../../util/util.dart';
 import '../../../features.dart';
 
 /// {@template file_widget_tile}
@@ -26,7 +27,18 @@ class FileWidgetTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TravelWidgetGestureWrapper(
-      onTapOverride: Option.of((_, __) {}),
+      onTapOverride: Option.of((_, __) async {
+        await context.navRoot.pushBarrier();
+        if (context.mounted && file.localPath != null) {
+          await LinkUtils.maybeOpenFile(
+            context: context,
+            absolutePath: file.localPath!,
+          );
+        }
+        if (context.mounted) {
+          context.navRoot.pop();
+        }
+      }),
       index: index,
       travelItem: file,
       child: Card.outlined(
