@@ -147,7 +147,7 @@ class AddWidgetMbs extends StatelessWidget {
                       // context is the context of the modal bottom sheet
                       // when the mbs is popped the context is no
                       // longer mounted.
-                      // So the mbs should be poppe when cubit terminates 
+                      // So the mbs should be popped when cubit terminates
                       // its processing.
                       final cubit = CreateFileWidgetCubit(
                         index: index,

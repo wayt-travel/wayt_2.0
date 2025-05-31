@@ -10,7 +10,7 @@ part of '../widget_model.dart';
 /// The [name] is the name displayed in the travel document.
 /// The default value is the name of the file.
 ///
-/// The [url] is the remote URL of the file. It can be null if the photo has
+/// The [url] is the remote URL of the file. It can be null if the file has
 /// not been uploaded yet.
 ///
 /// The [order] is the order of the widget in the travel document.
@@ -34,7 +34,7 @@ part of '../widget_model.dart';
 /// It includes the dot, e.g. ".jpg".
 /// {@endtemplate}
 final class FileWidgetModel extends WidgetModel {
-  /// {@macro photo_widget_model}
+  /// {@macro file_widget_model}
   factory FileWidgetModel({
     required String id,
     required String mediaId,
@@ -85,7 +85,7 @@ final class FileWidgetModel extends WidgetModel {
         );
 
   // Getters
-  /// Path to the local file of the photo.
+  /// Path to the local file.
   ///
   /// Returns null if the file is not stored locally.
   String? get localPath => TravelDocumentLocalMediaDataSource.I.getMediaPath(
