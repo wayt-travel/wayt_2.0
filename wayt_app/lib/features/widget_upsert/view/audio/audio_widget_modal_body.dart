@@ -89,7 +89,7 @@ class _AudioWidgetModalBodyState extends State<AudioWidgetModalBody> {
               }, (tuple) async {
                 // create the audio widget with path
                 // get the duration of the audio file
-                // Player is init and then we called [setUrl] only for the 
+                // Player is init and then we called [setUrl] only for the
                 // audio's duration
                 final player = audioplayers.AudioPlayer();
 

@@ -1,7 +1,7 @@
 part of 'create_audio_widget_cubit.dart';
 
 /// State of the [CreateAudioWidgetCubit].
-// TODO: can be replaced with a TaskCubitState 
+// TODO: can be replaced with a TaskCubitState
 final class CreateAudioWidgetState extends SuperBlocState<WError> {
   const CreateAudioWidgetState._({
     required super.status,

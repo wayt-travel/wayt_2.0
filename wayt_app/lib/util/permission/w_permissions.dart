@@ -5,7 +5,6 @@ import 'w_permission.dart';
 ///
 /// - `microphone`: Permission to access the microphone.
 abstract class WPermissions {
-
   /// {@macro microphone_permission}
   static const WPermission microphone = MicrophonePermission();
 }

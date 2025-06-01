@@ -52,7 +52,6 @@ class AudioRecorderCubit extends Cubit<AudioRecorderState> with LoggerMixin {
       '$mediaId.mp4',
     );
 
-
     logger.d('The audio will be saved at: $tempDestinationPath');
     emit(
       state.copyWith(
