@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart' as audioplayers;
 import 'package:flext/flext.dart';
@@ -55,7 +55,7 @@ class _AudioWidgetModalBodyState extends State<AudioWidgetModalBody> {
       child: BlocListener<AudioRecorderCubit, AudioRecorderState>(
         listenWhen: (previous, current) =>
             previous.recorderState != current.recorderState,
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state.recorderState.isRecording) {
             state.audioPath.match(
               () {
@@ -75,68 +75,77 @@ class _AudioWidgetModalBodyState extends State<AudioWidgetModalBody> {
           /// If the audio path is available, the recording is stopped and has
           /// to be processed.
           if (state.recorderState.isIdle) {
-            _audioRecorder.stop(); // or cancel
+            await _audioRecorder.stop(); // or cancel
 
-            state.audioPath
-                .flatMap(
-              (path) => state.mediaId.map(
-                (mediaId) => (path, mediaId),
-              ),
-            )
-                .match(() {}, (tuple) async {
-              // create the audio widget with path
-              // get the duration of the audio file
-              // Player is init and then we called [setUrl] only for the audio's
-              // duration
-              final player = audioplayers.AudioPlayer();
-              player.onDurationChanged.listen(
-                (duration) {
-                  // when duration is available, create the audio widget.
-                  if (context.mounted) {
-                    final cubit = CreateAudioWidgetCubit(
-                      travelDocumentId: context
-                          .read<AudioWidgetParametersProvider>()
-                          .state
-                          .travelDocumentId,
-                      folderId: context
-                          .read<AudioWidgetParametersProvider>()
-                          .state
-                          .folderId,
-                      index: context
-                          .read<AudioWidgetParametersProvider>()
-                          .state
-                          .index,
-                      authRepository: $.repo.auth(),
-                      travelItemRepository: $.repo.travelItem(),
-                      travelDocumentLocalMediaDataSource:
-                          TravelDocumentLocalMediaDataSource.I,
-                    );
-                    context.navRoot.pushBlocListenerBarrier<
-                        CreateAudioWidgetCubit, CreateAudioWidgetState>(
-                      bloc: cubit,
-                      trigger: () => cubit.process(
-                        audioPath: tuple.$1,
-                        mediaId: tuple.$2,
-                        duration: duration.inMilliseconds,
-                      ),
-                      listenWhen: (previous, current) =>
-                          current.status.isFailure || current.status.isSuccess,
-                      listener: (context, state) {
-                        // Pop the barrier
-                        context.navRoot.pop();
-                        if (state.status.isFailure) {
-                          SnackBarHelper.I.showError(
-                            context: context,
-                            message: state.error!.userIntlMessage(context),
-                          );
-                        }
-                      },
-                    );
-                  }
-                },
-              );
-              await player.setSourceDeviceFile(tuple.$1);
-            });
+            unawaited(
+              state.audioPath
+                  .flatMap(
+                (path) => state.mediaId.map(
+                  (mediaId) => (path, mediaId),
+                ),
+              )
+                  .match(() {
+                return null;
+              }, (tuple) async {
+                // create the audio widget with path
+                // get the duration of the audio file
+                // Player is init and then we called [setUrl] only for the 
+                // audio's duration
+                final player = audioplayers.AudioPlayer();
+
+                player.onDurationChanged.listen(
+                  (duration) {
+                    // when duration is available, create the audio widget.
+                    if (context.mounted) {
+                      final cubit = CreateAudioWidgetCubit(
+                        travelDocumentId: context
+                            .read<AudioWidgetParametersProvider>()
+                            .state
+                            .travelDocumentId,
+                        folderId: context
+                            .read<AudioWidgetParametersProvider>()
+                            .state
+                            .folderId,
+                        index: context
+                            .read<AudioWidgetParametersProvider>()
+                            .state
+                            .index,
+                        authRepository: $.repo.auth(),
+                        travelItemRepository: $.repo.travelItem(),
+                        travelDocumentLocalMediaDataSource:
+                            TravelDocumentLocalMediaDataSource.I,
+                      );
+                      unawaited(
+                        context.navRoot.pushBlocListenerBarrier<
+                            CreateAudioWidgetCubit, CreateAudioWidgetState>(
+                          bloc: cubit,
+                          trigger: () => cubit.process(
+                            tempAudioPath: tuple.$1,
+                            mediaId: tuple.$2,
+                            duration: duration.inMilliseconds,
+                          ),
+                          listenWhen: (previous, current) =>
+                              current.status.isFailure ||
+                              current.status.isSuccess,
+                          listener: (context, state) {
+                            // Pop the barrier
+                            context.navRoot.pop();
+                            if (state.status.isFailure) {
+                              SnackBarHelper.I.showError(
+                                context: context,
+                                message: state.error!.userIntlMessage(context),
+                              );
+                            }
+                          },
+                        ),
+                      );
+                    }
+                  },
+                );
+
+                await player.setSourceDeviceFile(tuple.$1);
+              }),
+            );
           }
         },
         child: BlocSelector<AudioRecorderCubit, AudioRecorderState, AudioState>(

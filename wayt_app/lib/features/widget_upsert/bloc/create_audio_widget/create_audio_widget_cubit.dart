@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
 import 'package:path/path.dart';
+import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
@@ -18,7 +19,8 @@ part 'create_audio_widget_state.dart';
 ///   interact with the UI.
 /// {@endtemplate}
 // TODO: can be replaced with a TaskCubit
-class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState> {
+class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState>
+    with LoggerMixin {
   /// The ID of the travel document where the audio widget will be added.
   final TravelDocumentId travelDocumentId;
 
@@ -75,14 +77,23 @@ class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState> {
 
   /// Processes the audio file and creates a new audio widget.
   Future<void> process({
-    required String audioPath,
+    required String tempAudioPath,
     required String mediaId,
     required int duration,
   }) async {
     emit(state.copyWith(status: StateStatus.success));
 
+    final destinationPath = travelDocumentLocalMediaDataSource.getMediaPath(
+      travelDocumentId: travelDocumentId,
+      folderId: folderId,
+      mediaWidgetFeatureId: mediaId,
+      mediaExtension: extension(tempAudioPath),
+    );
+    logger.d('The audio file will be copied at: $destinationPath');
+
     final processor = ProcessAudioFileService(
-      file: File(audioPath),
+      file: File(tempAudioPath),
+      absoluteDestinationPath: destinationPath,
     );
 
     await processor

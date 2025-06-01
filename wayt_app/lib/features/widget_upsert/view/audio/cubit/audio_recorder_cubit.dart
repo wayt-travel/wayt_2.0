@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:path/path.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../../core/context/app_context.dart';
 import '../../../../../repositories/repositories.dart';
 
 part 'audio_recorder_state.dart';
@@ -35,34 +37,27 @@ class AudioRecorderCubit extends Cubit<AudioRecorderState> with LoggerMixin {
   }) : super(const AudioRecorderState.initial());
 
   /// Sets the audio recorder state to recording
-  Future<void> onStartRecording() async {
+  void onStartRecording() {
     logger.v('Attempt to start audio recording...');
     final mediaId = const Uuid().v4();
+
     // The file is saved with MP4 extension.
     // The encoding is still AAC but we faced some issues on iOS in
     // reproducing audios recorded on Android and saved with .aac
     // extension.
     // We tested that with mp4 extension everything works on iOS, Android and
     // Web (Chrome and Safari as well).
-    final destinationPath = travelDocumentLocalMediaDataSource.getMediaPath(
-      travelDocumentId: travelDocumentId,
-      folderId: folderId,
-      mediaWidgetFeatureId: mediaId,
-      mediaExtension: '.mp4',
+    final tempDestinationPath = join(
+      AppContext.I.temporaryDirectory.path,
+      '$mediaId.mp4',
     );
 
-    await travelDocumentLocalMediaDataSource
-        .getTravelDocumentDir(
-          travelDocumentId: travelDocumentId,
-          folderId: folderId,
-        )
-        .run();
 
-    logger.d('The audio will be saved at: $destinationPath');
+    logger.d('The audio will be saved at: $tempDestinationPath');
     emit(
       state.copyWith(
         recorderState: AudioState.recording,
-        audioPath: Option.of(destinationPath),
+        audioPath: Option.of(tempDestinationPath),
         mediaId: Option.of(mediaId),
       ),
     );
