@@ -2,13 +2,35 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 
-import '../../../../core/core.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../util/util.dart';
 import '../../../../widgets/widgets.dart';
 import 'audio.dart';
+import 'audio_widget_modal_body.dart';
+
+/// Provides the parameters for creating an audio widget.
+///
+/// It is uded to inject the parameters into the context of the modal.
+class AudioWidgetParametersProvider extends Cubit<
+    ({
+      TravelDocumentId travelDocumentId,
+      String? folderId,
+      int? index,
+    })> {
+  /// Creates an instance of [AudioWidgetParametersProvider].
+  AudioWidgetParametersProvider({
+    required TravelDocumentId travelDocumentId,
+    String? folderId,
+    int? index,
+  }) : super(
+          (
+            travelDocumentId: travelDocumentId,
+            folderId: folderId,
+            index: index,
+          ),
+        );
+}
 
 /// Modal for adding a audio widget
 class AudioWidgetModal extends StatelessWidget {
@@ -25,8 +47,24 @@ class AudioWidgetModal extends StatelessWidget {
       MaterialPageRoute<void>(
         fullscreenDialog: true,
         builder: (ctx) {
-          return BlocProvider(
-            create: (context) => AudioRecorderCubit(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => AudioRecorderCubit(
+                  travelDocumentId: travelDocumentId,
+                  folderId: folderId,
+                  travelDocumentLocalMediaDataSource:
+                      TravelDocumentLocalMediaDataSource.I,
+                ),
+              ),
+              BlocProvider(
+                create: (context) => AudioWidgetParametersProvider(
+                  travelDocumentId: travelDocumentId,
+                  folderId: folderId,
+                  index: index,
+                ),
+              ),
+            ],
             child: const AudioWidgetModal._(),
           );
         },
@@ -82,9 +120,11 @@ class AudioWidgetModal extends StatelessWidget {
                     }
                   }
                   if (context.mounted) {
-                    // TEMP: use hardcoded path
-                    context.read<AudioRecorderCubit>().onStartRecording('path');
+                    context.read<AudioRecorderCubit>().onStartRecording();
                   }
+                }
+                if (state.isRecording && context.mounted) {
+                  context.read<AudioRecorderCubit>().onStopRecording();
                 }
               },
               child: Icon(
@@ -93,41 +133,7 @@ class AudioWidgetModal extends StatelessWidget {
             );
           },
         ),
-        body: Center(
-          child:
-              BlocSelector<AudioRecorderCubit, AudioRecorderState, AudioState>(
-            selector: (state) {
-              return state.recorderState;
-            },
-            builder: (context, state) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // TEMP: show elasped time when recording
-                  Text(
-                    // FIXME: l10n
-                    state.isIdle
-                        ? 'Click the button below to start recording'
-                        : '00:00',
-                    textAlign: TextAlign.center,
-                  ),
-                  if (state.isRecording) ...[
-                    Gap($.style.insets.sm),
-                    TextButton(
-                      onPressed: () {
-                        context.read<AudioRecorderCubit>().onCancelRecording();
-                      },
-                      child: const Text(
-                        // FIXME: l10n
-                        'Cancel recording',
-                      ),
-                    )
-                  ],
-                ],
-              );
-            },
-          ),
-        ),
+        body: const AudioWidgetModalBody(),
       ),
     );
   }

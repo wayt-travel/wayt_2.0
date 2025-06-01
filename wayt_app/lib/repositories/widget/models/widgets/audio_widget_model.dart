@@ -1,8 +1,4 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:pub_semver/pub_semver.dart';
-import 'package:uuid/uuid.dart';
-
-import '../../../repositories.dart';
+part of '../widget_model.dart';
 
 /// {@template audio_widget_model}
 /// A widget that represents an audio file.
