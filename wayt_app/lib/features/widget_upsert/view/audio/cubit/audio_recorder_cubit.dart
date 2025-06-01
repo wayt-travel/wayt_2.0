@@ -12,6 +12,9 @@ part 'audio_recorder_state.dart';
 
 /// {@template audio_recorder_cubit}
 /// Cubit for handling audio recorder.
+///
+/// It is charge of creating and building the direcotry and the output path of
+/// the audio file.
 /// {@endtemplate}
 class AudioRecorderCubit extends Cubit<AudioRecorderState> with LoggerMixin {
   /// The ID of the travel document where the photo widget will be added.
@@ -32,15 +35,28 @@ class AudioRecorderCubit extends Cubit<AudioRecorderState> with LoggerMixin {
   }) : super(const AudioRecorderState.initial());
 
   /// Sets the audio recorder state to recording
-  void onStartRecording() {
+  Future<void> onStartRecording() async {
     logger.v('Attempt to start audio recording...');
     final mediaId = const Uuid().v4();
+    // The file is saved with MP4 extension.
+    // The encoding is still AAC but we faced some issues on iOS in
+    // reproducing audios recorded on Android and saved with .aac
+    // extension.
+    // We tested that with mp4 extension everything works on iOS, Android and
+    // Web (Chrome and Safari as well).
     final destinationPath = travelDocumentLocalMediaDataSource.getMediaPath(
       travelDocumentId: travelDocumentId,
       folderId: folderId,
       mediaWidgetFeatureId: mediaId,
-      mediaExtension: '.aac',
+      mediaExtension: '.mp4',
     );
+
+    await travelDocumentLocalMediaDataSource
+        .getTravelDocumentDir(
+          travelDocumentId: travelDocumentId,
+          folderId: folderId,
+        )
+        .run();
 
     logger.d('The audio will be saved at: $destinationPath');
     emit(
