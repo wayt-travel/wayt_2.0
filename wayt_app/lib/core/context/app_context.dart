@@ -24,6 +24,10 @@ abstract interface class AppContext {
 
   /// Path to the temporary directory on the device that is not backed up and is
   /// suitable for storing caches of downloaded files.
+  ///
+  /// On iOS is the NsCachesDirectory (Library/Caches).
+  ///
+  /// On Android is the Context.getCacheDir.
   Directory get temporaryDirectory;
 
   /// Initializes the app context.
