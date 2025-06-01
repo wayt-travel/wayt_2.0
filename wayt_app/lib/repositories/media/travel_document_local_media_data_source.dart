@@ -134,4 +134,42 @@ class TravelDocumentLocalMediaDataSource with LoggerMixin {
         },
         taskEitherOnError(logger, fallbackError: $errors.system.io),
       );
+
+  /// Gets [Directory] object from directory path. If the directory does
+  /// not exists it creates it.
+  WTaskEither<Directory> getOrCreateDir(String path) {
+    return TaskEither.tryCatch(
+      () async {
+        final dir = Directory(path);
+        if (!dir.existsSync()) {
+          dir.createSync(recursive: true);
+        }
+        return dir;
+      },
+      taskEitherOnError(logger, fallbackError: $errors.system.io),
+    );
+  }
+
+  /// Gets the directory for a travel document.
+  /// If it does not exist, it creates it.
+  ///
+  /// This method is useful to check and create the directory of a travel
+  /// document.
+  WTaskEither<Directory> getTravelDocumentDir({
+    required TravelDocumentId travelDocumentId,
+    required String? folderId,
+    String? userId,
+  }) {
+    var path = join(
+      appContext.applicationDocumentsDirectory.path,
+      'users',
+      userId ?? authRepository.getOrThrow().user!.id,
+      'travel_documents',
+      travelDocumentId.id,
+    );
+    if (folderId != null) {
+      path = join(path, folderId);
+    }
+    return getOrCreateDir(path);
+  }
 }
