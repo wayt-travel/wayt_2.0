@@ -8,14 +8,14 @@ abstract interface class DurationWidgetFeatureEntity
   /// {@template duration_widget_feature_data}
   /// The duration in seconds.
   /// {@endtemplate}
-  int get data;
+  Duration get data;
 }
 
 /// Implementation of [DurationWidgetFeatureEntity].
 class DurationWidgetFeatureModel extends WidgetFeatureModel
     implements DurationWidgetFeatureEntity {
   @override
-  final int data;
+  final Duration data;
 
   /// Creates a new [DurationWidgetFeatureModel] instance.
   DurationWidgetFeatureModel({
@@ -29,7 +29,7 @@ class DurationWidgetFeatureModel extends WidgetFeatureModel
   /// Creates a copy of this [DurationWidgetFeatureModel] with the given
   /// parameters.
   DurationWidgetFeatureModel copyWith({
-    int? data,
+    Duration? data,
   }) =>
       DurationWidgetFeatureModel(
         id: id,

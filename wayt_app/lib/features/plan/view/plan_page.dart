@@ -10,6 +10,24 @@ import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
 import '../../features.dart';
 
+/// The cubit is in charge of keeping track of the current selected audio
+/// widget tile.
+///
+/// When a audio is tapped, it expands the audio tile to show more details and
+/// the audio player.
+class SelectedAudioTileCubit extends Cubit<AudioWidgetModel?> {
+  /// Creates a new instance of [SelectedAudioTileCubit].
+  SelectedAudioTileCubit() : super(null);
+
+  /// Selects the [audio].
+  void onSelected(AudioWidgetModel audio) => emit(audio);
+
+  /// Resets the state of the cubit.
+  void onReset() {
+    if (state != null) emit(null);
+  }
+}
+
 /// Page for displaying a plan.
 class PlanPage {
   /// The name of the route.
@@ -44,6 +62,9 @@ class PlanPage {
                   travelItemRepository: $.repo.travelItem(),
                   folderId: null,
                 ),
+              ),
+              BlocProvider(
+                create: (context) => SelectedAudioTileCubit(),
               ),
             ],
             child: PlanView(
@@ -177,39 +198,45 @@ class PlanView extends StatelessWidget {
                   child: const Icon(Icons.add),
                 )
               : null,
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: context.heightPx * .6,
-                title: Text(
-                  fetchedPlan?.name ?? planSummary?.name ?? '',
-                ),
-                actions: isSuccess
-                    ? [
-                        const TravelDocumentReorderIconButton(),
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () => PlanPageMoreMbs.show(context),
+          body: Listener(
+            // Reset the selected audio tite when the user taps outside, even
+            // on other tiles.
+            onPointerDown: (_) =>
+                context.read<SelectedAudioTileCubit>().onReset(),
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: context.heightPx * .6,
+                  title: Text(
+                    fetchedPlan?.name ?? planSummary?.name ?? '',
+                  ),
+                  actions: isSuccess
+                      ? [
+                          const TravelDocumentReorderIconButton(),
+                          IconButton(
+                            icon: const Icon(Icons.more_vert),
+                            onPressed: () => PlanPageMoreMbs.show(context),
+                          ),
+                        ]
+                      : null,
+                  flexibleSpace: Stack(
+                    children: [
+                      const Positioned.fill(
+                        child: FlexibleSpaceBar(
+                          collapseMode: CollapseMode.parallax,
+                          background: TravelDocumentMapWidget(),
                         ),
-                      ]
-                    : null,
-                flexibleSpace: Stack(
-                  children: [
-                    const Positioned.fill(
-                      child: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.parallax,
-                        background: TravelDocumentMapWidget(),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: _buildAppBarBackground(context),
-                    ),
-                  ],
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: _buildAppBarBackground(context),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              content,
-            ],
+                content,
+              ],
+            ),
           ),
         );
       },

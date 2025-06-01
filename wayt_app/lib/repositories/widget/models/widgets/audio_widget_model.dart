@@ -45,7 +45,7 @@ final class AudioWidgetModel extends WidgetModel {
       features: [
         DurationWidgetFeatureModel(
           id: const Uuid().v4(),
-          data: duration,
+          data: Duration(milliseconds: duration),
         ),
         MediaWidgetFeatureModel(
           id: mediaId,
@@ -90,7 +90,7 @@ final class AudioWidgetModel extends WidgetModel {
   String get mediaExtension => _mediaFeature.mediaExtension;
 
   /// {@macro duration_widget_feature_data}
-  int get duration => _durationFeature.data;
+  Duration get duration => _durationFeature.data;
 
   /// Path to the local file of the photo.
   ///
