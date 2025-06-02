@@ -136,6 +136,13 @@ class _AudioWidgetModalBodyState extends State<AudioWidgetModalBody> {
                                 message: state.error!.userIntlMessage(context),
                               );
                             }
+                            if (state.status.isSuccess) {
+                              SnackBarHelper.I.showInfo(
+                                context: context,
+                                // FIXME: l10n
+                                message: 'Audio added successfully',
+                              );
+                            }
                           },
                         ),
                       );

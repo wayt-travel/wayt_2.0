@@ -61,5 +61,13 @@ final $errors = (
         ),
       ),
     ),
+    api: (
+      noInternet: WError(
+        code: 'API_NO_INTERNET',
+        defaultMessage: 'The device is offline.',
+        // FIXME: l10n
+        userIntlMessage: (context) => 'The device is offline.',
+      )
+    )
   ),
 );
