@@ -18,8 +18,20 @@ abstract class FileUtils {
     required File file,
     required String destinationPath,
   }) async {
-    final destinationDirectory = Directory(destinationPath);
-    _logger.d('Moving file: ${file.path} to ${destinationDirectory.path}');
+    _logger.d('Moving file: ${file.path} to $destinationPath');
+
+    final hasPathFile = path.extension(destinationPath).isNotEmpty;
+
+    final Directory destinationDirectory;
+    if (hasPathFile) {
+      final file = File(destinationPath);
+      final directoryPath = file.parent.path;
+
+      destinationDirectory = Directory(directoryPath);
+    } else {
+      destinationDirectory = Directory(destinationPath);
+    }
+
     if (!destinationDirectory.existsSync()) {
       _logger.d(
         'Destination directory does not exist, creating: '
@@ -27,6 +39,7 @@ abstract class FileUtils {
       );
       await destinationDirectory.create(recursive: true);
     }
+
     final destinationFilePath = path.join(
       destinationDirectory.path,
       path.basename(file.path),
