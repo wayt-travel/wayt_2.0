@@ -1,4 +1,5 @@
 export 'delete_plan/delete_plan.dart';
+export 'file/file.dart';
 export 'folder_display/folder_display.dart';
 export 'folder_upsert/folder_upsert.dart';
 export 'home/home.dart';

@@ -15,6 +15,7 @@ dependencies:
   bloc_concurrency: ^0.3.0
   envied: ^1.0.0
   equatable: ^2.0.7
+  file_picker: ^10.1.9
   flext: ^1.4.3
   flutter: { sdk: flutter }
   flutter_animate: ^4.5.2
@@ -31,6 +32,7 @@ dependencies:
   json_annotation: ^4.9.0
   luthor: ^0.5.2+1
   mapbox_maps_flutter: ^2.7.0
+  open_filex: ^4.7.0
   path: ^1.9.0
   path_provider: ^2.1.5
   pub_semver: ^2.1.5

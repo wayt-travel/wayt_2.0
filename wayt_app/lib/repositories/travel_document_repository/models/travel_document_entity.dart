@@ -37,6 +37,7 @@ abstract interface class TravelDocumentEntity
   /// Matches this entity to a specific type.
   T match<T>({
     required T Function(PlanEntity) onPlan,
+
     /// FIXME: This should be a JournalEntity.
     required T Function(dynamic) onJournal,
   });

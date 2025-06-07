@@ -45,6 +45,11 @@ class TravelWidget extends StatelessWidget {
         index: index,
         transfer: item,
       );
+    } else if (item is FileWidgetModel) {
+      return FileWidgetTile(
+        index: index,
+        file: item,
+      );
     }
     return ListTile(
       title: Text('Item ${item.asWidget.type} is not supported yet'),
