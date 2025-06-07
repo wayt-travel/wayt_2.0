@@ -11,7 +11,7 @@ import 'audio_widget_modal_body.dart';
 
 /// Provides the parameters for creating an audio widget.
 ///
-/// It is uded to inject the parameters into the context of the modal.
+/// It is used to inject the parameters into the context of the modal.
 class AudioWidgetParametersProvider extends Cubit<
     ({
       TravelDocumentId travelDocumentId,

@@ -11,6 +11,7 @@ import '../../../managers/managers.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
+import '../../../widgets/widgets.dart';
 import '../../features.dart';
 
 /// Page for displaying a plan.

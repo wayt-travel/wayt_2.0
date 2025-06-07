@@ -74,7 +74,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
     final photo = PhotoWidgetModel(
       id: const Uuid().v4(),
       mediaId: mediaId,
-      url: processedImage.file.path,
+      url: null,
       // The order does not matter at creation time.
       // It will be updated by the repository.
       order: 0,

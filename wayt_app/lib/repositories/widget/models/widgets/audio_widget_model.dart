@@ -153,7 +153,7 @@ final class AudioWidgetModel extends WidgetModel {
           byteCount: _mediaFeature.byteCount,
         ),
         nameFeature,
-      ].nonNulls.toList(),
+      ],
     );
   }
 }

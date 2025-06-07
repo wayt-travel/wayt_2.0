@@ -37,7 +37,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> with LoggerMixin {
       await emit.onEach(
         _audioManager.onPositionChanged,
         onData: (progress) {
-          logger.d('Audio position updated: $progress');
+          logger.v('Audio position updated: $progress');
           _audioManager.currentAudio.map((audio) {
             final maxMilliseconds = audio.duration.inMilliseconds.toDouble();
             final milliseconds =
@@ -99,7 +99,9 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> with LoggerMixin {
     on<AudioResumed>((event, emit) async {
       await _audioManager.resume();
     });
-
+    on<AudioSeekManuallyUpdated>((event, emit) async {
+      await _audioManager.seek(event.progress);
+    });
     // Subscribe to audio position and audio player state changes.
     add(const _AudioPositionSubscriptionRequested());
     add(const _AudioStateSubscriptionRequested());

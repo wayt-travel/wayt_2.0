@@ -47,27 +47,23 @@ class AudioResumed extends AudioEventWithAudio {
   const AudioResumed(super.audio);
 }
 
-/// {@template audio_event_play_updated}
-/// Event to request the audio to be updated with the current [progress].
+/// {@template audio_event_seek_manually_updated}
+/// Event to request the audio to seek to a specific position.
 ///
 /// The [progress] is the current position of the audio playback.
 /// {@endtemplate}
-class AudioPlayUpdated extends AudioEventWithAudio {
+class AudioSeekManuallyUpdated extends AudioEventWithAudio {
   /// Indicates the current position of the audio playback.
   final Duration progress;
 
-  /// [isManuallyUpdate] is true if user drag the audio slider
-  final bool isManuallyUpdate;
-
-  /// {@macro audio_event_play_updated}
-  const AudioPlayUpdated({
+  /// {@macro audio_event_seek_manually_updated}
+  const AudioSeekManuallyUpdated({
     required Audio audio,
     required this.progress,
-    this.isManuallyUpdate = false,
   }) : super(audio);
 
   @override
-  List<Object> get props => [...super.props, progress, isManuallyUpdate];
+  List<Object> get props => [...super.props, progress];
 }
 
 /// {@template audio_event_paused}
@@ -78,7 +74,7 @@ class AudioPaused extends AudioEventWithAudio {
   const AudioPaused(super.audio);
 
   @override
-  List<Object> get props => [audio];
+  List<Object> get props => [...super.props, audio];
 }
 
 /// {@template audio_event_failed}

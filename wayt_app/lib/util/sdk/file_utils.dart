@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
+import '../util.dart';
+
 /// An abstract class for handling file operations.
+@SdkCandidate()
 abstract class FileUtils {
   static const _logger = NthLogger('FileUtils');
 

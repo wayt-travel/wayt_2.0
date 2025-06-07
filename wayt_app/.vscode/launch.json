@@ -26,6 +26,14 @@
       "args": ["--flavor", "mem", "--target", "lib/main.dart"]
     },
     {
+      "name": "Launch MEM (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "mem", "--target", "lib/main.dart"],
+      "flutterMode": "release"
+    },
+    {
       "name": "Launch PRD",
       "request": "launch",
       "type": "dart",

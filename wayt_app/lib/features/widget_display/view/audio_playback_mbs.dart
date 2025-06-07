@@ -100,8 +100,8 @@ class AudioPlaybackMbs extends StatelessWidget {
                 // determine if the audio is paused or not. This because we want
                 // to keep the current position of the audio, even when it is
                 // paused. An alternative would be to create an updated state
-                // from the inProgress to keet the current position.
-                // It is guaranteed that the stat of the player from the audio
+                // from the inProgress to keep the current position.
+                // It is guaranteed that the state of the player from the audio
                 // manager is updated when it is used.
                 IconButton(
                   onPressed: () {
@@ -160,7 +160,22 @@ class AudioPlayerSlider extends StatelessWidget {
           builder: (context, state) {
             return Slider(
               value: progress.inMilliseconds.toDouble(),
-              onChanged: (value) {},
+              onChanged: (value) {
+                final audioManager = GetIt.I.get<AudioManager>();
+                context.read<AudioBloc>().add(
+                      AudioSeekManuallyUpdated(
+                        audio: audioManager.currentAudio.fold(
+                          () => throw ArgumentError.value(
+                            audioManager.currentAudio,
+                            'currentAudio',
+                            'Expected an audio, but got None.',
+                          ),
+                          (audio) => audio,
+                        ),
+                        progress: Duration(milliseconds: value.toInt()),
+                      ),
+                    );
+              },
               min: 0,
               max: duration.inMilliseconds.toDouble(),
             );

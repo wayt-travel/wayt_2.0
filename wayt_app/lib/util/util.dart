@@ -1,6 +1,5 @@
 export 'exif_helper.dart';
 export 'extensions/extensions.dart';
-export 'file_utils.dart';
 export 'geo_utils.dart';
 export 'link_utils.dart';
 export 'list_with_sorted_add.dart';

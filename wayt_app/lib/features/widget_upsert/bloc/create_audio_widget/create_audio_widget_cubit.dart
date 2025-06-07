@@ -60,7 +60,7 @@ class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState>
     final file = AudioWidgetModel(
       id: const Uuid().v4(),
       mediaId: mediaId,
-      url: processedFile.file.path,
+      url: null,
       name: 'audio_${DateFormat('d MMM yyyy, HH:mm').format(DateTime.now())}',
       duration: duration,
       // The order does not matter at creation time.

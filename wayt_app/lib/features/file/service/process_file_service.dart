@@ -51,7 +51,6 @@ class ProcessFileService with LoggerMixin {
     return TaskEither.tryCatch(
       () async {
         logger.i('Processing file: ${file.path}');
-        // TODO: validate the file size.
         final bytes = await file.readAsBytes();
         logger.d(
           'The file is ${NumberFormat.compact().format(bytes.lengthInBytes)} '
@@ -64,7 +63,6 @@ class ProcessFileService with LoggerMixin {
         final outputFile = await newFile.writeAsBytes(bytes);
         logger.d('The file was saved at: ${outputFile.path}');
 
-        // Return
         return ProcessFileServiceProcessedFile(
           file: outputFile,
           byteCount: bytes.lengthInBytes,

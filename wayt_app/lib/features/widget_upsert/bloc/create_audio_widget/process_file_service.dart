@@ -52,7 +52,6 @@ class ProcessAudioFileService with LoggerMixin {
     return TaskEither.tryCatch(
       () async {
         logger.i('Processing file: ${file.path}');
-        // TODO: validate the file size.
         final bytes = await file.readAsBytes();
         logger.d(
           'The file is ${NumberFormat.compact().format(bytes.lengthInBytes)} '
@@ -64,7 +63,6 @@ class ProcessAudioFileService with LoggerMixin {
           destinationPath: absoluteDestinationPath,
         );
 
-        // Return
         return ProcessAudioFileServiceProcessedFile(
           file: movedFile,
           byteCount: bytes.lengthInBytes,
