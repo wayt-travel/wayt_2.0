@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:bloc/bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
@@ -60,6 +61,7 @@ class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState>
       id: const Uuid().v4(),
       mediaId: mediaId,
       url: processedFile.file.path,
+      name: 'audio_${DateFormat('d MMM yyyy, HH:mm').format(DateTime.now())}',
       duration: duration,
       // The order does not matter at creation time.
       // It will be updated by the repository.

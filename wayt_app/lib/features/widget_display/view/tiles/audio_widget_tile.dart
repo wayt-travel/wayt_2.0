@@ -50,7 +50,7 @@ class AudioWidgetTile extends StatelessWidget {
             color: context.col.primary,
           ),
           title: Text(
-            'Audio',
+            audio.name,
             style: context.tt.bodyLarge,
           ),
           trailing: Text(

@@ -6,6 +6,9 @@ part of '../widget_model.dart';
 /// This widget can be used to display an audio in the travel document.
 /// The [id] uniquely identifies the widget.
 ///
+/// The [name] is the name displayed in the travel document.
+/// The default value is audio_CREATED_AT.
+///
 /// The [url] is the remote URL of the audio. It can be null if the audio has
 /// not been uploaded yet.
 /// The [order] is the order of the widget in the travel document.
@@ -29,6 +32,7 @@ final class AudioWidgetModel extends WidgetModel {
   /// {@macro audio_widget_model}
   factory AudioWidgetModel({
     required String id,
+    required String name,
     required String mediaId,
     required String? url,
     required int order,
@@ -54,6 +58,11 @@ final class AudioWidgetModel extends WidgetModel {
           byteCount: byteCount,
           mediaType: MediaFeatureType.audio,
           metadata: null,
+        ),
+        TypographyWidgetFeatureModel(
+          id: const Uuid().v4(),
+          data: name,
+          format: TypographyFormat.plain,
         ),
       ],
       folderId: folderId,
@@ -113,13 +122,23 @@ final class AudioWidgetModel extends WidgetModel {
   /// The type of the media.
   MediaFeatureType get mediaType => _mediaFeature.mediaType;
 
+  TypographyWidgetFeatureModel get _nameFeature =>
+      features.whereType<TypographyWidgetFeatureModel>().first;
+
+  /// The name of the audio.
+  String get name =>
+      features.whereType<TypographyWidgetFeatureModel>().first.data;
+
   @override
   WidgetModel copyWith({
     Option<String?> folderId = const Option.none(),
     int? order,
     DateTime? updatedAt,
     Option<String?> url = const Option.none(),
+    String? name,
   }) {
+    final nameFeature =
+        name != null ? _nameFeature.copyWith(data: name) : _nameFeature;
     return AudioWidgetModel._(
       id: id,
       order: order ?? this.order,
@@ -128,11 +147,12 @@ final class AudioWidgetModel extends WidgetModel {
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       features: [
+        _durationFeature,
         _mediaFeature.copyWith(
           url: url.getOrElse(() => this.url),
           byteCount: _mediaFeature.byteCount,
         ),
-        _durationFeature,
+        nameFeature,
       ].nonNulls.toList(),
     );
   }
