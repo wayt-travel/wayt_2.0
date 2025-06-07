@@ -26,9 +26,12 @@ class PlanPage {
         path: path,
         name: routeName,
         pageBuilder: (context, state) {
-          GetIt.I.registerLazySingleton<AudioManager>(
-            () => AudioManager(
-              player: AudioPlayer()..setReleaseMode(ReleaseMode.stop),
+          GetIt.I.pushNewScope(
+            isFinal: true,
+            init: (getIt) => getIt.registerLazySingleton<AudioManager>(
+              () => AudioManager(
+                player: AudioPlayer()..setReleaseMode(ReleaseMode.stop),
+              ),
             ),
           );
           return MaterialPage(
@@ -64,7 +67,7 @@ class PlanPage {
         },
         onExit: (context, state) {
           GetIt.I.get<AudioManager>().dispose();
-          GetIt.I.unregister<AudioManager>();
+          GetIt.I.popScope();
           return true;
         },
       );

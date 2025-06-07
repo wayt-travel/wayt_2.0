@@ -85,7 +85,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> with LoggerMixin {
     });
     on<AudioPaused>((event, emit) async {
       // No need to emit a new state, because the audioplayer
-      // listener callback is in charge to controlling the state
+      // listener callback is in charge of controlling the state
       await _audioManager.pause();
     });
     on<AudioPlayFailed>(
