@@ -28,12 +28,16 @@ class ProcessImageServiceProcessedImage {
   /// This file 100% exists.
   final File file;
 
+  /// The date and time when the image was taken.
+  final DateTime? takenAt;
+
   /// {@macro process_image_service_processed_image}
   ProcessImageServiceProcessedImage({
     required this.file,
     required this.size,
     required this.byteCount,
     required this.latLng,
+    required this.takenAt,
   });
 }
 
@@ -113,6 +117,7 @@ class ProcessImageService with LoggerMixin {
           size: size,
           byteCount: bytes.lengthInBytes,
           latLng: helper?.latLng,
+          takenAt: helper?.dateTime,
         );
       },
       taskEitherOnError(

@@ -50,6 +50,7 @@ final class PhotoWidgetModel extends WidgetModel {
     required LatLng? latLng,
     required String mediaExtension,
     required IntSize size,
+    required DateTime? takenAt,
     Map<String, dynamic>? metadata,
     String? folderId,
     DateTime? createdAt,
@@ -73,6 +74,7 @@ final class PhotoWidgetModel extends WidgetModel {
             GeoWidgetFeatureModel(
               id: const Uuid().v4(),
               latLng: latLng,
+              timestamp: takenAt,
             ),
         ],
         folderId: folderId,
@@ -143,6 +145,7 @@ final class PhotoWidgetModel extends WidgetModel {
     int? order,
     DateTime? updatedAt,
     Option<LatLng?> latLng = const Option.none(),
+    Option<DateTime?> takenAt = const Option.none(),
     Map<String, dynamic>? metadata,
     Option<String?> url = const Option.none(),
   }) =>
@@ -162,6 +165,7 @@ final class PhotoWidgetModel extends WidgetModel {
           if (latLng.isSome() || _geoFeature != null)
             _geoFeature?.copyWith(
               latLng: latLng.getOrElse(() => this.latLng),
+              timestamp: takenAt,
             ),
         ].nonNulls.toList(),
       );
