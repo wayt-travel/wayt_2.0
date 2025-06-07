@@ -37,11 +37,11 @@ class PlanTile extends StatelessWidget {
       title: 'Are you sure?',
       confirmActionColor: context.col.error,
       onConfirm: () async {
-        final cubit = DeletePlanCubit(
+        final cubit = DeleteTravelDocumentCubit(
           travelDocumentRepository: GetIt.I.get(),
         );
-        await context.navRoot
-            .pushBlocListenerBarrier<DeletePlanCubit, DeletePlanState>(
+        await context.navRoot.pushBlocListenerBarrier<DeleteTravelDocumentCubit,
+            DeleteTravelDocumentState>(
           bloc: cubit,
           trigger: () => cubit.onDelete(plan.id),
           listenWhen: (previous, current) =>

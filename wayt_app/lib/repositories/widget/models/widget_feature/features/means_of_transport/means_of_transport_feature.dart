@@ -34,4 +34,17 @@ class MeansOfTransportWidgetFeatureModel extends WidgetFeatureModel
         id: id,
         motType: motType ?? this.motType,
       );
+
+  @override
+  List<Object?> get props => [
+        ...super.props,
+        id,
+        motType,
+      ];
+  
+  @override
+  Map<String, dynamic> $toMap() => {
+        ...super.$toMap(),
+        'motType': motType.toString(),
+      };
 }

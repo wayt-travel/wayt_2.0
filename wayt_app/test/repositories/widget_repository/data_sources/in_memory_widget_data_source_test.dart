@@ -91,8 +91,19 @@ void main() {
     test('should add a widget at the end if index=null', () async {
       addWidgets(3);
       final widget = buildWidget();
+      final itemsBefore = getTravelItems().map((e) => e.id).toList();
       final (widget: created, :updatedOrders) = await dataSource.create(widget);
-      // The order of the widget model stays the same.
+      final itemsAfter = getTravelItems().map((e) => e.id).toList();
+
+      itemsAfter.toList()
+        ..removeWhere(itemsBefore.contains)
+        ..let((o) {
+          expect(o, hasLength(1));
+          expect(o.first, created.id);
+        });
+      expect(itemsAfter, hasLength(itemsBefore.length + 1));
+
+      // The order of the original widget model stays the same.
       expect(widget.order, -1);
       expect(created.order, getTravelItems().length - 1);
       expect(created, getTravelItems().last);
@@ -168,13 +179,15 @@ void main() {
             final before = itemsBefore[i - 1];
             final after = itemsAfter[i];
             // All items after the new widget are the same as before but with
-            // updated order (newOrder = previousOrder + 1)
-            expect(
-              after,
-              before.let(
-                (item) => item.copyWith(order: item.order + 1),
+            // updated order (newOrder = previousOrder + 1) and updatedAt
+            // timestamp.
+            final beforeWithNewOrder = before.let(
+              (item) => item.copyWith(
+                order: item.order + 1,
+                updatedAt: after.updatedAt,
               ),
             );
+            expect(after, beforeWithNewOrder);
           }
         }
       },

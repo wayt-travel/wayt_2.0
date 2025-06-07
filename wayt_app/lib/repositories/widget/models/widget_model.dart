@@ -142,7 +142,7 @@ abstract class WidgetModel extends TravelItemModel implements WidgetEntity {
         ...super.props,
         version,
         order,
-        features,
+        ...features,
         folderId,
         type,
       ];

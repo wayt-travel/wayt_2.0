@@ -5,31 +5,29 @@ import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import '../../../error/error.dart';
 import '../../../repositories/repositories.dart';
 
-part 'delete_plan_state.dart';
+part 'delete_travel_document_state.dart';
 
-/// Cubit for deleting a plan.
-class DeletePlanCubit extends Cubit<DeletePlanState> with LoggerMixin {
+/// Cubit for deleting a travel document.
+class DeleteTravelDocumentCubit extends Cubit<DeleteTravelDocumentState>
+    with LoggerMixin {
   /// The plan repository.
   final TravelDocumentRepository travelDocumentRepository;
 
-  /// Creates a new instance of [DeletePlanCubit].
-  DeletePlanCubit({
+  /// Creates a new instance of [DeleteTravelDocumentCubit].
+  DeleteTravelDocumentCubit({
     required this.travelDocumentRepository,
-  }) : super(const DeletePlanState.initial());
+  }) : super(const DeleteTravelDocumentState.initial());
 
-  /// Deletes the plan with id [id].
+  /// Deletes the travel document with id [id].
   Future<void> onDelete(String id) async {
     emit(state.copyWith(status: StateStatus.progress));
     try {
       await travelDocumentRepository.delete(id);
       emit(state.copyWith(status: StateStatus.success));
     } catch (e, s) {
-      final msg = 'An error occurred while deleting plan with id: $id';
-      logger.e(
-        msg,
-        e,
-        s,
-      );
+      final msg = 'An error occurred while deleting travel document with '
+          ' id: $id';
+      logger.e(msg, e, s);
       emit(state.copyWithError(e.errorOrGeneric));
     }
   }
