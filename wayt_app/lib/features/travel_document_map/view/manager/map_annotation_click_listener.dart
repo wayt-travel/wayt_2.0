@@ -15,7 +15,7 @@ class MapAnnotationClickListener extends OnPointAnnotationClickListener
 
   /// {@macro map_annotation_click_listener}
   MapAnnotationClickListener(this.manager);
-  
+
   @override
   void onPointAnnotationClick(PointAnnotation annotation) {
     final item = manager.getTravelItemByAnnotationId(annotation.id);

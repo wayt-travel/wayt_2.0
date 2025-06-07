@@ -53,10 +53,10 @@ class TravelDocumentWrapper<T extends TravelDocumentEntity>
 
   /// Returns the travel items that are widgets either in the root or in
   /// folders.
-  /// 
+  ///
   /// The order in this list is meaningless. Sorting this list does not make
   /// sense too!
-  /// 
+  ///
   /// It does not return the folders.
   List<TravelItemEntity> get onlyWidgets =>
       travelItemsFlattened.whereType<TravelItemEntity>().toList();

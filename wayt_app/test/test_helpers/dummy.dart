@@ -54,6 +54,7 @@ class DummyTestData {
         byteCount: 1000,
         mediaId: const Uuid().v4(),
         size: const IntSize.square(256),
+        takenAt: null,
         url: null,
         latLng: null,
       );

@@ -84,6 +84,7 @@ class CreatePhotoWidgetCubit extends Cubit<CreatePhotoWidgetState>
       size: processedImage.size,
       folderId: folderId,
       mediaExtension: extension(processedImage.file.path),
+      takenAt: processedImage.takenAt,
     );
     return travelItemRepository.createWidget(
       widget: photo,

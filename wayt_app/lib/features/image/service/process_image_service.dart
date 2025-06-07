@@ -28,12 +28,16 @@ class ProcessImageServiceProcessedImage {
   /// This file 100% exists.
   final File file;
 
+  /// The date and time when the image was taken.
+  final DateTime? takenAt;
+
   /// {@macro process_image_service_processed_image}
   ProcessImageServiceProcessedImage({
     required this.file,
     required this.size,
     required this.byteCount,
     required this.latLng,
+    required this.takenAt,
   });
 }
 
@@ -89,7 +93,8 @@ class ProcessImageService with LoggerMixin {
         // Compress
         // TODO: Implement compression logic here
 
-        // TODO: read EXIF data
+        // read EXIF data
+        final helper = await ExifHelper.maybeFromBytes(bytes);
 
         // Determine the size of the image
         final descriptor = await ImageDescriptor.encoded(
@@ -111,7 +116,8 @@ class ProcessImageService with LoggerMixin {
           file: outputFile,
           size: size,
           byteCount: bytes.lengthInBytes,
-          latLng: null,
+          latLng: helper?.latLng,
+          takenAt: helper?.dateTime,
         );
       },
       taskEitherOnError(

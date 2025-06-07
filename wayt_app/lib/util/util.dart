@@ -1,3 +1,4 @@
+export 'exif_helper.dart';
 export 'extensions/extensions.dart';
 export 'geo_utils.dart';
 export 'link_utils.dart';
