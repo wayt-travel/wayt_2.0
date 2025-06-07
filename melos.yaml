@@ -11,6 +11,28 @@ scripts:
   fix:
     exec: fvm dart fix ./lib --apply && fvm dart format ./lib
 
+  clean-hard:
+    run: |-
+      echo "🚿 Deep clean in progress..."
+      fvm flutter clean
+
+      echo "🗑️ Removing symlinks and Pods..."
+      rm -rf wayt_app/ios/.symlinks
+      rm -rf wayt_app/ios/Pods
+      rm -f wayt_app/ios/Podfile.lock
+      rm -f wayt_app/pubspec.lock
+
+      echo "📦 Getting dependencies..."
+      fvm flutter pub get
+
+      echo "📲 Installing CocoaPods..."
+      fvm flutter precache --ios
+      cd wayt_app/ios && pod install --repo-update
+      
+    packageFilters:
+      scope: wayt_app
+
+
   generate:
     run: |-
       fvm dart run build_runner build --delete-conflicting-outputs
