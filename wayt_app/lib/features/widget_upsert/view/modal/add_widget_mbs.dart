@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/context/context.dart';
 import '../../../../repositories/repositories.dart';
 import '../../../../theme/theme.dart';
+import '../../../../widgets/pickers/file_picker.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../features.dart';
-import '../../bloc/create_file_widget/create_file_widget_cubit.dart';
 
 /// Modal bottom sheet to add a new widget in a travel document.
 class AddWidgetMbs extends StatelessWidget {
@@ -140,6 +140,7 @@ class AddWidgetMbs extends StatelessWidget {
                     },
                   ),
                   NewItemButton(
+                    // FIXME: l10n
                     label: 'File',
                     size: size,
                     onTap: (ctx) async {
@@ -162,7 +163,7 @@ class AddWidgetMbs extends StatelessWidget {
                           CreateFileWidgetCubit, CreateFileWidgetState>(
                         bloc: cubit,
                         trigger: () async {
-                          final files = await FileUtils.pick(context);
+                          final files = await FilePicker.pick(context);
                           unawaited(cubit.process(files));
                         },
                         listener: (_, state) {
@@ -190,7 +191,7 @@ class AddWidgetMbs extends StatelessWidget {
                       );
                     },
                     child: const Icon(
-                      Icons.description,
+                      Icons.upload_file,
                       size: 32,
                     ),
                   ),

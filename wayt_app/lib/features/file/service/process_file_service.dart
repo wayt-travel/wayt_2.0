@@ -37,7 +37,7 @@ class ProcessFileService with LoggerMixin {
   /// The file to process.
   final XFile file;
 
-  /// The absolute path to the destination where the image will be saved.
+  /// The absolute path to the destination where the file will be saved.
   final String absoluteDestinationPath;
 
   /// {@macro process_file_service}
@@ -51,7 +51,7 @@ class ProcessFileService with LoggerMixin {
     return TaskEither.tryCatch(
       () async {
         logger.i('Processing file: ${file.path}');
-        // TODO: validate the fiel size.
+        // TODO: validate the file size.
         final bytes = await file.readAsBytes();
         logger.d(
           'The file is ${NumberFormat.compact().format(bytes.lengthInBytes)} '

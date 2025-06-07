@@ -101,6 +101,9 @@ final class FileWidgetModel extends WidgetModel {
   MediaWidgetFeatureModel get _mediaFeature =>
       features.whereType<MediaWidgetFeatureModel>().first;
 
+  TypographyWidgetFeatureModel get _nameFeature =>
+      features.whereType<TypographyWidgetFeatureModel>().first;
+
   /// The name of the file.
   String get name =>
       features.whereType<TypographyWidgetFeatureModel>().first.data;
@@ -120,19 +123,14 @@ final class FileWidgetModel extends WidgetModel {
     int? order,
     DateTime? updatedAt,
     Option<String?> url = const Option.none(),
+    String? name,
   }) {
-    final updatedFeatures = features
-        .map((feature) {
-          if (feature == _mediaFeature) {
-            return _mediaFeature.copyWith(
-              url: url.getOrElse(() => this.url),
-              byteCount: _mediaFeature.byteCount,
-            );
-          }
-          return feature;
-        })
-        .nonNulls
-        .toList();
+    final mediaFeature = _mediaFeature.copyWith(
+      url: url.getOrElse(() => this.url),
+      byteCount: _mediaFeature.byteCount,
+    );
+    final nameFeature =
+        name != null ? _nameFeature.copyWith(data: name) : _nameFeature;
     return FileWidgetModel._(
       id: id,
       order: order ?? this.order,
@@ -140,7 +138,8 @@ final class FileWidgetModel extends WidgetModel {
       folderId: folderId.getOrElse(() => this.folderId),
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      features: updatedFeatures,
+      // Is important to keep the original features'order. See the constructor
+      features: [nameFeature, mediaFeature],
     );
   }
 }
