@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 
-import '../../../error/error.dart';
+import '../../../../error/error.dart';
+import '../../../../util/util.dart';
 
-/// {@template process_file_service_processed_file}
-/// Processed file returned by the [ProcessFileService].
+/// {@template process_audio_file_service_processed_file}
+/// Processed file returned by the [ProcessAudioFileService].
 /// {@endtemplate}
-class ProcessFileServiceProcessedFile {
+class ProcessAudioFileServiceProcessedFile {
   /// The size of the file in bytes.
   final int? byteCount;
 
@@ -19,35 +19,36 @@ class ProcessFileServiceProcessedFile {
   /// This file 100% exists.
   final File file;
 
-  /// {@macro process_file_service_processed_file}
-  ProcessFileServiceProcessedFile({
+  /// {@macro process_audio_file_service_processed_file}
+  ProcessAudioFileServiceProcessedFile({
     required this.file,
     this.byteCount,
   });
 }
 
-/// {@template process_file_service}
-/// Service to process a file.
+/// {@template process_audio_file_service}
+/// Service to process an audio file.
 ///
 /// This service will:
-/// 1. Save the file to the destination path.
+/// 1. Compute the size of the file in bytes.
+/// 2. Move the audio file from temporary folder to the destination path.
 /// 2. Return the processed file.
 /// {@endtemplate}
-class ProcessFileService with LoggerMixin {
+class ProcessAudioFileService with LoggerMixin {
   /// The file to process.
-  final XFile file;
+  final File file;
 
-  /// The absolute path to the destination where the file will be saved.
+  /// The absolute path to the destination where the image will be saved.
   final String absoluteDestinationPath;
 
   /// {@macro process_file_service}
-  ProcessFileService({
+  ProcessAudioFileService({
     required this.file,
     required this.absoluteDestinationPath,
   });
 
   /// Runs the file processing service.
-  WTaskEither<ProcessFileServiceProcessedFile> task() {
+  WTaskEither<ProcessAudioFileServiceProcessedFile> task() {
     return TaskEither.tryCatch(
       () async {
         logger.i('Processing file: ${file.path}');
@@ -57,14 +58,13 @@ class ProcessFileService with LoggerMixin {
           'bytes',
         );
 
-        // Save
-        final newFile = File(absoluteDestinationPath);
-        await newFile.parent.create(recursive: true);
-        final outputFile = await newFile.writeAsBytes(bytes);
-        logger.d('The file was saved at: ${outputFile.path}');
+        final movedFile = await FileUtils.moveFile(
+          file: file,
+          destinationPath: absoluteDestinationPath,
+        );
 
-        return ProcessFileServiceProcessedFile(
-          file: outputFile,
+        return ProcessAudioFileServiceProcessedFile(
+          file: movedFile,
           byteCount: bytes.lengthInBytes,
         );
       },

@@ -10,6 +10,7 @@ import '../../../../theme/theme.dart';
 import '../../../../widgets/pickers/file_picker.dart';
 import '../../../../widgets/widgets.dart';
 import '../../../features.dart';
+import '../audio/audio.dart';
 
 /// Modal bottom sheet to add a new widget in a travel document.
 class AddWidgetMbs extends StatelessWidget {
@@ -194,6 +195,24 @@ class AddWidgetMbs extends StatelessWidget {
                       Icons.upload_file,
                       size: 32,
                     ),
+                  ),
+                  NewItemButton(
+                    // FIXME: l10n
+                    label: 'Audio',
+                    size: size,
+                    child: const Icon(
+                      Icons.mic_rounded,
+                      size: 32,
+                    ),
+                    onTap: (context) {
+                      context.navRoot.pop();
+                      AudioWidgetModal.show(
+                        context: context,
+                        index: index,
+                        folderId: folderId,
+                        travelDocumentId: travelDocumentId,
+                      );
+                    },
                   ),
                 ],
               ),

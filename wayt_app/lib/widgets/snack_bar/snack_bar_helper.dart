@@ -114,7 +114,7 @@ class SnackBarHelper {
         ),
       ),
       backgroundColor: switch (type) {
-        _MessageType.info => null,
+        _MessageType.info => context.col.surfaceContainerHighest,
         _MessageType.warning => Colors.orangeAccent,
         _MessageType.error => context.col.error,
       },

@@ -1,13 +1,17 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flext/flext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/context/context.dart';
+import '../../../managers/managers.dart';
 import '../../../repositories/repositories.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/message/loading_indicator_message.dart';
+import '../../../widgets/widgets.dart';
 import '../../features.dart';
 
 /// Page for displaying a plan.
@@ -22,36 +26,51 @@ class PlanPage {
   static GoRoute get route => GoRoute(
         path: path,
         name: routeName,
-        pageBuilder: (context, state) => MaterialPage(
-          key: state.pageKey,
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => TravelDocumentCubit(
-                  travelDocumentRepository: $.repo.travelDocument(),
-                  travelItemRepository: $.repo.travelItem(),
-                  summaryHelperRepository: $.repo.summaryHelper(),
-                  travelDocumentId: TravelDocumentId.plan(
-                    state.pathParameters['planId']!,
-                  ),
-                )..fetch(force: false),
+        pageBuilder: (context, state) {
+          GetIt.I.pushNewScope(
+            isFinal: true,
+            init: (getIt) => getIt.registerLazySingleton<AudioManager>(
+              () => AudioManager(
+                player: AudioPlayer()..setReleaseMode(ReleaseMode.stop),
               ),
-              BlocProvider(
-                create: (context) => ReorderItemsCubit(
-                  travelDocumentId: TravelDocumentId.plan(
-                    state.pathParameters['planId']!,
-                  ),
-                  travelItemRepository: $.repo.travelItem(),
-                  folderId: null,
-                ),
-              ),
-            ],
-            child: PlanView(
-              planId: state.pathParameters['planId']!,
-              planSummary: state.extra as PlanEntity?,
             ),
-          ),
-        ),
+          );
+          return MaterialPage(
+            key: state.pageKey,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => TravelDocumentCubit(
+                    travelDocumentRepository: $.repo.travelDocument(),
+                    travelItemRepository: $.repo.travelItem(),
+                    summaryHelperRepository: $.repo.summaryHelper(),
+                    travelDocumentId: TravelDocumentId.plan(
+                      state.pathParameters['planId']!,
+                    ),
+                  )..fetch(force: false),
+                ),
+                BlocProvider(
+                  create: (context) => ReorderItemsCubit(
+                    travelDocumentId: TravelDocumentId.plan(
+                      state.pathParameters['planId']!,
+                    ),
+                    travelItemRepository: $.repo.travelItem(),
+                    folderId: null,
+                  ),
+                ),
+              ],
+              child: PlanView(
+                planId: state.pathParameters['planId']!,
+                planSummary: state.extra as PlanEntity?,
+              ),
+            ),
+          );
+        },
+        onExit: (context, state) {
+          GetIt.I.get<AudioManager>().dispose();
+          GetIt.I.popScope();
+          return true;
+        },
       );
 
   /// Navigates to the plan page.

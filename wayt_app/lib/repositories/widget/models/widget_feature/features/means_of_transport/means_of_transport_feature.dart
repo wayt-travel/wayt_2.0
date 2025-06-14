@@ -41,7 +41,7 @@ class MeansOfTransportWidgetFeatureModel extends WidgetFeatureModel
         id,
         motType,
       ];
-  
+
   @override
   Map<String, dynamic> $toMap() => {
         ...super.$toMap(),

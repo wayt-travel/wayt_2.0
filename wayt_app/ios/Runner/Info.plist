@@ -54,5 +54,7 @@
 		<true/>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Wayt needs access to your location to use the map.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need it for you to record voice memos and videos with sound.</string>
 	</dict>
 </plist>

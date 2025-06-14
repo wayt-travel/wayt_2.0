@@ -13,5 +13,8 @@ enum WidgetFeatureType {
   meansOfTransport,
 
   /// A price feature.
-  price;
+  price,
+
+  /// A duration feature.
+  duration;
 }

@@ -50,6 +50,11 @@ class TravelWidget extends StatelessWidget {
         index: index,
         file: item,
       );
+    } else if (item is AudioWidgetModel) {
+      return AudioWidgetTile(
+        index: index,
+        audio: item,
+      );
     }
     return ListTile(
       title: Text('Item ${item.asWidget.type} is not supported yet'),
