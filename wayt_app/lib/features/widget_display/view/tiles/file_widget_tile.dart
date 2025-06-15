@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/core.dart';
-import '../../../../repositories/widget/models/widget_model.dart';
+import '../../../../repositories/widget/models/widget_model.gen.dart';
 import '../../../../util/util.dart';
 import '../../../features.dart';
 

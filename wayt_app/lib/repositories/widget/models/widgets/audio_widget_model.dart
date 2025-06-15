@@ -1,4 +1,4 @@
-part of '../widget_model.dart';
+part of '../widget_model.gen.dart';
 
 /// {@template audio_widget_model}
 /// A widget that represents an audio file.
@@ -39,7 +39,7 @@ final class AudioWidgetModel extends WidgetModel {
     required TravelDocumentId travelDocumentId,
     required int? byteCount,
     required String mediaExtension,
-    required int duration,
+    required int durationMs,
     String? folderId,
     DateTime? createdAt,
   }) {
@@ -47,9 +47,9 @@ final class AudioWidgetModel extends WidgetModel {
       id: id,
       order: order,
       features: [
-        DurationWidgetFeatureModel(
+        CronoWidgetFeatureModel(
           id: const Uuid().v4(),
-          data: Duration(milliseconds: duration),
+          duration: Duration(milliseconds: durationMs),
         ),
         MediaWidgetFeatureModel(
           id: mediaId,
@@ -86,8 +86,8 @@ final class AudioWidgetModel extends WidgetModel {
           version: Version(1, 0, 0),
         );
 
-  DurationWidgetFeatureModel get _durationFeature =>
-      features.whereType<DurationWidgetFeatureModel>().first;
+  CronoWidgetFeatureModel get _durationFeature =>
+      features.whereType<CronoWidgetFeatureModel>().first;
 
   MediaWidgetFeatureModel get _mediaFeature =>
       features.whereType<MediaWidgetFeatureModel>().first;
@@ -99,7 +99,7 @@ final class AudioWidgetModel extends WidgetModel {
   String get mediaExtension => _mediaFeature.mediaExtension;
 
   /// {@macro duration_widget_feature_data}
-  Duration get duration => _durationFeature.data;
+  Duration get duration => _durationFeature.duration!;
 
   /// Path to the local file of the photo.
   ///

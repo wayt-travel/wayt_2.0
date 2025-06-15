@@ -112,13 +112,13 @@ class UpsertPlaceWidgetCubit extends Cubit<UpsertPlaceWidgetState>
       Validators.l10n(context).textShortOptional();
 
   /// Validates the current state of the cubit.
-  SchemaValidationResult<Map<String, dynamic>> validate(BuildContext? context) {
+  SchemaValidationResult<Json> validate(BuildContext? context) {
     return l.schema({
       'lat': getLatValidator(context),
       'lng': getLngValidator(context),
       'name': getNameValidator(context),
       'address': getAddressValidator(context),
-    }).validateSchema<Map<String, dynamic>>({
+    }).validateSchema<Json>({
       'lat': state.lat,
       'lng': state.lng,
       'name': state.name,

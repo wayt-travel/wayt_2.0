@@ -9,6 +9,7 @@ targets:
           field_rename: snake
           create_to_json: true
           generic_argument_factories: true
+          explicit_to_json: true
       envied_generator|envied:
         generate_for:
           include:

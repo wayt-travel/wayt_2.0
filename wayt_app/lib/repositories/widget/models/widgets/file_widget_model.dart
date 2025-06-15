@@ -1,4 +1,4 @@
-part of '../widget_model.dart';
+part of '../widget_model.gen.dart';
 
 /// {@template file_widget_model}
 /// A widget that represents a file.

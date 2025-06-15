@@ -2,12 +2,13 @@ import 'package:a2f_sdk/a2f_sdk.dart';
 
 import 'plan_entity.dart';
 import 'travel_document_entity.dart';
-import 'travel_document_id.dart';
+import 'travel_document_id.gen.dart';
 
 /// {@template travel_document_model}
 /// Model for travel documents (journals and plans are both travel documents).
 /// {@endtemplate}
-class TravelDocumentModel extends Model implements TravelDocumentEntity {
+abstract class TravelDocumentModel extends Model
+    implements TravelDocumentEntity {
   /// The name of the travel plan.
   @override
   final String name;

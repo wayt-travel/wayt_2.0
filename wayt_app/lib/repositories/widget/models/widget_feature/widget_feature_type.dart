@@ -1,7 +1,7 @@
 /// The type of a Widget feature.
 enum WidgetFeatureType {
-  /// A text feature.
-  text,
+  /// A typography feature.
+  typography,
 
   /// A geo(graphic) feature.
   geo,
@@ -15,6 +15,13 @@ enum WidgetFeatureType {
   /// A price feature.
   price,
 
-  /// A duration feature.
-  duration;
+  /// A crono (time) feature.
+  crono;
+
+  /// Factory constructor that creates a [WidgetFeatureType] from its
+  /// string name.
+  factory WidgetFeatureType.fromName(String name) => values.firstWhere(
+        (e) => e.name.toLowerCase() == name.toLowerCase(),
+        orElse: () => throw ArgumentError.value(name, 'name', 'Invalid name'),
+      );
 }

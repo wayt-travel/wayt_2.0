@@ -131,13 +131,13 @@ class UpsertTransferStopCubit extends Cubit<UpsertTransferStopState>
       Validators.l10n(context).longitude();
 
   /// Validates the current state of the cubit.
-  SchemaValidationResult<Map<String, dynamic>> validate(BuildContext? context) {
+  SchemaValidationResult<Json> validate(BuildContext? context) {
     return l.schema({
       'name': getNameValidator(context),
       'address': getAddressValidator(context),
       'lat': getLatValidator(context),
       'lng': getLngValidator(context),
-    }).validateSchema<Map<String, dynamic>>({
+    }).validateSchema<Json>({
       'name': state.name,
       'address': state.address,
       'lat': state.lat,
