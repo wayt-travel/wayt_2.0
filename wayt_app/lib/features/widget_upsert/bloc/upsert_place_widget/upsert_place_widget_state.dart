@@ -24,11 +24,11 @@ final class UpsertPlaceWidgetState extends SuperBlocState<WError> {
   });
 
   /// Creates a new instance of [UpsertPlaceWidgetState].
-  const UpsertPlaceWidgetState.initial()
-      : lat = null,
-        lng = null,
-        name = null,
-        address = null,
+  UpsertPlaceWidgetState.initial(PlaceWidgetModel? widgetToUpdate)
+      : lat = widgetToUpdate?.latLng.latitude,
+        lng = widgetToUpdate?.latLng.longitude,
+        name = widgetToUpdate?.name,
+        address = widgetToUpdate?.address,
         super.initial();
 
   @override

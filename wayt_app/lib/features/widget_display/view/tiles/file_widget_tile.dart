@@ -48,12 +48,14 @@ class FileWidgetTile extends StatelessWidget {
         ),
         child: ListTile(
           leading: Icon(
-            Icons.description_rounded,
+            Icons.attachment,
             color: context.col.primary,
           ),
           title: Text(
             file.name,
             style: context.tt.bodyLarge,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
