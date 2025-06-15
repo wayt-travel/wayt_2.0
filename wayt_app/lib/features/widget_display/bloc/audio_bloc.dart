@@ -25,6 +25,9 @@ part 'audio_state.dart';
 /// with the current position of the audio.
 ///
 /// It listens to the audio manager's stream to update its state.
+///
+/// When the cubit is closed, it stops the audio. No need to reset the current
+/// audio of the audio manager.
 class AudioBloc extends Bloc<AudioEvent, AudioState> with LoggerMixin {
   final AudioManager _audioManager;
 
@@ -105,5 +108,11 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> with LoggerMixin {
     // Subscribe to audio position and audio player state changes.
     add(const _AudioPositionSubscriptionRequested());
     add(const _AudioStateSubscriptionRequested());
+  }
+
+  @override
+  Future<void> close() async {
+    await _audioManager.stop();
+    return super.close();
   }
 }
