@@ -93,9 +93,14 @@ class AudioManager {
     await _player.seek(position);
   }
 
-  /// Stops the current audio playback.
+  /// Pauses the current audio playback.
   Future<void> pause() async {
     await _player.pause();
+  }
+
+  /// Stops the current audio playback.
+  Future<void> stop() async {
+    await _player.stop();
   }
 
   /// Resumes the current audio playback.
