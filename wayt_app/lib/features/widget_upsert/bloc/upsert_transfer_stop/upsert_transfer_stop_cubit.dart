@@ -71,6 +71,17 @@ class UpsertTransferStopCubit extends Cubit<UpsertTransferStopState>
     );
   }
 
+  /// Updates the latitude and longitude of the stop.
+  void updateLatLng(LatLng latLng) {
+    emit(
+      state.copyWith(
+        status: StateStatus.initial,
+        lat: Option.of(latLng.latitude),
+        lng: Option.of(latLng.longitude),
+      ),
+    );
+  }
+
   /// Updates the latitude of the stop.
   void updateLat(double? lat) {
     emit(

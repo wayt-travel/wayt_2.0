@@ -11,6 +11,7 @@ import '../../../../theme/theme.dart';
 import '../../../../util/util.dart';
 import '../../../../widgets/widgets.dart';
 import '../../bloc/upsert_place_widget/upsert_place_widget_cubit.dart';
+import 'picker/lat_lng_picker.dart';
 
 /// {@template upsert_place_widget_modal}
 /// A modal for adding or editing a place widget.
@@ -121,8 +122,16 @@ class UpsertPlaceWidgetModal extends StatelessWidget {
   }
 }
 
-class _FormBody extends StatelessWidget {
+class _FormBody extends StatefulWidget {
   const _FormBody();
+
+  @override
+  State<_FormBody> createState() => _FormBodyState();
+}
+
+class _FormBodyState extends State<_FormBody> {
+  var _latKey = UniqueKey();
+  var _lngKey = UniqueKey();
 
   Widget _buildLatOrLngTextFormField(
     BuildContext context, {
@@ -135,6 +144,7 @@ class _FormBody extends StatelessWidget {
         builder: (context, value) {
           final cubit = context.read<UpsertPlaceWidgetCubit>();
           return TextFormField(
+            key: isLat ? _latKey : _lngKey,
             initialValue: value?.toString(),
             keyboardType: const TextInputType.numberWithOptions(
               decimal: true,
@@ -191,21 +201,6 @@ class _FormBody extends StatelessWidget {
             ).asSliver;
           },
         ),
-        $insets.sm.asVSpan.asSliver,
-        Text(
-          // FIXME: l10n
-          'Coordinates and address',
-          style: context.tt.titleMedium,
-        ).asSliver,
-        $insets.xs.asVSpan.asSliver,
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLatOrLngTextFormField(context, isLat: true),
-            $insets.xs.asHSpan,
-            _buildLatOrLngTextFormField(context, isLat: false),
-          ],
-        ).asSliver,
         $insets.xs.asVSpan.asSliver,
         BlocSelector<UpsertPlaceWidgetCubit, UpsertPlaceWidgetState, String?>(
           selector: (state) => state.address,
@@ -226,6 +221,50 @@ class _FormBody extends StatelessWidget {
             ).asSliver;
           },
         ),
+        $insets.sm.asVSpan.asSliver,
+        Text(
+          // FIXME: l10n
+          'Coordinates',
+          style: context.tt.titleMedium,
+        ).asSliver,
+        $insets.xs.asVSpan.asSliver,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLatOrLngTextFormField(context, isLat: true),
+            $insets.xs.asHSpan,
+            _buildLatOrLngTextFormField(context, isLat: false),
+          ],
+        ).asSliver,
+        $insets.xs.asVSpan.asSliver,
+        Center(
+          child: TextButton(
+            style: const ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+            onPressed: () => LatLngPicker.showForTravelDocument(
+              context: context,
+              travelDocumentId:
+                  context.read<UpsertPlaceWidgetCubit>().travelDocumentId,
+            ).then((latLng) {
+              if (latLng != null && context.mounted) {
+                context
+                    .read<UpsertPlaceWidgetCubit>()
+                    .updateLatLng(latLng.copyWithPrecision(8));
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() {
+                    // Reset the keys to force the TextFormFields to rebuild
+                    // with the new values.
+                    _latKey = UniqueKey();
+                    _lngKey = UniqueKey();
+                  });
+                });
+              }
+            }),
+            child: const Text('Select from the map'),
+          ),
+        ).asSliver,
       ],
     );
   }

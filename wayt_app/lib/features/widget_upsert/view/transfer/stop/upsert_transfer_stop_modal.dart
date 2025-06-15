@@ -12,6 +12,7 @@ import '../../../../../util/util.dart';
 import '../../../../../widgets/widgets.dart';
 import '../../../../features.dart';
 import '../../../bloc/upsert_transfer_stop/upsert_transfer_stop_cubit.dart';
+import '../../place/picker/lat_lng_picker.dart';
 
 /// {@template upsert_transfer_stop_modal}
 /// A modal for adding or editing a transfer stop.
@@ -124,9 +125,17 @@ class _UpsertTransferStopModalState extends State<UpsertTransferStopModal> {
   }
 }
 
-class _FormBody extends StatelessWidget {
+class _FormBody extends StatefulWidget {
   final void Function() onForceRebuildForm;
   const _FormBody({required this.onForceRebuildForm});
+
+  @override
+  State<_FormBody> createState() => _FormBodyState();
+}
+
+class _FormBodyState extends State<_FormBody> {
+  var _latKey = UniqueKey();
+  var _lngKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +182,7 @@ class _FormBody extends StatelessWidget {
                       context
                           .read<UpsertTransferStopCubit>()
                           .updateDateTime(null);
-                      onForceRebuildForm();
+                      widget.onForceRebuildForm();
                     },
                     child: const Text(
                       // FIXME: l10n
@@ -198,7 +207,7 @@ class _FormBody extends StatelessWidget {
                 .read<UpsertTransferStopCubit>()
                 .updateFromGeoFeature(geoFeature);
             context.unfocus();
-            onForceRebuildForm();
+            widget.onForceRebuildForm();
           },
         ).asSliver,
         const AltHorizontalLine().asSliver,
@@ -268,6 +277,34 @@ class _FormBody extends StatelessWidget {
             return const SizedBox().asSliver;
           },
         ),
+        Center(
+          child: TextButton(
+            style: const ButtonStyle(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+            onPressed: () => LatLngPicker.showForTravelDocument(
+              context: context,
+              travelDocumentId:
+                  context.read<UpsertTransferStopCubit>().travelDocumentId,
+            ).then((latLng) {
+              if (latLng != null && context.mounted) {
+                context
+                    .read<UpsertTransferStopCubit>()
+                    .updateLatLng(latLng.copyWithPrecision(8));
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  setState(() {
+                    // Reset the keys to force the TextFormFields to rebuild
+                    // with the new values.
+                    _latKey = UniqueKey();
+                    _lngKey = UniqueKey();
+                  });
+                });
+              }
+            }),
+            child: const Text('Select from the map'),
+          ),
+        ).asSliver,
       ],
     );
   }
@@ -283,6 +320,7 @@ class _FormBody extends StatelessWidget {
         builder: (context, value) {
           final cubit = context.read<UpsertTransferStopCubit>();
           return TextFormField(
+            key: isLat ? _latKey : _lngKey,
             initialValue: value?.toString(),
             keyboardType: const TextInputType.numberWithOptions(
               decimal: true,

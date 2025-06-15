@@ -69,6 +69,22 @@ class LatLng {
     return '${tokens.lat}, ${tokens.lng}';
   }
 
+  /// Generates the coordinates like `40.123456, -74.123456` from the double
+  /// value. The precision is set to 6 decimal places.
+  String toShortString() {
+    return '${latitude.toStringAsFixed(6)}, ${longitude.toStringAsFixed(6)}';
+  }
+
+  /// Copies this [LatLng] with a specified precision for latitude and
+  /// longitude.
+  ///
+  /// E.g., if the precision is 2, the latitude and longitude will be
+  /// rounded to two decimal places.
+  LatLng copyWithPrecision(int precision) => LatLng(
+        latitude.toPrecision(precision),
+        longitude.toPrecision(precision),
+      );
+
   @override
   bool operator ==(Object other) {
     return other is LatLng &&
