@@ -372,6 +372,15 @@ class InMemoryDataHelper with LoggerMixin {
     _data.travelItems.save(item.id, item as TravelItemModel);
   }
 
+  /// Gets the list of all travel items.
+  List<TravelItemModel> get allTravelItems => _data.travelItems.values.toList();
+
+  /// Gets the list of all the widgets in the data.
+  List<WidgetEntity> get allWidgets => _data.travelItems.values
+      .where((e) => e.isWidget)
+      .cast<WidgetEntity>()
+      .toList();
+
   /// Gets the travel item with the given [id].
   TravelItemModel getTravelItem(String id) => _data.travelItems.getOrThrow(id);
 

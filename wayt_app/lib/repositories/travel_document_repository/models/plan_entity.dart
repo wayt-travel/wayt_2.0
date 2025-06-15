@@ -1,8 +1,23 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'travel_document_entity.dart';
+import '../../repositories.dart';
+
+class _JsonConverter extends JsonConverter<PlanEntity?, Map<String, dynamic>?> {
+  const _JsonConverter();
+
+  @override
+  PlanEntity? fromJson(Map<String, dynamic>? json) =>
+      Option.fromNullable(json).map(PlanModel.fromJson).toNullable();
+
+  @override
+  Map<String, dynamic>? toJson(PlanEntity? o) => (o as PlanModel?)?.toJson();
+}
 
 /// Travel plan entity.
+@JsonSerializable()
+@_JsonConverter()
 abstract interface class PlanEntity
     implements TravelDocumentEntity, Entity, ResourceEntity {
   /// The tags associated with the travel plan.

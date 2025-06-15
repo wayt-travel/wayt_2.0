@@ -1,2 +1,2 @@
 export 'media_feature_type.dart';
-export 'media_widget_feature.dart';
+export 'media_widget_feature.gen.dart';

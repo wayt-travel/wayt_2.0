@@ -1,4 +1,4 @@
-part of '../widget_model.dart';
+part of '../widget_model.gen.dart';
 
 /// A Widget that displays a customizable text.
 final class TextWidgetModel extends WidgetModel {

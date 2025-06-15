@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:the_umpteenth_logger/the_umpteenth_logger.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../../../error/error.dart';
 import '../../../../repositories/repositories.dart';
 import 'process_file_service.dart';
@@ -62,7 +63,7 @@ class CreateAudioWidgetCubit extends Cubit<CreateAudioWidgetState>
       mediaId: mediaId,
       url: null,
       name: 'audio_${DateFormat('d MMM yyyy, HH:mm').format(DateTime.now())}',
-      duration: duration,
+      durationMs: duration,
       // The order does not matter at creation time.
       // It will be updated by the repository.
       order: 0,

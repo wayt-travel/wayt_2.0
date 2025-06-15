@@ -1,4 +1,4 @@
-part of '../widget_model.dart';
+part of '../widget_model.gen.dart';
 
 /// {@template photo_widget_model}
 /// A widget that represents a photo.
@@ -51,7 +51,7 @@ final class PhotoWidgetModel extends WidgetModel {
     required String mediaExtension,
     required IntSize size,
     required DateTime? takenAt,
-    Map<String, dynamic>? metadata,
+    Json? metadata,
     String? folderId,
     DateTime? createdAt,
   }) =>
@@ -146,7 +146,7 @@ final class PhotoWidgetModel extends WidgetModel {
     DateTime? updatedAt,
     Option<LatLng?> latLng = const Option.none(),
     Option<DateTime?> takenAt = const Option.none(),
-    Map<String, dynamic>? metadata,
+    Json? metadata,
     Option<String?> url = const Option.none(),
   }) =>
       PhotoWidgetModel._(

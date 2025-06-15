@@ -1,4 +1,4 @@
-import '../../travel_document_repository/models/travel_document_id.dart';
+import '../../travel_document_repository/models/travel_document_id.gen.dart';
 import '../widget_folder.dart';
 
 /// Data source for WidgetFolder entities.

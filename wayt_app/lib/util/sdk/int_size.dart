@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:equatable/equatable.dart';
 
 import '../util.dart';
@@ -46,19 +47,19 @@ class IntSize with EquatableMixin {
       );
 
   /// Creates an [IntSize] from a JSON object.
-  factory IntSize.fromJson(Map<String, dynamic> json) => IntSize(
+  factory IntSize.fromJson(Json json) => IntSize(
         width: (json['width'] as num).toInt(),
         height: (json['height'] as num).toInt(),
       );
 
   /// Creates an [IntSize] from a JSON object, or returns null if the
   /// JSON object is null.
-  static IntSize? maybeFromJson(Map<String, dynamic>? json) =>
+  static IntSize? maybeFromJson(Json? json) =>
       json == null ? null : IntSize.fromJson(json);
 
   /// Creates an [IntSize] from a JSON object, or returns null if the
   /// JSON object is null or invalid.
-  static IntSize? tryFromJson(Map<String, dynamic>? json) {
+  static IntSize? tryFromJson(Json? json) {
     try {
       return IntSize.maybeFromJson(json);
     } catch (e) {
@@ -67,7 +68,7 @@ class IntSize with EquatableMixin {
   }
 
   /// Converts the [IntSize] instance to a JSON object.
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Json toJson() => <String, dynamic>{
         'width': width,
         'height': height,
       };

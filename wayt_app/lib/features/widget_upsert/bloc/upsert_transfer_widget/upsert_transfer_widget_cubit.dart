@@ -162,13 +162,13 @@ class UpsertTransferWidgetCubit extends Cubit<UpsertTransferWidgetState>
       Validators.l10n(context).required();
 
   /// Validates the current state of the cubit.
-  SchemaValidationResult<Map<String, dynamic>> validate(
+  SchemaValidationResult<Json> validate(
     BuildContext? context,
   ) {
     return l.schema({
       'stops': _getStopsValidator(context),
       'meansOfTransport': getMeansOfTransportValidator(context),
-    }).validateSchema<Map<String, dynamic>>({
+    }).validateSchema<Json>({
       'stops': state.stops,
       'meansOfTransport': state.meansOfTransport,
     });

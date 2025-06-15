@@ -1,9 +1,40 @@
 import 'package:a2f_sdk/a2f_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:luthor/luthor.dart';
 
 import '../../../util/util.dart';
 import '../../repositories.dart';
+
+/// {@template travel_document_json_converter}
+/// A JSON converter for [TravelDocumentEntity] that can handle both plans and
+/// journals.
+/// {@endtemplate}
+class TravelDocumentJsonConverter
+    extends JsonConverter<TravelDocumentEntity, Json> {
+  /// {@macro travel_document_json_converter}
+  const TravelDocumentJsonConverter();
+
+  @override
+  TravelDocumentEntity fromJson(Map<String, dynamic> json) {
+    try {
+      return PlanModel.fromJson(json);
+    } catch (e) {
+      // Handle the case where the JSON does not match the expected format.
+      // FIXME: return JournalModel.fromJson(json);
+      throw UnimplementedError(
+        'Failed to parse TravelDocumentEntity from JSON: $e',
+      );
+    }
+  }
+
+  @override
+  Map<String, dynamic> toJson(TravelDocumentEntity object) => object.match(
+        onPlan: (plan) => (plan as PlanModel).toJson(),
+        // FIXME: This should be a JournalEntity.
+        onJournal: (journal) => throw UnimplementedError(),
+      );
+}
 
 /// Common entity interface for all travel documents, i.e., plans and journals.
 abstract interface class TravelDocumentEntity

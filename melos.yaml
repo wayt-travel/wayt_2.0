@@ -42,6 +42,7 @@ scripts:
     description: Build all generated files for Dart & Flutter packages in this project.
     packageFilters:
       dependsOn: build_runner
+
   generate-env:
     run: fvm dart run build_runner clean && fvm dart run build_runner build --delete-conflicting-outputs
     exec: 
@@ -50,3 +51,12 @@ scripts:
     description: Build all env generated files for Dart & Flutter packages in this project.
     packageFilters:
       dependsOn: envied_generator
+
+  generate-watch:
+    run: fvm dart run build_runner watch --delete-conflicting-outputs
+    exec: 
+      concurrency: 1
+      orderDependents: true
+    description: Watch for changes and rebuild generated files for Dart & Flutter packages in this project.
+    packageFilters:
+      dependsOn: build_runner

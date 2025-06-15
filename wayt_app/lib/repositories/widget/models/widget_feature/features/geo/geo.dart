@@ -1,1 +1,1 @@
-export 'geo_widget_feature.dart';
+export 'geo_widget_feature.gen.dart';
