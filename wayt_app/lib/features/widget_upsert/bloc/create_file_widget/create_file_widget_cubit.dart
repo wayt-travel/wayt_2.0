@@ -75,9 +75,9 @@ class CreateFileWidgetCubit extends Cubit<CreateFileWidgetState>
       id: const Uuid().v4(),
       mediaId: mediaId,
       url: processedFile.file.path,
-      name: basenameWithoutExtension(processedFile.file.path),
+      name: basenameWithoutExtension(processedFile.originalFileName),
       // The order does not matter at creation time.
-      // It will be updated by the repository.
+      // It will be updated by the repositor ̑y.
       order: 0,
       travelDocumentId: travelDocumentId,
       byteCount: processedFile.byteCount,

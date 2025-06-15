@@ -19,10 +19,14 @@ class ProcessFileServiceProcessedFile {
   /// This file 100% exists.
   final File file;
 
+  /// The original file name.
+  final String originalFileName;
+
   /// {@macro process_file_service_processed_file}
   ProcessFileServiceProcessedFile({
     required this.file,
-    this.byteCount,
+    required this.originalFileName,
+    required this.byteCount,
   });
 }
 
@@ -66,6 +70,7 @@ class ProcessFileService with LoggerMixin {
         return ProcessFileServiceProcessedFile(
           file: outputFile,
           byteCount: bytes.lengthInBytes,
+          originalFileName: file.name,
         );
       },
       taskEitherOnError(

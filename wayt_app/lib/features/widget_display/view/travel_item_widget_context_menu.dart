@@ -140,8 +140,39 @@ class TravelItemWidgetContextMenu extends StatelessWidget {
         folderId: textWidget.folderId,
         textWidget: textWidget,
       );
+    } else if (travelItem is PlaceWidgetModel) {
+      final placeWidget = travelItem.asWidget as PlaceWidgetModel;
+      UpsertPlaceWidgetModal.show(
+        context: context,
+        travelDocumentId: placeWidget.travelDocumentId,
+        // If the widget is being edited, the index does not matter,
+        index: null,
+        folderId: placeWidget.folderId,
+        widgetToUpdate: placeWidget,
+      );
+    } else if (travelItem is PhotoWidgetModel) {
+      SnackBarHelper.I.showNotImplemented(
+        context,
+        message: 'Editing photo should allow to change the caption',
+      );
+    } else if (travelItem is AudioWidgetModel) {
+      SnackBarHelper.I.showNotImplemented(
+        context,
+        message: 'Editing audio should allow to change the audio name',
+      );
+    } else if (travelItem is FileWidgetModel) {
+      SnackBarHelper.I.showNotImplemented(
+        context,
+        message: 'Editing file should allow to change the file name',
+      );
     } else {
-      SnackBarHelper.I.showNotImplemented(context);
+      // We should never reach this point, as all widget types should
+      // have an edit handler.
+      SnackBarHelper.I.showError(
+        context: context,
+        message: 'Add an edit handler for this widget '
+            '${travelItem.runtimeType}',
+      );
     }
   }
 

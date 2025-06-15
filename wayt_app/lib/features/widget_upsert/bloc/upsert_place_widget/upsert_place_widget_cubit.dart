@@ -53,7 +53,7 @@ class UpsertPlaceWidgetCubit extends Cubit<UpsertPlaceWidgetState>
     required this.travelItemRepository,
     required this.widgetToUpdate,
     required this.folderId,
-  }) : super(const UpsertPlaceWidgetState.initial());
+  }) : super(UpsertPlaceWidgetState.initial(widgetToUpdate));
 
   /// Updates the latitude of the place.
   void updateLat(double? lat) {
@@ -146,16 +146,14 @@ class UpsertPlaceWidgetCubit extends Cubit<UpsertPlaceWidgetState>
       return;
     }
 
+    late final WEither<UpsertWidgetOutput> result;
     if (isUpdate) {
       final widget = widgetToUpdate!.copyWith(
         name: state.name,
         address: Option.of(state.address),
         latLng: LatLng(state.lat!, state.lng!),
       );
-      // TODO: Implement place widget update
-      throw UnimplementedError(
-        'Update widget not implemented yet. Widget: $widget',
-      );
+      result = await travelItemRepository.updateWidget(widget: widget).run();
     } else {
       final widget = PlaceWidgetModel(
         id: const Uuid().v4(),
@@ -166,26 +164,25 @@ class UpsertPlaceWidgetCubit extends Cubit<UpsertPlaceWidgetState>
         address: state.address,
         folderId: folderId,
       );
-
-      final result = await travelItemRepository
+      result = await travelItemRepository
           .createWidget(
             widget: widget,
             index: index,
           )
           .run();
-
-      result.match(
-        (error) {
-          logger.e('Error upserting place: $error');
-          emit(state.copyWithError(error));
-        },
-        (_) {
-          logger.i('Place widget upserted successfully');
-          emit(
-            state.copyWith(status: StateStatus.success),
-          );
-        },
-      );
     }
+
+    result.match(
+      (error) {
+        logger.e('Error upserting place: $error');
+        emit(state.copyWithError(error));
+      },
+      (_) {
+        logger.i('Place widget upserted successfully');
+        emit(
+          state.copyWith(status: StateStatus.success),
+        );
+      },
+    );
   }
 }

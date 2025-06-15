@@ -87,10 +87,10 @@ class SnackBarHelper {
       );
 
   /// Shows a message that the feature is not implemented yet.
-  void showNotImplemented(BuildContext context) {
+  void showNotImplemented(BuildContext context, {String? message}) {
     showWarning(
       context: context,
-      message: 'Not implemented yet',
+      message: 'Not implemented yet.' + (message != null ? '\n$message' : ''),
     );
   }
 
