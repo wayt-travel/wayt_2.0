@@ -77,7 +77,7 @@ class CreateFileWidgetCubit extends Cubit<CreateFileWidgetState>
       url: processedFile.file.path,
       name: basenameWithoutExtension(processedFile.originalFileName),
       // The order does not matter at creation time.
-      // It will be updated by the repositor ̑y.
+      // It will be updated by the repository.
       order: 0,
       travelDocumentId: travelDocumentId,
       byteCount: processedFile.byteCount,
