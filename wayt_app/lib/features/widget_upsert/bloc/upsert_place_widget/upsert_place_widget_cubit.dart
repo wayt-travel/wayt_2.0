@@ -55,6 +55,17 @@ class UpsertPlaceWidgetCubit extends Cubit<UpsertPlaceWidgetState>
     required this.folderId,
   }) : super(const UpsertPlaceWidgetState.initial());
 
+  /// Updates the latitude and longitude of the place.
+  void updateLatLng(LatLng latLng) {
+    emit(
+      state.copyWith(
+        status: StateStatus.initial,
+        lat: latLng.latitude,
+        lng: latLng.longitude,
+      ),
+    );
+  }
+
   /// Updates the latitude of the place.
   void updateLat(double? lat) {
     emit(

@@ -9,3 +9,12 @@ extension LatLngToPoint on LatLng {
         coordinates: Position(longitude, latitude),
       );
 }
+
+/// Extension on [Point] to convert it to a [LatLng].
+extension PointToLatLng on Point {
+  /// Converts a [Point] to a [LatLng].
+  LatLng toLatLng() => LatLng(
+        coordinates.lat.toDouble(),
+        coordinates.lng.toDouble(),
+      );
+}

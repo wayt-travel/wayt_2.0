@@ -76,6 +76,7 @@ abstract class WPermission {
           context: context,
           message: alertMessage,
           action: SnackBarAction(
+            // FIXME: l10n
             label: 'Settings',
             onPressed: openSettingsPage ?? openAppSettings,
           ),
